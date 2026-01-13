@@ -20,7 +20,8 @@ class Attribute extends Model
         'sort',
         'attribute_group_id',
         'in_filter',
-        'type_front'
+        'type_front',
+        'helper_text'
     ];
 
     protected $casts = [

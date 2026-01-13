@@ -14,6 +14,7 @@ class SeoMeta extends Model
         'meta_description',
         'meta_keywords',
         'canonical',
+        'h1',
         'og_title',
         'og_description',
         'og_image',

@@ -26,7 +26,14 @@ class PageController extends Controller
         }
 
         $page->load('seoMeta');
-        $page->applySeo();
+
+        // Применяем SEO с контекстом 'page' и переменными для масок
+        $vars = [
+            'title' => $page->title ?? '',
+            // добавьте другие переменные по необходимости
+        ];
+
+        $page->applySeo('page', $vars);
 
         $blocks = $blocksResolver->resolve($page->blocksForRender ?? $page->blocks ?? []);
 

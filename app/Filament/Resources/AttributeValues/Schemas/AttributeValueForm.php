@@ -27,10 +27,7 @@ class AttributeValueForm
                             ->placeholder('Например: Красный, 2024, Да')
                             ->required(),
 
-                        TextInput::make('helper_text')
-                            ->label('Подсказка')
-                            ->placeholder('Например: Используется на карточке товара')
-                            ->required(),
+
                     ])
                     ->columns(2),
             ]);

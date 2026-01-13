@@ -37,64 +37,21 @@ trait HasSeo
 
     /**
      * Применить SEO этой модели к глобальному Seo-сервису (фасад Seo).
+     * Использует SeoApplier для унифицированной логики.
+     *
+     * @param string $context Контекст для маски ('product', 'page', и т.д.)
+     * @param array $vars Переменные для маски
+     * @param bool $useMask Использовать ли маски для добивки пустых полей
      */
-    public function applySeo(): void
+    public function applySeo(string $context = 'default', array $vars = [], bool $useMask = true): void
     {
-        $meta = $this->seoMeta;
+        $applier = app(\App\Services\SeoApplier::class);
 
-        if (!$meta) {
-            return;
-        }
-
-        // Основные
-        if ($meta->meta_title) {
-            Seo::setMetaTitle($meta->meta_title);
-        }
-
-        if ($meta->meta_description) {
-            Seo::setMetaDescription($meta->meta_description);
-        }
-
-        if ($meta->meta_keywords) {
-            Seo::setMetaKeywords($meta->meta_keywords);
-        }
-
-        if ($meta->canonical) {
-            Seo::setCanonical($meta->canonical);
-        }
-
-        // Robots
-        Seo::setNoIndex($meta->noindex);
-
-        // OpenGraph
-        if ($meta->og_title) {
-            Seo::setOgTitle($meta->og_title);
-        }
-        if ($meta->og_description) {
-            Seo::setOgDescription($meta->og_description);
-        }
-        if ($meta->og_image) {
-            Seo::setOgImage($meta->og_image);
-        }
-        if ($meta->og_type) {
-            Seo::setOgType($meta->og_type);
-        }
-
-        // Twitter
-        if ($meta->twitter_card) {
-            Seo::setTwitterCard($meta->twitter_card);
-        }
-        if ($meta->twitter_title) {
-            Seo::setTwitterTitle($meta->twitter_title);
-        }
-        if ($meta->twitter_description) {
-            Seo::setTwitterDescription($meta->twitter_description);
-        }
-        if ($meta->twitter_image) {
-            Seo::setTwitterImage($meta->twitter_image);
-        }
-
-        // Если что-то доп. лежит в extra — тут можно кастомно обработать
-        // $meta->extra ...
+        $applier->apply(
+            model: $this,
+            context: $context,
+            vars: $vars,
+            useMask: $useMask
+        );
     }
 }

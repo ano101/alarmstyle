@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'disk'        => 'public',
     'source_path' => 'images',
     'cache_path'  => 'images/cache',
@@ -12,17 +11,28 @@ return [
     'cache_ttl_days'  => 30,
 
     'presets' => [
-
         'product' => [
             'card' => [
-                'width'   => 470,
-                'height'  => 352,
-                'fit'     => 'crop',
-                'upscale' => false, // ⬅ не увеличивать маленькие
+                'width'   => 800,
+                'height'  => 800,
+                'fit'     => 'contain',
+                'upscale' => false,
             ],
             'card_2x' => [
-                'width'   => 940,
-                'height'  => 704,
+                'width'   => 1600,
+                'height'  => 1600,
+                'fit'     => 'contain',
+                'upscale' => false,
+            ],
+            'thumbnail' => [
+                'width'   => 120,
+                'height'  => 120,
+                'fit'     => 'crop',
+                'upscale' => false,
+            ],
+            'thumbnail_2x' => [
+                'width'   => 240,
+                'height'  => 240,
                 'fit'     => 'crop',
                 'upscale' => false,
             ],

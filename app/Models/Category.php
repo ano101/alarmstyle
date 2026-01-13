@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Str;
 
 class Category extends Model
 {
@@ -22,6 +23,15 @@ class Category extends Model
         'is_active',
         'description',
     ];
+
+    protected static function booted(): void
+    {
+        // после create/update
+        static::saved(function (Category $category) {
+            $baseSlug = $category->getSlug() ?? Str::slug($category->name);
+            $category->setSlug($baseSlug);
+        });
+    }
 
     /**
      * Родительская категория

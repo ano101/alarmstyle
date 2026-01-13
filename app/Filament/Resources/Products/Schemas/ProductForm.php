@@ -57,7 +57,7 @@ class ProductForm
                                     return;
                                 }
 
-                                $mainCategory = $record->mainCategory();
+                                $mainCategory = $record->mainCategory()->first();
                                 if ($mainCategory) {
                                     $set('main_category_id', $mainCategory->id);
                                 }

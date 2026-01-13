@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignIdFor(\App\Models\Attribute::class)->constrained('attributes')->cascadeOnDelete();
             $table->string('value');
-            $table->string('helper_text')->nullable();
+            $table->text('feature')->nullable();
             $table->timestamps();
 
             $table->unique(['attribute_id', 'value']);

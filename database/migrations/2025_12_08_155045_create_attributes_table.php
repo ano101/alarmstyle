@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->string('name');
             $table->foreignIdFor(\App\Models\AttributeGroup::class)->constrained()->cascadeOnDelete();
             $table->unsignedTinyInteger('type');
+            $table->text('helper_text')->nullable();
             $table->integer('sort')->default(0);
             $table->timestamps();
 

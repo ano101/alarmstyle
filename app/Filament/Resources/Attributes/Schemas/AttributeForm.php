@@ -44,6 +44,9 @@ class AttributeForm
                             ->searchable()
                             ->options(fn () => \App\Models\AttributeGroup::pluck('name', 'id')->toArray())
                             ->required(),
+                        TextInput::make('helper_text')
+                            ->label('Подсказка')
+                            ->placeholder('Например: Используется на карточке товара'),
                     ])
                     ->columns(2),
             ]);

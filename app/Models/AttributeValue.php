@@ -19,6 +19,7 @@ class AttributeValue extends Model
         'value',
         'sort',
         'attribute_id',
+        'feature'
     ];
 
     public function attribute(): BelongsTo
@@ -55,7 +56,7 @@ class AttributeValue extends Model
             // если это флажковый атрибут (Да/Нет/Опция)
             if ((int) $attribute->type === 1) {
                 $map = [
-                    'да'    => 'da',
+                    'есть'    => 'da',
                     'нет'   => 'net',
                     'опция' => 'opciya',
                 ];

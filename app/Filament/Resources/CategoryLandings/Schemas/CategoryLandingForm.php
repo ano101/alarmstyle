@@ -99,6 +99,12 @@ class CategoryLandingForm
                             ->default([])
                             ->addActionLabel('Добавить атрибут')
                             ->columns(1)
+                            ->minItems(1) // Минимум 1 атрибут обязателен
+                            ->itemLabel(fn (array $state): ?string =>
+                                $state['attribute_value_id']
+                                    ? AttributeValue::find($state['attribute_value_id'])?->value
+                                    : null
+                            )
 
                             // При сохранении: превращаем массив объектов репитера в плоский массив ID
                             ->dehydrateStateUsing(function ($state): array {

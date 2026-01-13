@@ -19,6 +19,9 @@ use App\Facades\Seo;
 
 class CatalogService
 {
+    public function __construct(
+        protected SeoApplier $seoApplier
+    ) {}
     public function resolvePath(?string $path): array
     {
         $path = $path ? trim($path, '/') : '';
@@ -34,7 +37,7 @@ class CatalogService
 
         $categorySlugModel = Slug::where('slug', $categorySlug)
             ->where('sluggable_type', Category::class)
-            ->with('sluggable')
+            ->with(['sluggable', 'sluggable.seoMeta']) // загружаем категорию и её seoMeta
             ->first();
 
         if (! $categorySlugModel) {
@@ -408,9 +411,8 @@ class CatalogService
 
     /**
      * H1 для каталога:
-     * - используем meta_h1_pattern только для:
-     *    a) чистой категории
-     *    b) landing
+     * - приоритет: seoMeta->h1 (если есть)
+     * - затем meta_h1_pattern (только для чистой категории или landing)
      * - для фильтров без landing (noindex) делаем фоллбек: "Категория + h1Suffix"
      */
     public function buildCatalogH1(
@@ -421,35 +423,42 @@ class CatalogService
     ): string {
         $isLanding  = $landing !== null;
         $hasFilters = $selectedAttributeValues->isNotEmpty();
+        $seoSource  = $landing ?? $category;
 
-        $useMask = (! $hasFilters) || $isLanding;
+        // 1) Приоритет: явный h1 из seoMeta
+        $seoMeta = $seoSource->seoMeta ?? null;
+        if ($seoMeta && !empty($seoMeta->h1)) {
+            return $seoMeta->h1;
+        }
+
+        // 2) Маски используем только для чистой категории или landing
+        $useMask = (!$hasFilters) || $isLanding;
 
         $filtersUi  = $this->buildFilterUiPieces($selectedAttributeValues);
         $h1Suffix   = $filtersUi['h1Suffix'] ?? '';
         $filterText = $filtersUi['filterText'] ?? '';
 
-        $sortParam = $request->input('sort', 'popular_desc');
-        $sortLabel = match ($sortParam) {
-            'price_asc'    => 'сначала дешевле',
-            'price_desc'   => 'сначала дороже',
-            'popular_desc' => 'по популярности',
-            default        => '',
-        };
-
-        $vars = [
-            'category'     => $category->name,
-            'category_lc'  => mb_strtolower($category->name),
-            'filters'      => $filterText,
-            'price_from'   => (string) $request->input('price_from', ''),
-            'price_to'     => (string) $request->input('price_to', ''),
-            'sort_label'   => $sortLabel,
-            'page'         => '',
-        ];
-
         if ($useMask) {
-            $mask = SeoMask::resolveFor('catalog_category', $category);
+            $sortParam = $request->input('sort', 'popular_desc');
+            $sortLabel = match ($sortParam) {
+                'price_asc'    => 'сначала дешевле',
+                'price_desc'   => 'сначала дороже',
+                'popular_desc' => 'по популярности',
+                default        => '',
+            };
 
-            if ($mask && ! empty($mask->meta_h1_pattern)) {
+            $vars = [
+                'category'     => $category->name,
+                'category_lc'  => mb_strtolower($category->name),
+                'filters'      => $filterText,
+                'price_from'   => (string) $request->input('price_from', ''),
+                'price_to'     => (string) $request->input('price_to', ''),
+                'sort_label'   => $sortLabel,
+                'page'         => '',
+            ];
+
+            $mask = SeoMask::resolveFor('catalog_category', $category);
+            if ($mask && !empty($mask->meta_h1_pattern)) {
                 $h1 = $this->renderSeoMask($mask->meta_h1_pattern, $vars);
                 if ($h1) {
                     return $h1;
@@ -457,6 +466,7 @@ class CatalogService
             }
         }
 
+        // 3) Фоллбек: название категории + суффикс фильтров
         return $h1Suffix ? ($category->name . ' ' . $h1Suffix) : $category->name;
     }
 
@@ -470,9 +480,6 @@ class CatalogService
         $seoSource = $landing ?? $category;
         $isLanding = $landing !== null;
 
-        if (method_exists($seoSource, 'applySeo')) {
-            $seoSource->applySeo();
-        }
 
         $currentPage = (int) $items->currentPage();
         $totalItems  = (int) $items->total();
@@ -504,14 +511,9 @@ class CatalogService
             $shouldNoIndex = true;
         }
 
-        Seo::setNoIndex($shouldNoIndex);
-
         // =========================
-        // Маски/мета: на noindex-фильтрах без landing
-        // маски (title/desc) НЕ используем, но делаем понятный фоллбек
+        // SEO логика в зависимости от типа страницы
         // =========================
-        $useMaskForMeta = (! $hasFilters) || $isLanding;
-
         $filtersUi  = $this->buildFilterUiPieces($selectedAttributeValues);
         $filterText = $filtersUi['filterText'] ?? '';
 
@@ -536,65 +538,76 @@ class CatalogService
             'page'         => '',
         ];
 
-        $mask = SeoMask::resolveFor('catalog_category', $category);
+        // =========================
+        // Применяем SEO
+        // =========================
+        // Если есть фильтры БЕЗ лэндинга → это noindex страница
+        // Для неё НЕ используем seoMeta категории, только маски (если есть)
+        if ($hasFilters && !$isLanding) {
+            // Пытаемся применить только маски (без seoMeta)
+            $mask = SeoMask::resolveFor('catalog_category', $category);
+            if ($mask) {
+                $maskTitle = $this->renderSeoMask($mask->meta_title_pattern ?? null, $vars);
+                $maskDesc  = $this->renderSeoMask($mask->meta_description_pattern ?? null, $vars);
 
-        // ---------- TITLE ----------
-        $baseTitle = null;
-
-        if ($useMaskForMeta) {
-            // для landing или чистой категории можно уважать seoMeta (как у тебя было)
-            if ($seoMeta && $seoMeta->meta_title) {
-                $baseTitle = $seoMeta->meta_title;
-            } else {
-                if ($mask && $mask->meta_title_pattern) {
-                    $baseTitle = $this->renderSeoMask($mask->meta_title_pattern, $vars);
-                }
+                if ($maskTitle) Seo::setMetaTitle($maskTitle);
+                if ($maskDesc)  Seo::setMetaDescription($maskDesc);
             }
+            // Если маски нет или она пустая — ничего не устанавливаем,
+            // фоллбеки сработают ниже
+        } else {
+            // Чистая категория или лэндинг → используем полную логику SeoApplier
+            $this->seoApplier->apply(
+                model: $seoSource,
+                context: 'catalog_category',
+                vars: $vars,
+                useMask: true, // всегда true для категорий и лэндингов
+                maskModel: $category
+            );
         }
 
-        // фоллбек (в т.ч. для noindex-фильтров без landing — будет “понятно что выбрано”)
-        if (! $baseTitle) {
-            $baseTitle = $category->name;
+        // =========================
+        // Специфичная логика каталога
+        // =========================
+
+        // Устанавливаем noindex (может переписать значение из seoMeta)
+        Seo::setNoIndex($shouldNoIndex);
+
+        // ---------- TITLE с пагинацией ----------
+        $currentTitle = Seo::getTitle();
+
+        // Если title не был установлен, делаем фоллбек
+        if (!$currentTitle) {
+            $currentTitle = $category->name;
             if ($filterText !== '') {
-                $baseTitle .= ' – ' . $filterText;
+                $currentTitle .= ' – ' . $filterText;
             }
         }
 
-        $finalTitle = $baseTitle;
         if ($isPaginated) {
-            $finalTitle .= ' – страница ' . $currentPage;
+            $currentTitle .= ' – страница ' . $currentPage;
         }
 
-        Seo::setMetaTitle($finalTitle);
+        Seo::setMetaTitle($currentTitle);
 
-        // ---------- DESCRIPTION ----------
-        $baseDescription = null;
+        // ---------- DESCRIPTION с пагинацией ----------
+        $currentDescription = Seo::getDescription();
 
-        if ($useMaskForMeta) {
-            if ($seoMeta && $seoMeta->meta_description) {
-                $baseDescription = $seoMeta->meta_description;
-            } else {
-                if ($mask && $mask->meta_description_pattern) {
-                    $baseDescription = $this->renderSeoMask($mask->meta_description_pattern, $vars);
-                }
-            }
-        }
-
-        if (! $baseDescription) {
-            $baseDescription = 'Каталог ' . mb_strtolower($category->name) . ' — подбор товаров по параметрам и цене.';
+        // Если description не был установлен, делаем фоллбек
+        if (!$currentDescription) {
+            $currentDescription = 'Каталог ' . mb_strtolower($category->name) . ' — подбор товаров по параметрам и цене.';
             if ($filterText !== '') {
-                $baseDescription .= ' Выбрано: ' . $filterText . '.';
+                $currentDescription .= ' Выбрано: ' . $filterText . '.';
             }
         }
 
-        $finalDescription = $baseDescription;
         if ($isPaginated) {
-            $finalDescription = rtrim($finalDescription);
-            $finalDescription = rtrim($finalDescription, '.');
-            $finalDescription .= '. Страница ' . $currentPage . '.';
+            $currentDescription = rtrim($currentDescription);
+            $currentDescription = rtrim($currentDescription, '.');
+            $currentDescription .= '. Страница ' . $currentPage . '.';
         }
 
-        Seo::setMetaDescription($finalDescription);
+        Seo::setMetaDescription($currentDescription);
 
         // =========================
         // CANONICAL
@@ -648,6 +661,7 @@ class CatalogService
         return CategoryLanding::query()
             ->where('category_id', (int) $category->id)
             ->where('attribute_value_ids_key', $key)
+            ->with('seoMeta') // загружаем seoMeta для лэндинга
             ->first();
     }
 

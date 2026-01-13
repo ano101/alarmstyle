@@ -27,6 +27,13 @@ class CategoryLanding extends Model
     protected static function booted()
     {
         static::saving(function (CategoryLanding $landing) {
+            // Нормализуем: если массив пустой, делаем null
+            if (empty($landing->attribute_value_ids)) {
+                $landing->attribute_value_ids = null;
+                $landing->attribute_value_ids_key = '';
+                return;
+            }
+
             $ids = $landing->getNormalizedAttributeValueIds();
             $landing->attribute_value_ids_key = implode(',', $ids);
         });

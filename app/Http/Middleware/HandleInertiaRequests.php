@@ -45,6 +45,7 @@ class HandleInertiaRequests extends Middleware
             'seo' => fn () => [
                 'title'       => Seo::getTitle() ?? config('app.name'),
                 'description' => Seo::getDescription(),
+                'h1' => Seo::getH1(),
                 'keywords'    => Seo::getKeywords(),
                 'canonical'   => Seo::getCanonical(),
                 'noindex'     => Seo::isNoIndex(),

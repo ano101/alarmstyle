@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Slugs\Schemas;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
 use App\Models\Category;
+use App\Models\Page;
 use App\Models\Product;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\TextInput;
@@ -26,6 +27,8 @@ class SlugForm
                             ->titleAttribute('value'),
                         MorphToSelect\Type::make(Attribute::class)
                             ->titleAttribute('name'),
+                        MorphToSelect\Type::make(Page::class)
+                            ->titleAttribute('title'),
                     ]),
                 TextInput::make('slug')
                     ->required(),

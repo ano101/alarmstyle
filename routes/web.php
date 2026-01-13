@@ -10,7 +10,7 @@ Route::get('/category/{path?}', [\App\Http\Controllers\CatalogController::class,
     ->where('path', '.*')
     ->name('catalog');
 
-Route::get('/product/{slug}', [\App\Http\Controllers\CatalogController::class, 'show']);
+Route::get('/product/{slug}', [\App\Http\Controllers\ProductController::class, 'index']);
 
 Route::get('/img/{preset}/{path}', ImageController::class)
     ->where('path', '.*')   // разрешаем вложенные папки

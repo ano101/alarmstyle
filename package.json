@@ -17,11 +17,13 @@
     "dependencies": {
         "@inertiajs/vue3": "^2.2.21",
         "@motionone/vue": "^10.16.4",
+        "@splidejs/vue-splide": "^0.6.12",
         "@vitejs/plugin-vue": "^6.0.2",
         "@vue/server-renderer": "^3.5.25",
         "class-variance-authority": "^0.7.1",
         "lucide-vue-next": "^0.561.0",
         "motion-v": "^1.7.4",
+        "photoswipe": "^5.4.4",
         "radix-vue": "^1.9.17",
         "ziggy-js": "^2.6.0"
     }

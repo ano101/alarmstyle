@@ -140,23 +140,44 @@ class ImportAutostudioProducts extends Command
 
         $crawler->filter('table.params tr')->each(function (Crawler $tr) use (&$attributesData) {
             $tds = $tr->filter('td');
-
             if ($tds->count() !== 2) {
                 return;
             }
 
-            $attribute = trim($tds->eq(0)->text() ?? '');
-            $value     = trim($tds->eq(1)->text() ?? '');
+            $leftTd  = $tds->eq(0);
+            $rightTd = $tds->eq(1);
+
+            // Название атрибута — только из <b>
+            $bNode = $leftTd->filter('b');
+            $attribute = $bNode->count() ? trim($bNode->first()->text()) : trim($leftTd->text());
+
+            $value = trim($rightTd->text() ?? '');
 
             if ($attribute === '' || $value === '') {
                 return;
             }
 
+            // helper_text — из img title="... body=[...]" (если есть)
+            $helperText = null;
+
+            $imgNode = $leftTd->filter('img[title]');
+            if ($imgNode->count()) {
+                $title = (string) $imgNode->first()->attr('title');
+                $title = html_entity_decode($title, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+                // вытащить body=[...]
+                if (preg_match('/body=\[(.*?)\]/su', $title, $m)) {
+                    $helperText = trim($m[1]);
+                }
+            }
+
             $attributesData[] = [
-                'attribute' => Str::ucfirst($attribute),
-                'value'     => $value,
+                'attribute'   => Str::ucfirst($attribute),
+                'value'       => $value,
+                'helper_text' => $helperText, // <-- добавили
             ];
         });
+
 
         /** Галерея */
         $galleryUrls = [];
@@ -182,14 +203,14 @@ class ImportAutostudioProducts extends Command
 
         // Цены
         $product->prices()->create([
-            'type'  => 2,
+            'type'  => 1,
             'price' => $price,
         ]);
 
-        $product->prices()->create([
-            'type'  => 3,
-            'price' => max(0, $price - 5000),
-        ]);
+//        $product->prices()->create([
+//            'type'  => 3,
+//            'price' => max(0, $price - 5000),
+//        ]);
 
         // Главная картинка
         if ($mainImageUrl) {
@@ -214,12 +235,21 @@ class ImportAutostudioProducts extends Command
                     continue;
                 }
 
-                $attributeValue = AttributeValue::query()
-                    ->firstOrCreate(['value' => $row['value'], 'attribute_id' => $attribute->id]);
+                // обновляем helper_text, если пришёл и в базе пусто
+                if (!empty($row['helper_text']) && empty($attribute->helper_text)) {
+                    $attribute->helper_text = $row['helper_text'];
+                    $attribute->save();
+                }
+
+                $attributeValue = AttributeValue::query()->firstOrCreate([
+                    'value'        => $row['value'],
+                    'attribute_id' => $attribute->id,
+                ]);
 
                 $attributeValueIds[] = $attributeValue->id;
-
             }
+
+
 
             if (!empty($attributeValueIds)) {
                 $product->attributeValues()->syncWithoutDetaching($attributeValueIds);
@@ -253,7 +283,7 @@ class ImportAutostudioProducts extends Command
 
             if ($brand !== '') {
                 $brandValue = AttributeValue::query()->firstOrCreate([
-                    'attribute_id' => 58,
+                    'attribute_id' => Attribute::query()->where('name', 'Производитель')->first()->id,
                     'value'        => $brand,
                 ]);
 

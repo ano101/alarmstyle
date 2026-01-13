@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Presenters\ProductPresenter;
 use App\Models\Traits\HasSeo;
 use App\Models\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Model;
@@ -54,7 +55,7 @@ class Product extends Model
             'name'                => $this->name,
             'image' => $this->image,
             'category_ids'        => $this->categories->pluck('id')->values()->all(),
-            'main_category_id'    => optional($this->mainCategory())->id,
+            'main_category_id'    => $this->mainCategory()->first()?->id,
             'price'               => (double)optional($this->basePrice)->price,
             'brand'             => $this->attributeValues?->firstWhere('attribute_id', 58)?->value ?? '',
             'gps' => $this->attributeValues?->firstWhere('attribute_id', 56)?->value !== 'Нет',
@@ -120,19 +121,30 @@ class Product extends Model
     }
 
     /**
-     * Вернуть главную категорию товара (или null, если не задана)
+     * Получить основную категорию товара (отношение)
      */
-    public function mainCategory(): ?Category
+    public function mainCategory()
     {
-        // если уже загружены категории — не делаем лишний запрос
-        if ($this->relationLoaded('categories')) {
-            return $this->categories
-                ->firstWhere('pivot.is_main', true);
+        return $this->belongsToMany(Category::class)
+            ->wherePivot('is_main', true)
+            ->withPivot(['is_main'])
+            ->withTimestamps()
+            ->limit(1);
+    }
+
+    /**
+     * Аксессор для удобного доступа к главной категории как к свойству.
+     * Использование: $product->main_category или $product->mainCategory
+     */
+    public function getMainCategoryAttribute(): ?Category
+    {
+        // Если отношение уже загружено через eager loading
+        if ($this->relationLoaded('mainCategory')) {
+            return $this->getRelation('mainCategory')->first();
         }
 
-        return $this->categories()
-            ->wherePivot('is_main', true)
-            ->first();
+        // Иначе выполняем запрос
+        return $this->mainCategory()->first();
     }
 
     /**
@@ -160,5 +172,10 @@ class Product extends Model
 
         // Чтобы в уже загруженных отношениях тоже всё обновилось
         $this->unsetRelation('categories');
+    }
+
+    public function presenter(): ProductPresenter
+    {
+        return new ProductPresenter($this);
     }
 }
