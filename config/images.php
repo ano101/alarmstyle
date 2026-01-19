@@ -36,6 +36,12 @@ return [
                 'fit'     => 'crop',
                 'upscale' => false,
             ],
+            'lightbox' => [
+                'width'   => 1920,
+                'height'  => 1440,
+                'fit'     => 'contain',
+                'upscale' => false,
+            ],
         ],
 
         'category' => [

@@ -15,7 +15,43 @@ class CallbackRequest extends Model
         'status',
     ];
 
-    protected $casts = [
-        'utm' => 'array',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'utm' => 'array',
+        ];
+    }
+
+    /**
+     * Scope для новых заявок
+     */
+    public function scopeNew($query)
+    {
+        return $query->where('status', 'new');
+    }
+
+    /**
+     * Scope для обработанных заявок
+     */
+    public function scopeProcessed($query)
+    {
+        return $query->where('status', 'processed');
+    }
+
+    /**
+     * Отметить как обработанную
+     */
+    public function markAsProcessed(): bool
+    {
+        return $this->update(['status' => 'processed']);
+    }
+
+    /**
+     * Отметить как спам
+     */
+    public function markAsSpam(): bool
+    {
+        return $this->update(['status' => 'spam']);
+    }
 }
+

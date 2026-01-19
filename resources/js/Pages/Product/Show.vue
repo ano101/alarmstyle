@@ -2,7 +2,7 @@
 import MainLayout from "@/Layouts/MainLayout.vue"
 import { motion } from 'motion-v'
 import Image from "../../Components/ui/Image.vue";
-import { Star, Shield, Clock, Wrench, ShoppingCart, Phone } from 'lucide-vue-next'
+import { Star, Shield, Clock, Wrench, ShoppingCart, Phone, Check, ChevronDown, Info } from 'lucide-vue-next'
 import { ref, computed, onMounted } from 'vue'
 import Button from "../../Components/ui/Button.vue";
 import { Splide, SplideSlide } from '@splidejs/vue-splide';
@@ -10,6 +10,10 @@ import '@splidejs/splide/dist/css/splide.min.css';
 import PhotoSwipeLightbox from 'photoswipe/lightbox';
 import 'photoswipe/style.css';
 import { nextTick } from 'vue'
+import { Tooltip, TooltipTrigger, TooltipContent } from "../../Components/ui/Tooltip.vue";
+import OrderModal from "@/Components/OrderModal.vue"
+import CallbackModal from "@/Components/CallbackModal.vue"
+import { useOrderModal } from "@/Composables/useOrderModal.js"
 
 defineOptions({ layout: MainLayout })
 
@@ -22,6 +26,10 @@ const props = defineProps({
         type: String,
         required: false,
     },
+    attributeFeature: {
+        type: Array,
+        required: false,
+    }
 })
 
 const mainSplide = ref(null)
@@ -30,6 +38,35 @@ const thumbsSplide = ref(null)
 const galleryImages = computed(() => {
     return props.product.gallery || [props.product.image]
 })
+
+// Модалки
+const { isOpen: isOrderOpen, selectedProduct, open: openOrder } = useOrderModal()
+const callbackOpen = ref(false)
+
+const openOrderModal = () => {
+    openOrder(props.product)
+}
+
+const openCallbackModal = () => {
+    callbackOpen.value = true
+}
+
+// Состояние для аккордеонов атрибутов
+const openGroups = ref(new Set())
+
+const toggleGroup = (index) => {
+    if (openGroups.value.has(index)) {
+        openGroups.value.delete(index)
+    } else {
+        openGroups.value.add(index)
+    }
+    // Триггер реактивности
+    openGroups.value = new Set(openGroups.value)
+}
+
+const isGroupOpen = (index) => {
+    return openGroups.value.has(index)
+}
 
 const mainOptions = {
     type: 'fade',
@@ -112,7 +149,7 @@ onMounted(() => {
                 >
                     <SplideSlide v-for="(image, index) in galleryImages" :key="index">
                         <a
-                            :href="image"
+                            :href="route('images.show', { path: image, preset: 'product.lightbox' })"
                             :data-pswp-width="1200"
                             :data-pswp-height="900"
                             target="_blank"
@@ -156,13 +193,13 @@ onMounted(() => {
             :animate="{ opacity: 1, y: 0 }"
             :transition="{ duration: 0.5, delay: 0.2 }"
         >
-            <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 rounded-full mb-4">
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 rounded-full mb-4" v-if="brand">
                 <span class="text-sm font-medium text-emerald-700">{{ brand }}</span>
             </div>
             <h1 class="text-4xl font-bold text-gray-900 mb-6">{{ product.name }}</h1>
             <div class="flex items-baseline gap-3 mb-10">
                 <div class="text-5xl font-bold text-gray-900">
-                    {{product.price.toLocaleString()}}₽
+                    {{product.price.toLocaleString()}} ₽
                 </div>
                 <div class="text-lg text-gray-500">
                     c установкой
@@ -171,11 +208,11 @@ onMounted(() => {
             <div class="grid grid-cols-3 gap-4 mb-10">
                 <div class="bg-white rounded-xl p-4 border border-gray-200 text-center">
                     <Shield class="w-6 h-6 text-emerald-600 mx-auto mb-2" />
-                    <div class="text-sm text-gray-700 font-medium">Гаратия 1 год</div>
+                    <div class="text-sm text-gray-700 font-medium">Гарантия 1 год</div>
                 </div>
                 <div class="bg-white rounded-xl p-4 border border-gray-200 text-center">
                     <Clock class="w-6 h-6 text-emerald-600 mx-auto mb-2" />
-                    <div class="text-sm text-gray-700 font-medium">Установк 2-3 часа</div>
+                    <div class="text-sm text-gray-700 font-medium">Установка 2-3 часа</div>
                 </div>
                 <div class="bg-white rounded-xl p-4 border border-gray-200 text-center">
                     <Wrench class="w-6 h-6 text-emerald-600 mx-auto mb-2" />
@@ -184,6 +221,7 @@ onMounted(() => {
             </div>
             <div class="flex gap-4 mb-12">
                 <Button
+                    @click="openOrderModal"
                     size="lg"
                     class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 h-14"
                 >
@@ -191,13 +229,25 @@ onMounted(() => {
                     Заказать установку
                 </Button>
                 <Button
+                    @click="openCallbackModal"
                     size="lg"
                     variant="outline"
                     class="border-2 border-gray-300 hover:border-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 h-14 px-6 transition-all duration-200"
                 >
-                    <Phone className="w-5 h-5" />
+                    <Phone class="w-5 h-5" />
                 </Button>
 
+            </div>
+            <div class="bg-white rounded-xl border border-gray-200 p-6" v-if="attributeFeature.length > 0">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Основные особенности</h3>
+                <div class="space-y-3">
+                    <div v-for="(feature, index) in attributeFeature" :key="index" class="flex items-start gap-3">
+                        <div class="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check class="w-4 h-4 text-emerald-600" />
+                        </div>
+                        <p class="text-sm text-gray-700 leading-relaxed">{{feature}}</p>
+                    </div>
+                </div>
             </div>
         </motion.div>
     </div>
@@ -207,11 +257,86 @@ onMounted(() => {
         :transition="{ duration: 0.5, delay: 0.4 }"
         class="mt-16"
     >
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Технические характеристики</h2>\
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Технические характеристики</h2>
         <div class="space-y-3">
-
+            <div v-for="(group, index) in product.attributeGroups" :key="index" class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <button
+                    @click="toggleGroup(index)"
+                    class="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
+                >
+                    <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">{{ group.name }}</h3>
+                    <ChevronDown
+                        class="w-5 h-5 text-gray-400 transition-transform duration-300 ease-in-out"
+                        :class="{ 'rotate-180': isGroupOpen(index) }"
+                    />
+                </button>
+                <Transition
+                    enter-active-class="transition-all duration-300 ease-in-out"
+                    leave-active-class="transition-all duration-300 ease-in-out"
+                    enter-from-class="grid-rows-[0fr] opacity-0"
+                    enter-to-class="grid-rows-[1fr] opacity-100"
+                    leave-from-class="grid-rows-[1fr] opacity-100"
+                    leave-to-class="grid-rows-[0fr] opacity-0"
+                >
+                    <div v-show="isGroupOpen(index)" class="grid overflow-hidden">
+                        <div class="min-h-0 border-t border-gray-200">
+                            <div class="grid sm:grid-cols-2 xl:grid-cols-4">
+                                <div v-for="(attribute, key) in group.attributes"
+                                    :key="key"
+                                    class="flex flex-col gap-1 px-4 py-3 border-b border-r border-gray-100 last:border-r-0"
+                                >
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-xs text-gray-500">{{attribute.name}}</span>
+                                        <Tooltip v-if="attribute.helper_text">
+                                            <TooltipTrigger asChild>
+                                                <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                                                    <Info class="w-3.5 h-3.5" />
+                                                </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="top" class="max-w-xs bg-gray-900 text-white p-3 rounded-lg">
+                                                <p class="text-xs leading-relaxed">{{attribute.helper_text}}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-900">{{attribute.value}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </Transition>
+            </div>
         </div>
     </motion.div>
+    <motion.div
+        :initial="{ opacity: 0, y: 20 }"
+        :animate="{ opacity: 1, y: 0 }"
+        :transition="{ duration: 0.5, delay: 0.6 }"
+        class="mt-12 bg-white rounded-2xl p-8 sm:p-12 border border-gray-200"
+    >
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6">О проукте</h2>
+        <div class="prose prose-gray max-w-none text-gray-700 space-y-4 leading-relaxed">
+            <p>
+                Современная автомобильная сигнализация с диалоговым кодом обеспечивает надежную защиту вашего
+                автомобиля от угона. Передовые технологии шифрования делают невозможным перехват и клонирование
+                сигнала брелока.
+            </p>
+            <p>
+                Система интегрируется с CAN-шиной автомобиля, что позволяет контролировать все важные параметры
+                и блокировать двигатель при попытке угона. Встроенный GSM-модуль обеспечивает связь с владельцем
+                через мобильное приложение.
+            </p>
+            <p>
+                Профессиональная установка нашими специалистами гарантирует корректную работу всех функций
+                сигнализации. Мы предоставляем гарантию на оборудование и выполненные работы.
+            </p>
+        </div>
+    </motion.div>
+    <!-- Модалки -->
+    <OrderModal
+        v-model:open="isOrderOpen"
+        :product="selectedProduct"
+    />
+    <CallbackModal :open="callbackOpen" @close="callbackOpen = false" />
 </template>
 
 <style scoped>

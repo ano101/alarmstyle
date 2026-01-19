@@ -42,6 +42,7 @@ class ProductController extends Controller
 
         // Форматируем данные продукта для frontend
         $productData = [
+            'id' => $product->id,
             'name' => $product->name ?? '',
             'price' => $product->basePrice?->price ?? null,
         ];
@@ -70,6 +71,8 @@ class ProductController extends Controller
         // Собираем атрибуты по группам
         $attributesByGroup = [];
 
+        $attributeFeature = [];
+
         if ($product->attributeValues && $product->attributeValues->isNotEmpty()) {
             foreach ($product->attributeValues as $attributeValue) {
                 $attribute = $attributeValue->attribute;
@@ -89,23 +92,29 @@ class ProductController extends Controller
                     ];
                 }
 
+                if($attributeValue->feature){
+                    $attributeFeature[] = $attributeValue->feature;
+                }
+
                 // Добавляем атрибут в группу
                 $attributesByGroup[$groupName]['attributes'][] = [
                     'name' => $attribute->name,
                     'value' => $attributeValue->value,
                     'type' => $attribute->type,
                     'type_front' => $attribute->type_front,
+                    'helper_text' => $attribute->helper_text ?: false
                 ];
             }
         }
 
         // Преобразуем в индексированный массив и добавляем в $productData
         $productData['attributeGroups'] = array_values($attributesByGroup);
-        dd($productData['attributeGroups']);
+
         return Inertia::render('Product/Show', [
             'product' => $productData,
             'breadcrumbs' => $breadcrumbs,
-            'brand' => $product->presenter()->brand()
+            'brand' => $product->presenter()->brand(),
+            'attributeFeature' => $attributeFeature
         ]);
     }
 }
