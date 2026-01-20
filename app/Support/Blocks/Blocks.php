@@ -2,16 +2,26 @@
 
 namespace App\Support\Blocks;
 
+use App\Support\Blocks\Definitions\HeadingBlock;
+use App\Support\Blocks\Definitions\HeroBlock;
+use App\Support\Blocks\Definitions\ImageBlock;
+use App\Support\Blocks\Definitions\ProductsSliderBlock;
+use App\Support\Blocks\Definitions\TextBlock;
 use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Builder\Block;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
-use App\Models\Category;
 
 class Blocks
 {
+    /**
+     * @var array<class-string>
+     */
+    protected static array $blocks = [
+        HeadingBlock::class,
+        TextBlock::class,
+        ImageBlock::class,
+        ProductsSliderBlock::class,
+        HeroBlock::class,
+    ];
+
     public static function builder(string $field = 'blocks'): Builder
     {
         return Builder::make($field)
@@ -22,71 +32,27 @@ class Blocks
 
     public static function definitions(): array
     {
-        return [
-            Block::make('heading')
-                ->label('Заголовок')
-                ->schema([
-                    TextInput::make('text')
-                        ->label('Текст')
-                        ->required(),
-                    TextInput::make('level')
-                        ->label('Уровень (h1–h4)')
-                        ->default('h2'),
-                ]),
+        return array_map(
+            fn ($blockClass) => $blockClass::make(),
+            self::$blocks
+        );
+    }
 
-            Block::make('text')
-                ->label('Текстовый блок')
-                ->schema([
-                    Textarea::make('content')
-                        ->label('Текст')
-                        ->rows(4)
-                        ->required(),
-                ]),
+    /**
+     * Регистрация кастомного блока
+     */
+    public static function register(string $blockClass): void
+    {
+        if (! in_array($blockClass, self::$blocks, true)) {
+            self::$blocks[] = $blockClass;
+        }
+    }
 
-            Block::make('image')
-                ->label('Картинка')
-                ->schema([
-                    FileUpload::make('url')
-                        ->label('Картинка')
-                        ->image()
-                        ->required(),
-                    TextInput::make('alt')
-                        ->label('Alt')
-                        ->nullable(),
-                ]),
-
-            Block::make('products_slider')
-                ->label('Слайдер товаров')
-                ->schema([
-                    TextInput::make('title')
-                        ->label('Заголовок блока')
-                        ->default('Популярные товары'),
-
-                    Select::make('category_id')
-                        ->label('Категория')
-                        ->options(fn () => Category::query()
-                            ->orderBy('name')
-                            ->pluck('name', 'id')
-                            ->toArray()
-                        )
-                        ->searchable()
-                        ->nullable(),
-
-                    Select::make('sort')
-                        ->label('Сортировка')
-                        ->options([
-                            'popular'   => 'Популярные',
-                            'new'       => 'Новинки',
-                            'price_asc' => 'Цена ↑',
-                            'price_desc'=> 'Цена ↓',
-                        ])
-                        ->default('popular'),
-
-                    TextInput::make('limit')
-                        ->label('Сколько товаров')
-                        ->numeric()
-                        ->default(10),
-                ]),
-        ];
+    /**
+     * Получить все зарегистрированные блоки
+     */
+    public static function getRegistered(): array
+    {
+        return self::$blocks;
     }
 }

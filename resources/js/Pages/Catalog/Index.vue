@@ -135,12 +135,13 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="flex items-center justify-between mb-8">
-        <div>
-            <h1 class="text-2xl sm:text-3xl font-semibold text-gray-800 mb-2">Каталог</h1>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-semibold text-gray-800 mb-2">Каталог</h1>
+            </div>
         </div>
-    </div>
-    <CatalogQuickLinks :links="quickLinks" />
+        <CatalogQuickLinks :links="quickLinks" />
 
     <CatalogActiveFilters
         :attributes="attributes"
@@ -183,6 +184,7 @@ onBeforeUnmount(() => {
                                 :category="category"
                             />
     </div>
+    </div><!-- Закрытие контейнера max-w-7xl -->
 
 <!--    <div class="bg-slate-50/40">-->
 <!--        <div-->

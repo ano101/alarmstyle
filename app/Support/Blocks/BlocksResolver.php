@@ -13,7 +13,7 @@ class BlocksResolver
     public function __construct()
     {
         $this->handlers = [
-//            'products_slider' => new ProductsSliderHandler(),
+            'products_slider' => new ProductsSliderHandler,
             // тут же зарегаем другие "умные" блоки
         ];
     }

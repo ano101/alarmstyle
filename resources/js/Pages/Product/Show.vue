@@ -125,7 +125,8 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
         <motion.div
             :initial="{ opacity: 0, scale: 0.95 }"
             :animate="{ opacity: 1, scale: 1 }"
@@ -149,9 +150,9 @@ onMounted(() => {
                 >
                     <SplideSlide v-for="(image, index) in galleryImages" :key="index">
                         <a
-                            :href="route('images.show', { path: image, preset: 'product.lightbox' })"
-                            :data-pswp-width="1200"
-                            :data-pswp-height="900"
+                            :href="route('images.show', { path: image, preset: 'product.lightbox_2x' })"
+                            :data-pswp-width="3840"
+                            :data-pswp-height="2880"
                             target="_blank"
                             rel="noreferrer"
                             class="block cursor-zoom-in"
@@ -250,13 +251,13 @@ onMounted(() => {
                 </div>
             </div>
         </motion.div>
-    </div>
-    <motion.div
-        :initial="{ opacity: 0, y: 20 }"
-        :animate="{ opacity: 1, y: 0 }"
-        :transition="{ duration: 0.5, delay: 0.4 }"
-        class="mt-16"
-    >
+
+        <motion.div
+            :initial="{ opacity: 0, y: 20 }"
+            :animate="{ opacity: 1, y: 0 }"
+            :transition="{ duration: 0.5, delay: 0.4 }"
+            class="mt-16"
+        >
         <h2 class="text-2xl font-semibold text-gray-800 mb-6">Технические характеристики</h2>
         <div class="space-y-3">
             <div v-for="(group, index) in product.attributeGroups" :key="index" class="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -331,6 +332,9 @@ onMounted(() => {
             </p>
         </div>
     </motion.div>
+    </div><!-- Закрытие grid lg:grid-cols-2 -->
+    </div><!-- Закрытие контейнера max-w-7xl -->
+
     <!-- Модалки -->
     <OrderModal
         v-model:open="isOrderOpen"

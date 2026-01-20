@@ -555,16 +555,18 @@ onUnmounted(() => {
         <!-- Spacer for fixed header -->
 
 
-        <!-- Breadcrumbs всегда сверху -->
+        <!-- Контент -->
         <div class="min-h-screen pt-40 pb-24 bg-gradient-to-br from-gray-50 to-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <!-- Breadcrumbs в контейнере -->
+            <div v-if="breadcrumbs.length" class="max-w-7xl mx-auto px-4 sm:px-6 mb-8">
                 <Breadcrumbs
-                    v-if="breadcrumbs.length"
                     :items="breadcrumbs"
                     @navigate="navigate"
                 />
-                <slot />
             </div>
+
+            <!-- Slot без ограничения ширины для поддержки full-width блоков -->
+            <slot />
         </div>
 
 

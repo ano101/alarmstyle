@@ -37,8 +37,14 @@ return [
                 'upscale' => false,
             ],
             'lightbox' => [
-                'width'   => 1920,
-                'height'  => 1440,
+                'width'   => 2560,
+                'height'  => 1920,
+                'fit'     => 'contain',
+                'upscale' => false,
+            ],
+            'lightbox_2x' => [
+                'width'   => 3840,
+                'height'  => 2880,
                 'fit'     => 'contain',
                 'upscale' => false,
             ],
