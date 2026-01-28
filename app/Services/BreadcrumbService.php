@@ -16,17 +16,16 @@ class BreadcrumbService
         if ($product->mainCategory) {
             $breadcrumbs[] = [
                 'label' => $product->mainCategory->name,
-                'url' => route('catalog', $product->mainCategory->getSlug())
+                'url' => route('catalog', $product->mainCategory->getSlug()),
             ];
         }
 
         // Текущий товар (без ссылки)
         $breadcrumbs[] = [
             'label' => $product->name,
-            'url' => null
+            'url' => null,
         ];
 
         return $breadcrumbs;
     }
 }
-

@@ -8,19 +8,17 @@ use App\Models\Category;
 use App\Models\CategoryRequiredAttribute;
 use App\Models\Product;
 use App\Models\ProductPrice;
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 
 class ProductForm
 {
-
-
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -96,7 +94,8 @@ class ProductForm
 
                                     if (empty($selectedValueIds)) {
                                         $attrNames = Attribute::whereIn('id', $requiredAttributeIds)->pluck('name')->toArray();
-                                        $fail('Обязательно укажите значения для атрибутов: ' . implode(', ', $attrNames) . '.');
+                                        $fail('Обязательно укажите значения для атрибутов: '.implode(', ', $attrNames).'.');
+
                                         return;
                                     }
 
@@ -110,7 +109,7 @@ class ProductForm
 
                                     if ($missingAttributeIds->isNotEmpty()) {
                                         $attrNames = Attribute::whereIn('id', $missingAttributeIds)->pluck('name')->toArray();
-                                        $fail('Не выбраны значения для обязательных атрибутов: ' . implode(', ', $attrNames) . '.');
+                                        $fail('Не выбраны значения для обязательных атрибутов: '.implode(', ', $attrNames).'.');
                                     }
                                 },
                             ]),
@@ -121,8 +120,8 @@ class ProductForm
                                 Select::make('type')
                                     ->label('Тип цены')
                                     ->options([
-                                        ProductPrice::TYPE_BASE            => 'Цена',
-                                        ProductPrice::TYPE_WITH_INSTALL    => 'Цена с установкой',
+                                        ProductPrice::TYPE_BASE => 'Цена',
+                                        ProductPrice::TYPE_WITH_INSTALL => 'Цена с установкой',
                                         ProductPrice::TYPE_WITHOUT_INSTALL => 'Цена без установки',
                                     ])
                                     ->required()

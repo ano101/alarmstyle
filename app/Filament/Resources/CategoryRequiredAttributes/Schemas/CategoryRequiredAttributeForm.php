@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\CategoryRequiredAttributes\Schemas;
 
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class CategoryRequiredAttributeForm

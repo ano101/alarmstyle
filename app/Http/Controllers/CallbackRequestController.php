@@ -18,12 +18,12 @@ class CallbackRequestController extends Controller
         $utm = $this->collectUtmParams($request);
 
         CallbackRequest::create([
-            'name'     => $request->input('name'),
-            'phone'    => $request->input('phone'),
-            'comment'  => $request->input('comment'),
+            'name' => $request->input('name'),
+            'phone' => $request->input('phone'),
+            'comment' => $request->input('comment'),
             'page_url' => $request->input('page_url') ?: $request->header('referer'),
-            'utm'      => !empty($utm) ? $utm : null,
-            'status'   => 'new',
+            'utm' => ! empty($utm) ? $utm : null,
+            'status' => 'new',
         ]);
 
         // Здесь можно добавить отправку уведомлений (email, Telegram и т.д.)

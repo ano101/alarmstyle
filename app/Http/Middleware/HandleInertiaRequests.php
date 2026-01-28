@@ -2,8 +2,8 @@
 
 namespace App\Http\Middleware;
 
-use App\Facades\Seo;
 use App\Facades\JsonLd;
+use App\Facades\Seo;
 use App\Models\Menu;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -39,49 +39,70 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
-            'pageTitle'   => null,
+            'pageTitle' => null,
             'breadcrumbs' => [],
-            'jsonLd'     => fn () => JsonLd::get(),
+            'jsonLd' => fn () => JsonLd::get(),
             'seo' => fn () => [
-                'title'       => Seo::getTitle() ?? config('app.name'),
+                'title' => Seo::getTitle() ?? config('app.name'),
                 'description' => Seo::getDescription(),
                 'h1' => Seo::getH1(),
-                'keywords'    => Seo::getKeywords(),
-                'canonical'   => Seo::getCanonical(),
-                'noindex'     => Seo::isNoIndex(),
+                'keywords' => Seo::getKeywords(),
+                'canonical' => Seo::getCanonical(),
+                'noindex' => Seo::isNoIndex(),
 
-                'og_title'       => Seo::getOgTitle(),
+                'og_title' => Seo::getOgTitle(),
                 'og_description' => Seo::getOgDescription(),
-                'og_image'       => Seo::getOgImage(),
-                'og_type'        => Seo::getOgType(),
+                'og_image' => Seo::getOgImage(),
+                'og_type' => Seo::getOgType(),
 
-                'twitter_card'        => Seo::getTwitterCard(),
-                'twitter_title'       => Seo::getTwitterTitle(),
+                'twitter_card' => Seo::getTwitterCard(),
+                'twitter_title' => Seo::getTwitterTitle(),
                 'twitter_description' => Seo::getTwitterDescription(),
-                'twitter_image'       => Seo::getTwitterImage(),
+                'twitter_image' => Seo::getTwitterImage(),
 
                 'url' => url()->current(),
             ],
             'settings' => fn () => [
                 'company' => [
-                    'name'    => setting('company.name', 'Alarmstyle'),
+                    'name' => setting('company.name', 'Alarmstyle'),
                     'tagline' => setting('company.tagline', 'Противоугонные системы и автоэлектроника'),
                 ],
                 'contacts' => [
-                    'phone'    => setting('contacts.phone', '+7 (999) 123-45-67'),
+                    'phone' => setting('contacts.phone', '+7 (999) 123-45-67'),
                     'whatsapp' => setting('contacts.whatsapp'),
                     'telegram' => setting('contacts.telegram'),
-                    'address'  => setting('contacts.address'),
-                    'email'    => setting('contacts.email'),
+                    'address' => setting('contacts.address'),
+                    'email' => setting('contacts.email'),
                 ],
             ],
             'menus' => fn () => [
                 'header' => optional(
-                        Menu::query()
-                            ->where('key', 'header') // ключ меню в БД
-                            ->where('is_active', true)
-                            ->first()
-                    )?->tree() ?? [],
+                    Menu::query()
+                        ->where('key', 'header')
+                        ->where('is_active', true)
+                        ->first()
+                )?->tree() ?? [],
+
+                'mob_menu' => optional(
+                    Menu::query()
+                        ->where('key', 'mob_menu')
+                        ->where('is_active', true)
+                        ->first()
+                )?->tree() ?? [],
+
+                'footer1' => optional(
+                    Menu::query()
+                        ->where('key', 'footer1')
+                        ->where('is_active', true)
+                        ->first()
+                )?->tree() ?? [],
+
+                'footer2' => optional(
+                    Menu::query()
+                        ->where('key', 'footer2')
+                        ->where('is_active', true)
+                        ->first()
+                )?->tree() ?? [],
 
             ],
         ]);

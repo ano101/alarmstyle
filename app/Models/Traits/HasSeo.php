@@ -28,7 +28,7 @@ trait HasSeo
      */
     public function setSeo(array $data): SeoMeta
     {
-        $fillable = (new SeoMeta())->getFillable();
+        $fillable = (new SeoMeta)->getFillable();
 
         $payload = array_intersect_key($data, array_flip($fillable));
 
@@ -39,9 +39,9 @@ trait HasSeo
      * Применить SEO этой модели к глобальному Seo-сервису (фасад Seo).
      * Использует SeoApplier для унифицированной логики.
      *
-     * @param string $context Контекст для маски ('product', 'page', и т.д.)
-     * @param array $vars Переменные для маски
-     * @param bool $useMask Использовать ли маски для добивки пустых полей
+     * @param  string  $context  Контекст для маски ('product', 'page', и т.д.)
+     * @param  array  $vars  Переменные для маски
+     * @param  bool  $useMask  Использовать ли маски для добивки пустых полей
      */
     public function applySeo(string $context = 'default', array $vars = [], bool $useMask = true): void
     {

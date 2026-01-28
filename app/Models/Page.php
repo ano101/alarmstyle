@@ -2,19 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\HasBlocks;
 use App\Models\Traits\HasSeo;
 use App\Models\Traits\HasSlug;
-use App\Models\Traits\HasBlocks;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class Page extends Model
 {
-    use HasFactory;
-    use HasSlug;
     use HasBlocks;
+    use HasFactory;
     use HasSeo;
+    use HasSlug;
 
     protected $table = 'pages';
 
@@ -22,18 +22,32 @@ class Page extends Model
         'title',
         'blocks',
         'is_published',
+        'is_homepage',
     ];
 
     protected $casts = [
-        'blocks'       => 'array',
+        'blocks' => 'array',
         'is_published' => 'boolean',
+        'is_homepage' => 'boolean',
     ];
+
     protected static function booted(): void
     {
-        static::saved(function (Page $page) {
-            // если слага ещё нет — генерим его по title
-            if (! $page->getSlug() && $page->title) {
-                $page->setSlug(Str::slug($page->title));
+        static::saving(function (Page $page) {
+            // Если страница помечена как главная
+            if ($page->is_homepage) {
+                // Снимаем флаг главной со всех других страниц
+                static::where('id', '!=', $page->id)
+                    ->where('is_homepage', true)
+                    ->update(['is_homepage' => false]);
+
+                // Для главной страницы слаг должен быть пустым
+                $page->setSlug('');
+            } else {
+                // Для остальных страниц генерируем слаг по title, если его нет
+                if (! $page->getSlug() && $page->title) {
+                    $page->setSlug(Str::slug($page->title));
+                }
             }
         });
     }

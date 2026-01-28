@@ -55,9 +55,9 @@ class CategoryRequiredAttributeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => ListCategoryRequiredAttributes::route('/'),
+            'index' => ListCategoryRequiredAttributes::route('/'),
             'create' => CreateCategoryRequiredAttribute::route('/create'),
-            'edit'   => EditCategoryRequiredAttribute::route('/{record}/edit'),
+            'edit' => EditCategoryRequiredAttribute::route('/{record}/edit'),
         ];
     }
 }

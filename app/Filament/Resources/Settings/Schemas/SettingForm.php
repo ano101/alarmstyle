@@ -2,8 +2,9 @@
 
 namespace App\Filament\Resources\Settings\Schemas;
 
-use Filament\Schemas\Schema;
 use Filament\Forms;
+use Filament\Schemas\Schema;
+
 class SettingForm
 {
     public static function configure(Schema $schema): Schema

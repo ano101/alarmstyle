@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Facades\Seo;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
 use App\Models\CatalogQuickLink;
@@ -15,19 +16,19 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use App\Facades\Seo;
 
 class CatalogService
 {
     public function __construct(
         protected SeoApplier $seoApplier
     ) {}
+
     public function resolvePath(?string $path): array
     {
         $path = $path ? trim($path, '/') : '';
 
         if ($path === '') {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException;
         }
 
         $segments = explode('/', $path);
@@ -41,7 +42,7 @@ class CatalogService
             ->first();
 
         if (! $categorySlugModel) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException;
         }
 
         /** @var Category $category */
@@ -49,8 +50,8 @@ class CatalogService
 
         // атрибуты
         $attributeValues = collect();
-        $needsRedirect   = false;
-        $redirectPath    = null;
+        $needsRedirect = false;
+        $redirectPath = null;
 
         if (! empty($segments)) {
             // ВАЖНО:
@@ -77,7 +78,7 @@ class CatalogService
 
             // если хоть один slug не найден ИЛИ найден, но in_filter=false → 404
             if ($attributeSlugModels->count() !== count($segments)) {
-                throw new NotFoundHttpException();
+                throw new NotFoundHttpException;
             }
 
             // канонизация порядка slug'ов (алфавит)
@@ -89,17 +90,17 @@ class CatalogService
 
             if ($segments !== $canonicalAttributeSlugs) {
                 $needsRedirect = true;
-                $redirectPath  = implode('/', array_merge([$categorySlug], $canonicalAttributeSlugs));
+                $redirectPath = implode('/', array_merge([$categorySlug], $canonicalAttributeSlugs));
             }
 
             $attributeValues = $attributeSlugModels->pluck('sluggable');
         }
 
         return [
-            'category'        => $category,
+            'category' => $category,
             'attributeValues' => $attributeValues,
-            'needsRedirect'   => $needsRedirect,
-            'redirectPath'    => $redirectPath,
+            'needsRedirect' => $needsRedirect,
+            'redirectPath' => $redirectPath,
         ];
     }
 
@@ -116,15 +117,15 @@ class CatalogService
         $filters = [];
 
         // категория
-        $filters[] = 'category_ids = ' . (int) $category->id;
+        $filters[] = 'category_ids = '.(int) $category->id;
 
         // цена
         if (! $ignorePrice) {
             if ($request->filled('price_from')) {
-                $filters[] = 'price >= ' . (float) $request->input('price_from');
+                $filters[] = 'price >= '.(float) $request->input('price_from');
             }
             if ($request->filled('price_to')) {
-                $filters[] = 'price <= ' . (float) $request->input('price_to');
+                $filters[] = 'price <= '.(float) $request->input('price_to');
             }
         }
 
@@ -138,13 +139,13 @@ class CatalogService
 
                 // атрибут уже подгружен в resolvePath() (sluggable.attribute),
                 // но на всякий случай оставим как есть — Laravel сам решит
-                $attribute  = $firstValue->attribute;
-                $typeFront  = (int) ($attribute->type_front ?? 0);
+                $attribute = $firstValue->attribute;
+                $typeFront = (int) ($attribute->type_front ?? 0);
 
                 $valueFilters = [];
                 foreach ($values as $val) {
                     /** @var \App\Models\AttributeValue $val */
-                    $valueFilters[] = 'attribute_value_ids = ' . (int) $val->id;
+                    $valueFilters[] = 'attribute_value_ids = '.(int) $val->id;
                 }
 
                 if ($typeFront === 1) {
@@ -186,7 +187,7 @@ class CatalogService
             function ($meiliIndex, string $query, array $options) use ($filters, $facets, $extraOptions) {
                 $options['filter'] = $filters;
                 $options['facets'] = $facets;
-                $options['limit']  = $extraOptions['limit'] ?? 0;
+                $options['limit'] = $extraOptions['limit'] ?? 0;
 
                 unset($extraOptions['limit']);
                 $options = array_merge($options, $extraOptions);
@@ -206,7 +207,7 @@ class CatalogService
     ): LengthAwarePaginator {
         $filters = $this->buildMeiliFilterStrings($category, $request, $selectedAttributeValues);
 
-        $sortParam   = $request->input('sort');
+        $sortParam = $request->input('sort');
         $sortOptions = null;
 
         if (! $sortParam) {
@@ -229,7 +230,7 @@ class CatalogService
         }
 
         // текущая страница (Laravel сам достаёт ?page=)
-        $page  = LengthAwarePaginator::resolveCurrentPage();
+        $page = LengthAwarePaginator::resolveCurrentPage();
         $limit = $perPage;
         $offset = ($page - 1) * $limit;
 
@@ -244,7 +245,7 @@ class CatalogService
                 }
 
                 // Управляем пагинацией сами
-                $options['limit']  = $limit;
+                $options['limit'] = $limit;
                 $options['offset'] = $offset;
 
                 return $meiliIndex->search($query, $options);
@@ -264,7 +265,7 @@ class CatalogService
             $limit,
             $page,
             [
-                'path'  => $request->url(),
+                'path' => $request->url(),
                 'query' => $request->query(),
             ]
         );
@@ -336,7 +337,7 @@ class CatalogService
                 },
             ])
             ->get()
-            ->filter(fn(AttributeValue $v) => $v->attribute); // отсекаем, если attribute не прошёл in_filter
+            ->filter(fn (AttributeValue $v) => $v->attribute); // отсекаем, если attribute не прошёл in_filter
 
         // 2) группируем значения по атрибуту и возвращаем коллекцию атрибутов с values
         $grouped = $values->groupBy('attribute_id');
@@ -352,7 +353,7 @@ class CatalogService
         })->values();
 
         // 3) сортировка по sort атрибута (на всякий случай)
-        return $attributes->sortBy(fn(Attribute $a) => (int) $a->sort)->values();
+        return $attributes->sortBy(fn (Attribute $a) => (int) $a->sort)->values();
     }
 
     public function buildFacetsFromMeili(
@@ -384,7 +385,7 @@ class CatalogService
 
         foreach ($attributes as $attribute) {
             $typeFront = (int) ($attribute->type_front ?? 1);
-            $attrId    = (int) $attribute->id;
+            $attrId = (int) $attribute->id;
 
             $selectedForThisAttr = $selectedByAttribute[$attrId] ?? [];
 
@@ -393,11 +394,13 @@ class CatalogService
 
                 if (in_array($id, $selectedIds, true)) {
                     $facets[$id] = true;
+
                     continue;
                 }
 
                 if ($typeFront === 1 && ! empty($selectedForThisAttr)) {
                     $facets[$id] = true;
+
                     continue;
                 }
 
@@ -421,44 +424,44 @@ class CatalogService
         Request $request,
         ?CategoryLanding $landing = null
     ): string {
-        $isLanding  = $landing !== null;
+        $isLanding = $landing !== null;
         $hasFilters = $selectedAttributeValues->isNotEmpty();
-        $seoSource  = $landing ?? $category;
+        $seoSource = $landing ?? $category;
 
         // 1) Приоритет: явный h1 из seoMeta
         $seoMeta = $seoSource->seoMeta ?? null;
-        if ($seoMeta && !empty($seoMeta->h1)) {
+        if ($seoMeta && ! empty($seoMeta->h1)) {
             return $seoMeta->h1;
         }
 
         // 2) Маски используем только для чистой категории или landing
-        $useMask = (!$hasFilters) || $isLanding;
+        $useMask = (! $hasFilters) || $isLanding;
 
-        $filtersUi  = $this->buildFilterUiPieces($selectedAttributeValues);
-        $h1Suffix   = $filtersUi['h1Suffix'] ?? '';
+        $filtersUi = $this->buildFilterUiPieces($selectedAttributeValues);
+        $h1Suffix = $filtersUi['h1Suffix'] ?? '';
         $filterText = $filtersUi['filterText'] ?? '';
 
         if ($useMask) {
             $sortParam = $request->input('sort', 'popular_desc');
             $sortLabel = match ($sortParam) {
-                'price_asc'    => 'сначала дешевле',
-                'price_desc'   => 'сначала дороже',
+                'price_asc' => 'сначала дешевле',
+                'price_desc' => 'сначала дороже',
                 'popular_desc' => 'по популярности',
-                default        => '',
+                default => '',
             };
 
             $vars = [
-                'category'     => $category->name,
-                'category_lc'  => mb_strtolower($category->name),
-                'filters'      => $filterText,
-                'price_from'   => (string) $request->input('price_from', ''),
-                'price_to'     => (string) $request->input('price_to', ''),
-                'sort_label'   => $sortLabel,
-                'page'         => '',
+                'category' => $category->name,
+                'category_lc' => mb_strtolower($category->name),
+                'filters' => $filterText,
+                'price_from' => (string) $request->input('price_from', ''),
+                'price_to' => (string) $request->input('price_to', ''),
+                'sort_label' => $sortLabel,
+                'page' => '',
             ];
 
             $mask = SeoMask::resolveFor('catalog_category', $category);
-            if ($mask && !empty($mask->meta_h1_pattern)) {
+            if ($mask && ! empty($mask->meta_h1_pattern)) {
                 $h1 = $this->renderSeoMask($mask->meta_h1_pattern, $vars);
                 if ($h1) {
                     return $h1;
@@ -467,7 +470,7 @@ class CatalogService
         }
 
         // 3) Фоллбек: название категории + суффикс фильтров
-        return $h1Suffix ? ($category->name . ' ' . $h1Suffix) : $category->name;
+        return $h1Suffix ? ($category->name.' '.$h1Suffix) : $category->name;
     }
 
     public function applyCatalogSeo(
@@ -480,15 +483,14 @@ class CatalogService
         $seoSource = $landing ?? $category;
         $isLanding = $landing !== null;
 
-
         $currentPage = (int) $items->currentPage();
-        $totalItems  = (int) $items->total();
+        $totalItems = (int) $items->total();
         $isPaginated = $currentPage > 1;
 
         $selectedAttributesCount = $selectedAttributeValues->count();
-        $hasFilters              = $selectedAttributesCount > 0;
+        $hasFilters = $selectedAttributesCount > 0;
 
-        $seoMeta     = $seoSource->seoMeta ?? null;
+        $seoMeta = $seoSource->seoMeta ?? null;
         $baseNoIndex = optional($seoMeta)->noindex ?? false;
 
         // =========================
@@ -514,28 +516,28 @@ class CatalogService
         // =========================
         // SEO логика в зависимости от типа страницы
         // =========================
-        $filtersUi  = $this->buildFilterUiPieces($selectedAttributeValues);
+        $filtersUi = $this->buildFilterUiPieces($selectedAttributeValues);
         $filterText = $filtersUi['filterText'] ?? '';
 
         $sortParam = $request->input('sort', 'popular_desc');
         $sortLabel = match ($sortParam) {
-            'price_asc'    => 'сначала дешевле',
-            'price_desc'   => 'сначала дороже',
+            'price_asc' => 'сначала дешевле',
+            'price_desc' => 'сначала дороже',
             'popular_desc' => 'по популярности',
-            default        => '',
+            default => '',
         };
 
         $priceFrom = $request->input('price_from', '');
-        $priceTo   = $request->input('price_to', '');
+        $priceTo = $request->input('price_to', '');
 
         $vars = [
-            'category'     => $category->name,
-            'category_lc'  => mb_strtolower($category->name),
-            'filters'      => $filterText,
-            'price_from'   => $priceFrom,
-            'price_to'     => $priceTo,
-            'sort_label'   => $sortLabel,
-            'page'         => '',
+            'category' => $category->name,
+            'category_lc' => mb_strtolower($category->name),
+            'filters' => $filterText,
+            'price_from' => $priceFrom,
+            'price_to' => $priceTo,
+            'sort_label' => $sortLabel,
+            'page' => '',
         ];
 
         // =========================
@@ -543,15 +545,19 @@ class CatalogService
         // =========================
         // Если есть фильтры БЕЗ лэндинга → это noindex страница
         // Для неё НЕ используем seoMeta категории, только маски (если есть)
-        if ($hasFilters && !$isLanding) {
+        if ($hasFilters && ! $isLanding) {
             // Пытаемся применить только маски (без seoMeta)
             $mask = SeoMask::resolveFor('catalog_category', $category);
             if ($mask) {
                 $maskTitle = $this->renderSeoMask($mask->meta_title_pattern ?? null, $vars);
-                $maskDesc  = $this->renderSeoMask($mask->meta_description_pattern ?? null, $vars);
+                $maskDesc = $this->renderSeoMask($mask->meta_description_pattern ?? null, $vars);
 
-                if ($maskTitle) Seo::setMetaTitle($maskTitle);
-                if ($maskDesc)  Seo::setMetaDescription($maskDesc);
+                if ($maskTitle) {
+                    Seo::setMetaTitle($maskTitle);
+                }
+                if ($maskDesc) {
+                    Seo::setMetaDescription($maskDesc);
+                }
             }
             // Если маски нет или она пустая — ничего не устанавливаем,
             // фоллбеки сработают ниже
@@ -577,15 +583,15 @@ class CatalogService
         $currentTitle = Seo::getTitle();
 
         // Если title не был установлен, делаем фоллбек
-        if (!$currentTitle) {
+        if (! $currentTitle) {
             $currentTitle = $category->name;
             if ($filterText !== '') {
-                $currentTitle .= ' – ' . $filterText;
+                $currentTitle .= ' – '.$filterText;
             }
         }
 
         if ($isPaginated) {
-            $currentTitle .= ' – страница ' . $currentPage;
+            $currentTitle .= ' – страница '.$currentPage;
         }
 
         Seo::setMetaTitle($currentTitle);
@@ -594,17 +600,17 @@ class CatalogService
         $currentDescription = Seo::getDescription();
 
         // Если description не был установлен, делаем фоллбек
-        if (!$currentDescription) {
-            $currentDescription = 'Каталог ' . mb_strtolower($category->name) . ' — подбор товаров по параметрам и цене.';
+        if (! $currentDescription) {
+            $currentDescription = 'Каталог '.mb_strtolower($category->name).' — подбор товаров по параметрам и цене.';
             if ($filterText !== '') {
-                $currentDescription .= ' Выбрано: ' . $filterText . '.';
+                $currentDescription .= ' Выбрано: '.$filterText.'.';
             }
         }
 
         if ($isPaginated) {
             $currentDescription = rtrim($currentDescription);
             $currentDescription = rtrim($currentDescription, '.');
-            $currentDescription .= '. Страница ' . $currentPage . '.';
+            $currentDescription .= '. Страница '.$currentPage.'.';
         }
 
         Seo::setMetaDescription($currentDescription);
@@ -630,7 +636,7 @@ class CatalogService
         $result = $pattern;
 
         foreach ($vars as $key => $value) {
-            $result = str_replace('{' . $key . '}', (string) $value, $result);
+            $result = str_replace('{'.$key.'}', (string) $value, $result);
         }
 
         $result = preg_replace('/\{[a-z0-9_]+\}/i', '', $result);
@@ -665,27 +671,25 @@ class CatalogService
             ->first();
     }
 
-
-
     public function buildFilterUiPieces(Collection $selectedAttributeValues): array
     {
         if ($selectedAttributeValues->isEmpty()) {
             return [
-                'filterText'   => '',
-                'h1Suffix'     => '',
+                'filterText' => '',
+                'h1Suffix' => '',
                 'crumbsBySlug' => [],
             ];
         }
 
         $grouped = $selectedAttributeValues->groupBy('attribute_id');
 
-        $fullParts    = [];
-        $h1Parts      = [];
+        $fullParts = [];
+        $h1Parts = [];
         $crumbsBySlug = [];
 
         foreach ($grouped as $attrId => $values) {
             /** @var AttributeValue $firstVal */
-            $firstVal  = $values->first();
+            $firstVal = $values->first();
 
             // attribute уже подгружен в resolvePath(): sluggable.attribute
             $attribute = $firstVal->attribute;
@@ -694,7 +698,7 @@ class CatalogService
             }
 
             $typeFront = (int) ($attribute->type_front ?? 1);
-            $attrName  = $attribute->name ?? null;
+            $attrName = $attribute->name ?? null;
 
             $valueLabels = [];
 
@@ -711,7 +715,7 @@ class CatalogService
                 $slug = method_exists($val, 'getSlug') ? $val->getSlug() : null;
                 if ($slug) {
                     $crumbLabel = ($typeFront === 1 && $attrName)
-                        ? ($attrName . ' ' . $label)
+                        ? ($attrName.' '.$label)
                         : $label;
 
                     $crumbsBySlug[$slug] = $crumbLabel;
@@ -724,26 +728,25 @@ class CatalogService
 
             // filterText: "Цвет: красный, синий; Размер: 42"
             if ($attrName) {
-                $fullParts[] = $attrName . ': ' . implode(', ', $valueLabels);
+                $fullParts[] = $attrName.': '.implode(', ', $valueLabels);
             } else {
                 $fullParts[] = implode(', ', $valueLabels);
             }
 
             // h1Suffix: "Цвет красный синий Размер 42" (или как у тебя было)
             if ($typeFront === 1 && $attrName) {
-                $h1Parts[] = trim($attrName . ' ' . implode(' ', $valueLabels));
+                $h1Parts[] = trim($attrName.' '.implode(' ', $valueLabels));
             } else {
                 $h1Parts[] = implode(' ', $valueLabels);
             }
         }
 
         return [
-            'filterText'   => implode('; ', $fullParts),
-            'h1Suffix'     => implode(' ', $h1Parts),
+            'filterText' => implode('; ', $fullParts),
+            'h1Suffix' => implode(' ', $h1Parts),
             'crumbsBySlug' => $crumbsBySlug,
         ];
     }
-
 
     public function getQuickLinksForCatalog(
         Category $category,
@@ -766,8 +769,8 @@ class CatalogService
 
             return $links->map(fn (CatalogQuickLink $link) => [
                 'label' => $link->label,
-                'href'  => $link->resolveHref(),
-                'icon'  => $link->icon,
+                'href' => $link->resolveHref(),
+                'icon' => $link->icon,
                 'color' => $link->color,
             ])->all();
         }
@@ -780,10 +783,9 @@ class CatalogService
 
         return $links->map(fn (CatalogQuickLink $link) => [
             'label' => $link->label,
-            'href'  => $link->resolveHref(),
-            'icon'  => $link->icon,
+            'href' => $link->resolveHref(),
+            'icon' => $link->icon,
             'color' => $link->color,
         ])->all();
     }
-
 }

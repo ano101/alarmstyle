@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Product;
 use App\Services\CatalogService;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
 use App\Support\Breadcrumbs\Breadcrumbs;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 
 class CatalogController extends Controller
 {
@@ -34,7 +33,7 @@ class CatalogController extends Controller
                 ->setStatusCode(301);
         }
 
-        $category        = $data['category'];
+        $category = $data['category'];
         $attributeValues = $data['attributeValues'];
 
         $filtersUi = $this->catalogService->buildFilterUiPieces($attributeValues);
@@ -67,7 +66,7 @@ class CatalogController extends Controller
         $mark('buildFacetsFromMeili');
 
         Log::info('Catalog timing', [
-            'path'  => $path,
+            'path' => $path,
             'total' => round((microtime(true) - $start) * 1000, 2),
             'steps' => $marks,
         ]);
@@ -111,44 +110,44 @@ class CatalogController extends Controller
         $breadcrumbs = Breadcrumbs::home();
 
         $breadcrumbs[] = [
-            'label'   => $category->name,
-            'url'     => route('catalog', ['path' => $categorySlug]),
+            'label' => $category->name,
+            'url' => route('catalog', ['path' => $categorySlug]),
             'current' => empty($selectedSlugSequence),
         ];
 
         if (! empty($selectedSlugSequence)) {
             $accumulated = [];
-            $lastIndex   = count($selectedSlugSequence) - 1;
+            $lastIndex = count($selectedSlugSequence) - 1;
 
             foreach ($selectedSlugSequence as $index => $slug) {
                 $accumulated[] = $slug;
                 $label = $crumbsBySlug[$slug] ?? $slug;
 
                 $isLast = $index === $lastIndex;
-                $path   = $categorySlug . '/' . implode('/', $accumulated);
+                $path = $categorySlug.'/'.implode('/', $accumulated);
 
                 $breadcrumbs[] = [
-                    'label'   => $label,
-                    'url'     => $isLast ? null : route('catalog', ['path' => $path]),
+                    'label' => $label,
+                    'url' => $isLast ? null : route('catalog', ['path' => $path]),
                     'current' => $isLast,
                 ];
             }
         }
 
         return Inertia::render('Catalog/Index', [
-            'category'           => $category,
-            'categories'         => $categories,
-            'items'              => $items,
-            'attributes'         => $attributes,
+            'category' => $category,
+            'categories' => $categories,
+            'items' => $items,
+            'attributes' => $attributes,
             'selectedValueSlugs' => $selectedValueSlugs,
-            'categorySlug'       => $categorySlug,
-            'facets'             => $facets,
-            'priceBounds'        => $priceBounds,
-            'landing'            => $landing,
-            'filters'            => $request->query(),
+            'categorySlug' => $categorySlug,
+            'facets' => $facets,
+            'priceBounds' => $priceBounds,
+            'landing' => $landing,
+            'filters' => $request->query(),
             'quickLinks' => $quickLinks,
 
-            'pageTitle'   => $pageTitle,
+            'pageTitle' => $pageTitle,
             'breadcrumbs' => $breadcrumbs,
         ]);
     }

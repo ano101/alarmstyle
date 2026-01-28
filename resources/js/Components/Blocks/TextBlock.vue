@@ -19,7 +19,7 @@ const wrapperClass = computed(() => {
 </script>
 
 <template>
-    <div :class="wrapperClass" class="py-8">
+    <div :class="wrapperClass" class="py-6 sm:py-8">
         <p class="leading-relaxed">
             {{ data.content }}
         </p>

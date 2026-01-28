@@ -29,7 +29,7 @@ class SeoMeta extends Model
 
     protected $casts = [
         'noindex' => 'boolean',
-        'extra'   => 'array',
+        'extra' => 'array',
     ];
 
     public function metaable(): MorphTo

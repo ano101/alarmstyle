@@ -15,6 +15,7 @@ use Symfony\Component\DomCrawler\Crawler;
 class ImportAutostudioProducts extends Command
 {
     protected $signature = 'autostudio:import';
+
     protected $description = 'Импорт сигнализаций Pandora с autostudio.ru';
 
     public function handle(): int
@@ -63,7 +64,7 @@ class ImportAutostudioProducts extends Command
             'https://www.autostudio.ru/catalog/ustanovka-avtosignalizaciy/starline/s96_v2_bt_lte_gps.html',
             'https://www.autostudio.ru/catalog/ustanovka-avtosignalizaciy/starline/starline_s97_can_fd_gps.html',
             'https://www.autostudio.ru/catalog/ustanovka-avtosignalizaciy/starline/s97_fd_lte_gps.html',
-            'https://www.autostudio.ru/catalog/ustanovka-avtosignalizaciy/starline/b97-v2-lte-gps.html'
+            'https://www.autostudio.ru/catalog/ustanovka-avtosignalizaciy/starline/b97-v2-lte-gps.html',
         ];
 
         foreach ($urls as $url) {
@@ -71,8 +72,9 @@ class ImportAutostudioProducts extends Command
 
             $response = Http::get($url);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 $this->error("Ошибка загрузки ({$response->status()}): {$url}");
+
                 continue;
             }
 
@@ -84,6 +86,7 @@ class ImportAutostudioProducts extends Command
         }
 
         $this->info('Импорт завершён');
+
         return CommandAlias::SUCCESS;
     }
 
@@ -113,7 +116,7 @@ class ImportAutostudioProducts extends Command
         }
 
         $priceRaw = (string) $priceNode->first()->attr('content');
-        $price    = (int) preg_replace('/\D+/', '', $priceRaw);
+        $price = (int) preg_replace('/\D+/', '', $priceRaw);
 
         if ($price <= 0) {
             return;
@@ -131,7 +134,7 @@ class ImportAutostudioProducts extends Command
         if ($imgNode->count() > 0) {
             $src = trim($imgNode->first()->attr('src') ?? '');
             if ($src !== '') {
-                $mainImageUrl = 'https://www.autostudio.ru' . $src;
+                $mainImageUrl = 'https://www.autostudio.ru'.$src;
             }
         }
 
@@ -144,7 +147,7 @@ class ImportAutostudioProducts extends Command
                 return;
             }
 
-            $leftTd  = $tds->eq(0);
+            $leftTd = $tds->eq(0);
             $rightTd = $tds->eq(1);
 
             // Название атрибута — только из <b>
@@ -172,12 +175,11 @@ class ImportAutostudioProducts extends Command
             }
 
             $attributesData[] = [
-                'attribute'   => Str::ucfirst($attribute),
-                'value'       => $value,
+                'attribute' => Str::ucfirst($attribute),
+                'value' => $value,
                 'helper_text' => $helperText, // <-- добавили
             ];
         });
-
 
         /** Галерея */
         $galleryUrls = [];
@@ -185,12 +187,12 @@ class ImportAutostudioProducts extends Command
             $href = $a->attr('href');
 
             if ($href) {
-                $galleryUrls[] = 'https://www.autostudio.ru' . $href;
+                $galleryUrls[] = 'https://www.autostudio.ru'.$href;
             }
         });
 
         /** Создание товара */
-        $product = new Product();
+        $product = new Product;
         $product->name = $h1;
         $product->description = $description;
         $product->save();
@@ -203,27 +205,27 @@ class ImportAutostudioProducts extends Command
 
         // Цены
         $product->prices()->create([
-            'type'  => 1,
+            'type' => 1,
             'price' => $price,
         ]);
 
-//        $product->prices()->create([
-//            'type'  => 3,
-//            'price' => max(0, $price - 5000),
-//        ]);
+        //        $product->prices()->create([
+        //            'type'  => 3,
+        //            'price' => max(0, $price - 5000),
+        //        ]);
 
         // Главная картинка
         if ($mainImageUrl) {
             $mainFilename = $this->downloadImage($mainImageUrl);
 
             if ($mainFilename) {
-                $product->image = 'images/products/' . $mainFilename;
+                $product->image = 'images/products/'.$mainFilename;
                 $product->save();
             }
         }
 
         /** Атрибуты */
-        if (!empty($attributesData)) {
+        if (! empty($attributesData)) {
             $attributeValueIds = [];
 
             foreach ($attributesData as $row) {
@@ -231,33 +233,31 @@ class ImportAutostudioProducts extends Command
                     ->where('name', $row['attribute'])
                     ->first();
 
-                if (!$attribute) {
+                if (! $attribute) {
                     continue;
                 }
 
                 // обновляем helper_text, если пришёл и в базе пусто
-                if (!empty($row['helper_text']) && empty($attribute->helper_text)) {
+                if (! empty($row['helper_text']) && empty($attribute->helper_text)) {
                     $attribute->helper_text = $row['helper_text'];
                     $attribute->save();
                 }
 
                 $attributeValue = AttributeValue::query()->firstOrCreate([
-                    'value'        => $row['value'],
+                    'value' => $row['value'],
                     'attribute_id' => $attribute->id,
                 ]);
 
                 $attributeValueIds[] = $attributeValue->id;
             }
 
-
-
-            if (!empty($attributeValueIds)) {
+            if (! empty($attributeValueIds)) {
                 $product->attributeValues()->syncWithoutDetaching($attributeValueIds);
             }
         }
 
         /** Галерея изображений */
-        if (!empty($galleryUrls)) {
+        if (! empty($galleryUrls)) {
             $imagesData = [];
 
             foreach ($galleryUrls as $url) {
@@ -265,12 +265,12 @@ class ImportAutostudioProducts extends Command
 
                 if ($filename) {
                     $imagesData[] = [
-                        'url' => 'images/products/' . $filename,
+                        'url' => 'images/products/'.$filename,
                     ];
                 }
             }
 
-            if (!empty($imagesData)) {
+            if (! empty($imagesData)) {
                 $product->images()->createMany($imagesData);
             }
         }
@@ -284,7 +284,7 @@ class ImportAutostudioProducts extends Command
             if ($brand !== '') {
                 $brandValue = AttributeValue::query()->firstOrCreate([
                     'attribute_id' => Attribute::query()->where('name', 'Производитель')->first()->id,
-                    'value'        => $brand,
+                    'value' => $brand,
                 ]);
 
                 $product->attributeValues()->syncWithoutDetaching($brandValue->id);
@@ -296,15 +296,16 @@ class ImportAutostudioProducts extends Command
     {
         $response = Http::get($url);
 
-        if (!$response->successful()) {
+        if (! $response->successful()) {
             $this->error("Не удалось скачать изображение: {$url}");
+
             return null;
         }
 
         $path = parse_url($url, PHP_URL_PATH);
-        $ext  = pathinfo($path, PATHINFO_EXTENSION) ?: 'jpg';
+        $ext = pathinfo($path, PATHINFO_EXTENSION) ?: 'jpg';
 
-        $filename = now()->format('Y-m-d') . '-' . uniqid() . '.' . $ext;
+        $filename = now()->format('Y-m-d').'-'.uniqid().'.'.$ext;
 
         Storage::disk('public')->put("images/products/{$filename}", $response->body());
 

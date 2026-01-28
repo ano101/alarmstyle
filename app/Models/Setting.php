@@ -64,7 +64,7 @@ class Setting extends Model
                 ->keyBy('key')
                 ->map(fn (self $s) => [
                     'value' => $s->value,
-                    'data'  => $s->data,
+                    'data' => $s->data,
                 ])
                 ->toArray();
         });

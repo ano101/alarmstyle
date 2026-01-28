@@ -55,9 +55,9 @@ class AttributeValueResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => ListAttributeValues::route('/'),
+            'index' => ListAttributeValues::route('/'),
             'create' => CreateAttributeValue::route('/create'),
-            'edit'   => EditAttributeValue::route('/{record}/edit'),
+            'edit' => EditAttributeValue::route('/{record}/edit'),
         ];
     }
 }

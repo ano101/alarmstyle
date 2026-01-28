@@ -39,45 +39,71 @@ class SeoApplier
         // 1) SEO META (явные значения)
         // =========================
         if ($meta) {
-            if (!empty($meta->meta_title))       Seo::setMetaTitle($meta->meta_title);
-            if (!empty($meta->h1))              Seo::setH1($meta->h1);
-            if (!empty($meta->meta_description)) Seo::setMetaDescription($meta->meta_description);
-            if (!empty($meta->meta_keywords))   Seo::setMetaKeywords($meta->meta_keywords);
-            if (!empty($meta->canonical))       Seo::setCanonical($meta->canonical);
+            if (! empty($meta->meta_title)) {
+                Seo::setMetaTitle($meta->meta_title);
+            }
+            if (! empty($meta->h1)) {
+                Seo::setH1($meta->h1);
+            }
+            if (! empty($meta->meta_description)) {
+                Seo::setMetaDescription($meta->meta_description);
+            }
+            if (! empty($meta->meta_keywords)) {
+                Seo::setMetaKeywords($meta->meta_keywords);
+            }
+            if (! empty($meta->canonical)) {
+                Seo::setCanonical($meta->canonical);
+            }
 
             Seo::setNoIndex((bool) $meta->noindex);
 
             // OpenGraph
-            if (!empty($meta->og_title))       Seo::setOgTitle($meta->og_title);
-            if (!empty($meta->og_description)) Seo::setOgDescription($meta->og_description);
-            if (!empty($meta->og_image))       Seo::setOgImage($meta->og_image);
-            if (!empty($meta->og_type))        Seo::setOgType($meta->og_type);
+            if (! empty($meta->og_title)) {
+                Seo::setOgTitle($meta->og_title);
+            }
+            if (! empty($meta->og_description)) {
+                Seo::setOgDescription($meta->og_description);
+            }
+            if (! empty($meta->og_image)) {
+                Seo::setOgImage($meta->og_image);
+            }
+            if (! empty($meta->og_type)) {
+                Seo::setOgType($meta->og_type);
+            }
 
             // Twitter
-            if (!empty($meta->twitter_card))        Seo::setTwitterCard($meta->twitter_card);
-            if (!empty($meta->twitter_title))       Seo::setTwitterTitle($meta->twitter_title);
-            if (!empty($meta->twitter_description)) Seo::setTwitterDescription($meta->twitter_description);
-            if (!empty($meta->twitter_image))       Seo::setTwitterImage($meta->twitter_image);
+            if (! empty($meta->twitter_card)) {
+                Seo::setTwitterCard($meta->twitter_card);
+            }
+            if (! empty($meta->twitter_title)) {
+                Seo::setTwitterTitle($meta->twitter_title);
+            }
+            if (! empty($meta->twitter_description)) {
+                Seo::setTwitterDescription($meta->twitter_description);
+            }
+            if (! empty($meta->twitter_image)) {
+                Seo::setTwitterImage($meta->twitter_image);
+            }
         }
 
         // =========================
         // 2) SEO MASK (добивка пустых полей)
         // =========================
-        if (!$useMask) {
+        if (! $useMask) {
             return;
         }
 
         $maskOwner = $maskModel ?? $model;
         $mask = SeoMask::resolveFor($context, $maskOwner);
 
-        if (!$mask) {
+        if (! $mask) {
             return;
         }
 
         // Рендерим маски
         $maskTitle = $this->renderSeoMask($mask->meta_title_pattern ?? null, $vars);
-        $maskH1    = $this->renderSeoMask($mask->meta_h1_pattern ?? null, $vars);
-        $maskDesc  = $this->renderSeoMask($mask->meta_description_pattern ?? null, $vars);
+        $maskH1 = $this->renderSeoMask($mask->meta_h1_pattern ?? null, $vars);
+        $maskDesc = $this->renderSeoMask($mask->meta_description_pattern ?? null, $vars);
 
         // Добиваем пустые поля (важно: только IfEmpty)
         Seo::setMetaTitleIfEmpty($maskTitle);
@@ -102,7 +128,7 @@ class SeoApplier
      */
     protected function getSeoMeta(Model $model)
     {
-        if (!method_exists($model, 'seoMeta')) {
+        if (! method_exists($model, 'seoMeta')) {
             return null;
         }
 
@@ -114,14 +140,14 @@ class SeoApplier
      */
     protected function renderSeoMask(?string $pattern, array $vars): ?string
     {
-        if (!$pattern) {
+        if (! $pattern) {
             return null;
         }
 
         $result = $pattern;
 
         foreach ($vars as $key => $value) {
-            $result = str_replace('{' . $key . '}', (string) $value, $result);
+            $result = str_replace('{'.$key.'}', (string) $value, $result);
         }
 
         // убрать плейсхолдеры, которые не были заменены

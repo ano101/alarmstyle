@@ -10,9 +10,11 @@ class ProductPrice extends Model
     use HasFactory;
 
     // Типы цен
-    public const TYPE_BASE           = 1; // "просто" цена
-    public const TYPE_WITH_INSTALL   = 2; // с установкой
-    public const TYPE_WITHOUT_INSTALL= 3; // без установки
+    public const TYPE_BASE = 1; // "просто" цена
+
+    public const TYPE_WITH_INSTALL = 2; // с установкой
+
+    public const TYPE_WITHOUT_INSTALL = 3; // без установки
 
     protected $fillable = [
         'product_id',
@@ -22,7 +24,7 @@ class ProductPrice extends Model
 
     protected $casts = [
         'price' => 'decimal:2',
-        'type'  => 'integer',
+        'type' => 'integer',
     ];
 
     public function product()
@@ -36,10 +38,10 @@ class ProductPrice extends Model
     public function getTypeNameAttribute(): string
     {
         return match ($this->type) {
-            self::TYPE_BASE            => 'Цена',
-            self::TYPE_WITH_INSTALL    => 'Цена с установкой',
+            self::TYPE_BASE => 'Цена',
+            self::TYPE_WITH_INSTALL => 'Цена с установкой',
             self::TYPE_WITHOUT_INSTALL => 'Цена без установки',
-            default                    => 'Неизвестный тип',
+            default => 'Неизвестный тип',
         };
     }
 

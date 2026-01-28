@@ -43,9 +43,9 @@ class AttributeGroupResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => ListAttributeGroups::route('/'),
+            'index' => ListAttributeGroups::route('/'),
             'create' => CreateAttributeGroup::route('/create'),
-            'edit'   => EditAttributeGroup::route('/{record}/edit'),
+            'edit' => EditAttributeGroup::route('/{record}/edit'),
         ];
     }
 

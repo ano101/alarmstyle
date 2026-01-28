@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 
 class ImageController
@@ -15,7 +15,7 @@ class ImageController
     public function __construct()
     {
         // Если хочешь Imagick → поменяй Driver() на new \Intervention\Image\Drivers\Imagick\Driver()
-        $this->manager = new ImageManager(new Driver());
+        $this->manager = new ImageManager(new Driver);
     }
 
     /**
@@ -32,7 +32,7 @@ class ImageController
 
         $presets = $config['presets'] ?? [];
 
-        if (!isset($presets[$group][$name])) {
+        if (! isset($presets[$group][$name])) {
             abort(404, "Preset {$group}.{$name} not found");
         }
 
@@ -41,27 +41,27 @@ class ImageController
         // Мини-защита от ../
         $path = ltrim(str_replace('..', '', $path), '/');
 
-        $disk          = $config['disk']          ?? 'public';
-        $sourceRoot    = $config['source_path']   ?? 'images';
-        $cacheRoot     = $config['cache_path']    ?? 'images/cache';
-        $mainFormat    = $config['format']        ?? 'webp';
-        $fallback      = $config['fallback_format'] ?? 'jpeg';
-        $quality       = $config['quality']       ?? 80;
-        $cacheTtlDays  = $config['cache_ttl_days'] ?? null;
+        $disk = $config['disk'] ?? 'public';
+        $sourceRoot = $config['source_path'] ?? 'images';
+        $cacheRoot = $config['cache_path'] ?? 'images/cache';
+        $mainFormat = $config['format'] ?? 'webp';
+        $fallback = $config['fallback_format'] ?? 'jpeg';
+        $quality = $config['quality'] ?? 80;
+        $cacheTtlDays = $config['cache_ttl_days'] ?? null;
 
         // --- 2. Определяем, поддерживает ли браузер webp ---
         $acceptHeader = $request->header('Accept', '');
-        $acceptsWebp  = str_contains($acceptHeader, 'image/webp');
+        $acceptsWebp = str_contains($acceptHeader, 'image/webp');
 
-        $targetFormat = ($mainFormat === 'webp' && !$acceptsWebp)
+        $targetFormat = ($mainFormat === 'webp' && ! $acceptsWebp)
             ? $fallback
             : $mainFormat;
 
         // --- 3. Путь к оригиналу ---
         $sourceRoot = $config['source_path'] ?? 'images';
 
-// Если path уже начинается с sourceRoot, не добавляем его ещё раз
-        if ($sourceRoot && str_starts_with($path, $sourceRoot . '/')) {
+        // Если path уже начинается с sourceRoot, не добавляем его ещё раз
+        if ($sourceRoot && str_starts_with($path, $sourceRoot.'/')) {
             $sourcePath = $path;
         } elseif ($sourceRoot) {
             $sourcePath = "{$sourceRoot}/{$path}";
@@ -69,8 +69,7 @@ class ImageController
             $sourcePath = $path;
         }
 
-
-        if (!Storage::disk($disk)->exists($sourcePath)) {
+        if (! Storage::disk($disk)->exists($sourcePath)) {
             abort(404, 'Original image not found');
         }
 
@@ -78,7 +77,7 @@ class ImageController
 
         // --- 4. Путь к кэшу с зеркальной структурой ---
         $filename = pathinfo($path, PATHINFO_FILENAME);
-        $dir      = pathinfo($path, PATHINFO_DIRNAME);
+        $dir = pathinfo($path, PATHINFO_DIRNAME);
         if ($dir == '.' || $dir == DIRECTORY_SEPARATOR) {
             $dir = '';
         }
@@ -93,11 +92,11 @@ class ImageController
         ]));
 
         $cacheDirRelative = trim($cacheRoot, '/')
-            . '/' . $group
-            . '/' . $name;
+            .'/'.$group
+            .'/'.$name;
 
         if ($dir) {
-            $cacheDirRelative .= '/' . trim($dir, '/');
+            $cacheDirRelative .= '/'.trim($dir, '/');
         }
 
         $cachePathRelative = sprintf(
@@ -112,7 +111,7 @@ class ImageController
 
         // --- 5. Если кэш существует и актуален — отдать ---
         if (file_exists($cacheFull)) {
-            $cacheMTime  = filemtime($cacheFull);
+            $cacheMTime = filemtime($cacheFull);
             $sourceMTime = filemtime($sourceFull);
 
             $isFresh = $cacheMTime >= $sourceMTime;
@@ -133,19 +132,19 @@ class ImageController
         // --- 6. Генерация нового изображения ---
         $image = $this->manager->read($sourceFull);
 
-        $width   = $presetConfig['width']   ?? null;
-        $height  = $presetConfig['height']  ?? null;
-        $fit     = $presetConfig['fit']     ?? 'contain';
+        $width = $presetConfig['width'] ?? null;
+        $height = $presetConfig['height'] ?? null;
+        $fit = $presetConfig['fit'] ?? 'contain';
         $upscale = $presetConfig['upscale'] ?? true; // по умолчанию апскейлим, если не указано иное
 
-// Размеры исходника
+        // Размеры исходника
         $srcW = $image->width();
         $srcH = $image->height();
 
         if ($width && $height) {
             $isSmaller = $srcW < $width || $srcH < $height;
 
-            if (!$upscale && $isSmaller) {
+            if (! $upscale && $isSmaller) {
                 // 🧸 Исходник меньше пресета и мы НЕ хотим его растягивать
 
                 // 1. Вписываем исходник в рамку, но не увеличиваем (ratio <= 1)
@@ -179,16 +178,15 @@ class ImageController
             $image = $image->resize($width, $height);
         }
 
-
         // --- 7. Подготовка директории и удаление старых кэшей ---
         $cacheDirFull = dirname($cacheFull);
 
-        if (!is_dir($cacheDirFull)) {
+        if (! is_dir($cacheDirFull)) {
             mkdir($cacheDirFull, 0755, true);
         }
 
         // Удаляем старые версии
-        $pattern = $cacheDirFull . '/' . $filename . '-*.*';
+        $pattern = $cacheDirFull.'/'.$filename.'-*.*';
         foreach (glob($pattern) as $oldFile) {
             @unlink($oldFile);
         }
@@ -212,15 +210,15 @@ class ImageController
     private function serve(string $path, string $format): Response
     {
         $mime = match ($format) {
-            'webp'    => 'image/webp',
+            'webp' => 'image/webp',
             'jpg',
-            'jpeg'    => 'image/jpeg',
-            'png'     => 'image/png',
-            default   => 'image/' . $format,
+            'jpeg' => 'image/jpeg',
+            'png' => 'image/png',
+            default => 'image/'.$format,
         };
 
         return response()->file($path, [
-            'Content-Type'  => $mime,
+            'Content-Type' => $mime,
             'Cache-Control' => 'public, max-age=31536000, immutable',
         ]);
     }

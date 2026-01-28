@@ -1,5 +1,5 @@
 <template>
-    <section class="py-20 sm:py-32 bg-white">
+    <section class="py-12 sm:py-16 md:py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <!-- Header -->
             <motion.div
@@ -7,10 +7,10 @@
                 :while-in-view="{ opacity: 1, y: 0 }"
                 :viewport="{ once: true }"
                 :transition="{ duration: 0.6 }"
-                class="text-center mb-12 sm:mb-16"
+                class="text-center mb-8 sm:mb-12"
             >
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">{{ title }}</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">{{ title }}</h2>
+                <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
                     {{ description }}
                 </p>
             </motion.div>
@@ -23,7 +23,7 @@
                     :while-in-view="{ opacity: 1, y: 0 }"
                     :viewport="{ once: true }"
                     :transition="{ delay: index * 0.1 }"
-                    class="group relative bg-white rounded-2xl p-8 border border-gray-200 hover:border-emerald-500 transition-all duration-300 hover:shadow-lg"
+                    class="group relative bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 hover:border-emerald-500 transition-all duration-300 hover:shadow-lg"
                 >
                     <div
                         class="w-16 h-16 bg-emerald-600 rounded-xl flex items-center justify-center mb-6 group-hover:scale-105 transition-transform duration-300 shadow-md"
@@ -73,7 +73,18 @@
 <script setup>
 import { computed } from "vue"
 import { motion } from "motion-v"
-import { Car, Radio, Satellite, Lock, Camera, MapPin } from "lucide-vue-next"
+import {
+    Car,
+    Radio,
+    Satellite,
+    Lock,
+    Camera,
+    MapPin,
+    Shield,
+    Key,
+    Monitor,
+    Speaker,
+} from "lucide-vue-next"
 import Button from "@/Components/ui/Button.vue"
 import OrderModal from "@/Components/OrderModal.vue"
 import { useOrderModal } from "@/Composables/useOrderModal.js"
@@ -96,46 +107,69 @@ const description = computed(
         "Профессиональная установка автомобильного оборудования с гарантией качества"
 )
 
-/**
- * Если хочешь потом тянуть услуги из админки:
- * data.value.services (массив) — легко подменим этот computed.
- */
-const services = computed(() => [
-    {
-        icon: Car,
-        title: "Установка автосигнализации",
-        price: "От 3000₽",
-        features: ["Диалоговый код", "Защита от сканера", "GSM-модуль"],
-    },
-    {
-        icon: Radio,
-        title: "Установка фароискателя",
-        price: "От 2000₽",
-        features: ["GPS/ГЛОНАСС", "Онлайн мониторинг", "История поездок"],
-    },
-    {
-        icon: Satellite,
-        title: "Установка парктроника",
-        price: "От 3000₽",
-        features: ["4-8 датчиков", "Звуковой сигнал", "LED-дисплей"],
-    },
-    {
-        icon: Lock,
-        title: "Центральный замок",
-        price: "От 2500₽",
-        features: ["Комфорт открытия", "Защита от угона", "Бесшумная работа"],
-    },
-    {
-        icon: Camera,
-        title: "Камера заднего вида",
-        price: "От 2000₽",
-        features: ["HD качество", "Ночной режим", "Парковочные линии"],
-    },
-    {
-        icon: MapPin,
-        title: "Иммобилайзер",
-        price: "От 3500₽",
-        features: ["Скрытая установка", "Блокировка двигателя", "Максимальная защита"],
-    },
-])
+// Маппинг иконок из строковых идентификаторов в Vue компоненты
+const iconMap = {
+    car: Car,
+    radio: Radio,
+    satellite: Satellite,
+    lock: Lock,
+    camera: Camera,
+    "map-pin": MapPin,
+    shield: Shield,
+    key: Key,
+    monitor: Monitor,
+    speaker: Speaker,
+}
+
+// Преобразуем данные из админки в формат с компонентами иконок
+const services = computed(() => {
+    if (data.value.services && Array.isArray(data.value.services)) {
+        return data.value.services.map((service) => ({
+            icon: iconMap[service.icon] || Car,
+            title: service.title,
+            price: service.price,
+            features: service.features || [],
+        }))
+    }
+
+    // Дефолтные данные, если не заполнено в админке
+    return [
+        {
+            icon: Car,
+            title: "Установка автосигнализации",
+            price: "От 3000₽",
+            features: ["Диалоговый код", "Защита от сканера", "GSM-модуль"],
+        },
+        {
+            icon: Radio,
+            title: "Установка фароискателя",
+            price: "От 2000₽",
+            features: ["GPS/ГЛОНАСС", "Онлайн мониторинг", "История поездок"],
+        },
+        {
+            icon: Satellite,
+            title: "Установка парктроника",
+            price: "От 3000₽",
+            features: ["4-8 датчиков", "Звуковой сигнал", "LED-дисплей"],
+        },
+        {
+            icon: Lock,
+            title: "Центральный замок",
+            price: "От 2500₽",
+            features: ["Комфорт открытия", "Защита от угона", "Бесшумная работа"],
+        },
+        {
+            icon: Camera,
+            title: "Камера заднего вида",
+            price: "От 2000₽",
+            features: ["HD качество", "Ночной режим", "Парковочные линии"],
+        },
+        {
+            icon: MapPin,
+            title: "Иммобилайзер",
+            price: "От 3500₽",
+            features: ["Скрытая установка", "Блокировка двигателя", "Максимальная защита"],
+        },
+    ]
+})
 </script>

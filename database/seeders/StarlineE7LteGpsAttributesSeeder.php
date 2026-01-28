@@ -97,7 +97,7 @@ class StarlineE7LteGpsAttributesSeeder extends Seeder
                     ['name' => 'функция "свободные руки"',                    'value' => 'есть'],
                     ['name' => 'режим поиска автомобиля',                     'value' => 'есть'],
                     ['name' => 'закрытие замков дверей по скорости',          'value' => 'есть'],
-                    ['name' => 'бесшумное включение/выключение режима охраны','value' => 'есть'],
+                    ['name' => 'бесшумное включение/выключение режима охраны', 'value' => 'есть'],
                 ],
 
                 'радиоканал и функции брелока' => [
@@ -110,8 +110,8 @@ class StarlineE7LteGpsAttributesSeeder extends Seeder
                     ['name' => 'Поддержка автозапуска без обходчика*',                          'value' => 'есть'],
                     ['name' => 'режим "турботаймера"',                                          'value' => 'есть'],
                     ['name' => 'автоматический запуск двигателя через интервал (час)',          'value' => 'есть'],
-                    ['name' => 'автоматический запуск двигателя по температуре в салоне (град.)','value' => 'есть'],
-                    ['name' => 'автоматический запуск двигателя по температуре двигателя (град.)','value' => 'есть'],
+                    ['name' => 'автоматический запуск двигателя по температуре в салоне (град.)', 'value' => 'есть'],
+                    ['name' => 'автоматический запуск двигателя по температуре двигателя (град.)', 'value' => 'есть'],
                     ['name' => 'автоматический запуск двигателя по напряжению бортовой сети',   'value' => 'есть'],
                     ['name' => 'автоматический запуск двигателя по реальному времени',          'value' => 'есть'],
                 ],
@@ -144,14 +144,14 @@ class StarlineE7LteGpsAttributesSeeder extends Seeder
                 foreach ($attributes as $item) {
                     $attrName = $item['name'];
                     $rawValue = $item['value'];
-                    $value    = trim($rawValue);
+                    $value = trim($rawValue);
 
                     $isType1 = in_array(mb_strtolower($value), ['есть', 'нет', 'опция'], true);
 
                     $attribute = Attribute::firstOrCreate(
                         [
                             'attribute_group_id' => $group->id,
-                            'name'               => $attrName,
+                            'name' => $attrName,
                         ],
                         [
                             'type' => $isType1 ? 1 : 2,

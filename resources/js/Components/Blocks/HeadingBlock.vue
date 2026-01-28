@@ -30,7 +30,7 @@ const headingClass = computed(() => headingClasses[level.value] || headingClasse
 </script>
 
 <template>
-  <div :class="wrapperClass" class="py-8">
+  <div :class="wrapperClass" class="py-6 sm:py-8">
     <component
       :is="level"
       :class="headingClass"

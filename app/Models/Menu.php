@@ -35,10 +35,10 @@ class Menu extends Model
 
         $map = function (MenuItem $item) use (&$map) {
             return [
-                'label'    => $item->label,
-                'href'     => $item->resolved_href,
-                'icon'     => $item->icon,
-                'newTab'   => (bool) $item->open_in_new_tab,
+                'label' => $item->label,
+                'href' => $item->resolved_href,
+                'icon' => $item->icon,
+                'newTab' => (bool) $item->open_in_new_tab,
                 'children' => $item->children->map(fn ($c) => $map($c))->all(),
             ];
         };

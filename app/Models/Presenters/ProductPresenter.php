@@ -72,7 +72,7 @@ class ProductPresenter
     {
         $price = (float) ($this->product->basePrice->price ?? 0);
 
-        return number_format($price, 2, ',', ' ') . ' ₽';
+        return number_format($price, 2, ',', ' ').' ₽';
     }
 
     public function mainCategoryName(): string
@@ -88,7 +88,7 @@ class ProductPresenter
     public function imageUrl(): string
     {
         return $this->product->image
-            ? asset('storage/' . $this->product->image)
+            ? asset('storage/'.$this->product->image)
             : asset('images/no-image.png');
     }
 }

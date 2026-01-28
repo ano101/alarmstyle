@@ -5,22 +5,33 @@ namespace App\Services;
 class SeoService
 {
     protected ?string $title = null;
+
     protected ?string $h1 = null;
+
     protected ?string $description = null;
+
     protected ?string $keywords = null;
+
     protected ?string $canonical = null;
+
     protected bool $noIndex = false;
 
     // OpenGraph
     protected ?string $ogTitle = null;
+
     protected ?string $ogDescription = null;
+
     protected ?string $ogImage = null;
+
     protected ?string $ogType = 'website';
 
     // Twitter
     protected ?string $twitterCard = 'summary_large_image';
+
     protected ?string $twitterTitle = null;
+
     protected ?string $twitterDescription = null;
+
     protected ?string $twitterImage = null;
 
     // ======== INTERNAL ========
@@ -55,6 +66,7 @@ class SeoService
     public function setH1(?string $h1): static
     {
         $this->h1 = $h1;
+
         return $this;
     }
 
@@ -89,6 +101,7 @@ class SeoService
     public function setMetaKeywords(?string $keywords): static
     {
         $this->keywords = $keywords;
+
         return $this;
     }
 
@@ -104,6 +117,7 @@ class SeoService
     public function setCanonical(?string $url): static
     {
         $this->canonical = $url;
+
         return $this;
     }
 
@@ -119,6 +133,7 @@ class SeoService
     public function setNoIndex(bool $value = true): static
     {
         $this->noIndex = $value;
+
         return $this;
     }
 
@@ -127,6 +142,7 @@ class SeoService
     public function setOgTitle(?string $title): static
     {
         $this->ogTitle = $title;
+
         return $this;
     }
 
@@ -142,6 +158,7 @@ class SeoService
     public function setOgDescription(?string $description): static
     {
         $this->ogDescription = $description;
+
         return $this;
     }
 
@@ -157,6 +174,7 @@ class SeoService
     public function setOgImage(?string $imageUrl): static
     {
         $this->ogImage = $imageUrl;
+
         return $this;
     }
 
@@ -172,6 +190,7 @@ class SeoService
     public function setOgType(?string $type): static
     {
         $this->ogType = $type;
+
         return $this;
     }
 
@@ -189,6 +208,7 @@ class SeoService
     public function setTwitterCard(?string $cardType): static
     {
         $this->twitterCard = $cardType;
+
         return $this;
     }
 
@@ -204,6 +224,7 @@ class SeoService
     public function setTwitterTitle(?string $title): static
     {
         $this->twitterTitle = $title;
+
         return $this;
     }
 
@@ -219,6 +240,7 @@ class SeoService
     public function setTwitterDescription(?string $description): static
     {
         $this->twitterDescription = $description;
+
         return $this;
     }
 
@@ -234,6 +256,7 @@ class SeoService
     public function setTwitterImage(?string $imageUrl): static
     {
         $this->twitterImage = $imageUrl;
+
         return $this;
     }
 

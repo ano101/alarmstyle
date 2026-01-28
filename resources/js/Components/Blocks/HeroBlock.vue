@@ -32,7 +32,7 @@ const imageSrc = background.value || 'https://images.unsplash.com/photo-14921445
 
 <template>
     <section
-        class="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-emerald-50/30 py-20 sm:py-32"
+        class="relative flex items-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-emerald-50/30 py-12 sm:py-16 md:py-20"
     >
         <!-- Background decoration -->
         <div class="absolute inset-0 overflow-hidden">

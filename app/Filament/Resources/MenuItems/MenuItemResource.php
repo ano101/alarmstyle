@@ -19,7 +19,9 @@ class MenuItemResource extends Resource
     protected static ?string $model = MenuItem::class;
 
     protected static ?string $navigationLabel = 'Пункты меню';
+
     protected static ?string $pluralModelLabel = 'Пункты меню';
+
     protected static ?string $modelLabel = 'Пункт меню';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ListBullet;

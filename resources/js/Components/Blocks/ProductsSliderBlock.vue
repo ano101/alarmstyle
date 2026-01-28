@@ -22,7 +22,7 @@ const wrapperClass = computed(() => {
 </script>
 
 <template>
-  <div :class="wrapperClass" class="py-12">
+  <div :class="wrapperClass" class="py-12 sm:py-16">
     <h2 class="text-3xl font-bold text-gray-900 mb-8">
       {{ title }}
     </h2>

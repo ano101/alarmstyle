@@ -36,7 +36,7 @@ class CategoryLandingResource extends Resource
     {
         return [
             'seoMeta' => SeoMetaRelationManager::class,
-            'quickLinks' => CatalogQuickLinkRelationManager::class
+            'quickLinks' => CatalogQuickLinkRelationManager::class,
         ];
     }
 

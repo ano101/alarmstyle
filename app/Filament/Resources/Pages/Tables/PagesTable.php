@@ -16,14 +16,30 @@ class PagesTable
         return $table
             ->columns([
                 TextColumn::make('title')
-                    ->searchable(),
+                    ->label('Заголовок')
+                    ->searchable()
+                    ->sortable(),
+
+                IconColumn::make('is_homepage')
+                    ->label('Главная')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-home')
+                    ->falseIcon('')
+                    ->sortable(),
+
                 IconColumn::make('is_published')
-                    ->boolean(),
+                    ->label('Опубликовано')
+                    ->boolean()
+                    ->sortable(),
+
                 TextColumn::make('created_at')
+                    ->label('Создано')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('updated_at')
+                    ->label('Обновлено')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

@@ -55,9 +55,9 @@ class AttributeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => ListAttributes::route('/'),
+            'index' => ListAttributes::route('/'),
             'create' => CreateAttribute::route('/create'),
-            'edit'   => EditAttribute::route('/{record}/edit'),
+            'edit' => EditAttribute::route('/{record}/edit'),
         ];
     }
 }

@@ -54,4 +54,3 @@ class CallbackRequest extends Model
         return $this->update(['status' => 'spam']);
     }
 }
-

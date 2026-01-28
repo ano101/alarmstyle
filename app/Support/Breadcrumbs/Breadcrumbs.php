@@ -11,8 +11,8 @@ class Breadcrumbs
     {
         return [
             [
-                'label'   => $label,
-                'url'     => route('page.show', ['slug' => '']), // поправь на свой роут
+                'label' => $label,
+                'url' => route('page.show', ['slug' => '']), // поправь на свой роут
                 'current' => false,
             ],
         ];
@@ -31,12 +31,12 @@ class Breadcrumbs
 
         $label = $category->name;
         if ($filtersLabel) {
-            $label .= ' — ' . $filtersLabel;
+            $label .= ' — '.$filtersLabel;
         }
 
         $items[] = [
-            'label'   => $label,
-            'url'     => route('catalog', ['path' => $category->getSlug()]),
+            'label' => $label,
+            'url' => route('catalog', ['path' => $category->getSlug()]),
             'current' => true,
         ];
 
@@ -48,8 +48,8 @@ class Breadcrumbs
         $items = self::home();
 
         $items[] = [
-            'label'   => $page->title,
-            'url'     => $page->url ?? url()->current(),
+            'label' => $page->title,
+            'url' => $page->url ?? url()->current(),
             'current' => true,
         ];
 

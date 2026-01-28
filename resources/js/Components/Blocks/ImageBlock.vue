@@ -15,8 +15,8 @@ const width = computed(() => data.value.width || 'container')
 
 const wrapperClass = computed(() => {
   return width.value === 'full'
-    ? 'w-full py-8'
-    : 'max-w-7xl mx-auto px-4 sm:px-6 py-8'
+    ? 'w-full px-4 sm:px-6 py-6 sm:py-8'
+    : 'max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8'
 })
 </script>
 

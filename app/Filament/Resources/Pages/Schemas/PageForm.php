@@ -5,8 +5,8 @@ namespace App\Filament\Resources\Pages\Schemas;
 use App\Support\Blocks\Blocks as BlocksBuilder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 class PageForm
 {
@@ -49,6 +49,19 @@ class PageForm
                             ->label('Опубликовано')
                             ->helperText('Если выключено — страница будет недоступна по прямой ссылке.')
                             ->default(true)
+                            ->columnSpan(1),
+
+                        Toggle::make('is_homepage')
+                            ->label('Главная страница')
+                            ->helperText('Главная страница доступна по адресу "/"')
+                            ->live()
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state) {
+                                    // Если установлена как главная, очищаем слаг
+                                    $set('slug.slug', '');
+                                }
+                            })
+                            ->default(false)
                             ->columnSpan(1),
                     ])
                     ->columns(2)->columnSpanFull(),

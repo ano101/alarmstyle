@@ -37,9 +37,9 @@ class CatalogQuickLinkRelationManager extends RelationManager
                 ->label('Тип')
                 ->required()
                 ->options([
-                    'catalog_path'    => 'Каталог: фильтр (path)',
+                    'catalog_path' => 'Каталог: фильтр (path)',
                     'catalog_landing' => 'Каталог: landing',
-                    'custom_url'      => 'Ссылка: внешний URL',
+                    'custom_url' => 'Ссылка: внешний URL',
                 ])
                 ->reactive()
                 ->rule(function () {

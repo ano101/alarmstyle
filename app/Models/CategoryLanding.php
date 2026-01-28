@@ -31,6 +31,7 @@ class CategoryLanding extends Model
             if (empty($landing->attribute_value_ids)) {
                 $landing->attribute_value_ids = null;
                 $landing->attribute_value_ids_key = '';
+
                 return;
             }
 
@@ -38,7 +39,6 @@ class CategoryLanding extends Model
             $landing->attribute_value_ids_key = implode(',', $ids);
         });
     }
-
 
     public function category(): BelongsTo
     {

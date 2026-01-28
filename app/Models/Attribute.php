@@ -21,7 +21,7 @@ class Attribute extends Model
         'attribute_group_id',
         'in_filter',
         'type_front',
-        'helper_text'
+        'helper_text',
     ];
 
     protected $casts = [
@@ -48,8 +48,8 @@ class Attribute extends Model
             // 2) для типа 1 — если значений ещё нет, создаём Есть/Нет/Опция
             if ((int) $attribute->type === 1 && $attribute->values()->count() === 0) {
                 $defaults = [
-                    'Есть'    => 'est',
-                    'Нет'   => 'net',
+                    'Есть' => 'est',
+                    'Нет' => 'net',
                     'Опция' => 'opciya',
                 ];
 
@@ -60,7 +60,7 @@ class Attribute extends Model
 
                     // base slug атрибута
                     $baseSlug = $attribute->getSlug() ?? Str::slug($attribute->name);
-                    $value->setSlug($baseSlug . '-' . $suffix);
+                    $value->setSlug($baseSlug.'-'.$suffix);
                 }
             }
         });

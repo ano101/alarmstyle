@@ -5,8 +5,8 @@ namespace App\Filament\Resources\CategoryLandings\Schemas;
 use App\Models\AttributeValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -100,8 +100,7 @@ class CategoryLandingForm
                             ->addActionLabel('Добавить атрибут')
                             ->columns(1)
                             ->minItems(1) // Минимум 1 атрибут обязателен
-                            ->itemLabel(fn (array $state): ?string =>
-                                $state['attribute_value_id']
+                            ->itemLabel(fn (array $state): ?string => $state['attribute_value_id']
                                     ? AttributeValue::find($state['attribute_value_id'])?->value
                                     : null
                             )

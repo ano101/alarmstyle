@@ -13,11 +13,11 @@ class SeoServiceProvider extends ServiceProvider
     {
         // Один инстанс на запрос
         $this->app->singleton('seo', function ($app) {
-            return new SeoService();
+            return new SeoService;
         });
 
         $this->app->singleton('JsonLd', function ($app) {
-            return new JsonLdService();
+            return new JsonLdService;
         });
     }
 

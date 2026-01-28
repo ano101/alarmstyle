@@ -39,7 +39,7 @@ trait HasSlug
      */
     public function getUrlAttribute(): ?string
     {
-        return $this->slug ? '/' . $this->slug->slug : null;
+        return $this->slug ? '/'.$this->slug->slug : null;
     }
 
     /**

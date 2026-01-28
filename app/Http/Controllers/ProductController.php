@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Slug;
+use App\Services\BreadcrumbService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Services\BreadcrumbService;
 
 class ProductController extends Controller
 {
@@ -21,7 +21,7 @@ class ProductController extends Controller
                 'sluggable.basePrice',
                 'sluggable.attributeValues.attribute.attributeGroup',
                 'sluggable.mainCategory',
-                'sluggable.mainCategory.slug'
+                'sluggable.mainCategory.slug',
             ])
             ->firstOrFail();
 
@@ -30,7 +30,7 @@ class ProductController extends Controller
 
         // Применяем SEO с контекстом 'product' и переменными для масок
         $vars = [
-            'name'  => $product->name ?? '',
+            'name' => $product->name ?? '',
             'price' => $product->basePrice?->price ?? '',
             'article' => $product->article ?? '',
             // добавьте другие переменные по необходимости
@@ -77,7 +77,7 @@ class ProductController extends Controller
             foreach ($product->attributeValues as $attributeValue) {
                 $attribute = $attributeValue->attribute;
 
-                if (!$attribute) {
+                if (! $attribute) {
                     continue;
                 }
 
@@ -85,14 +85,14 @@ class ProductController extends Controller
                 $groupName = $group ? $group->name : 'Без группы';
 
                 // Инициализируем группу если её ещё нет
-                if (!isset($attributesByGroup[$groupName])) {
+                if (! isset($attributesByGroup[$groupName])) {
                     $attributesByGroup[$groupName] = [
                         'name' => $groupName,
-                        'attributes' => []
+                        'attributes' => [],
                     ];
                 }
 
-                if($attributeValue->feature){
+                if ($attributeValue->feature) {
                     $attributeFeature[] = $attributeValue->feature;
                 }
 
@@ -102,7 +102,7 @@ class ProductController extends Controller
                     'value' => $attributeValue->value,
                     'type' => $attribute->type,
                     'type_front' => $attribute->type_front,
-                    'helper_text' => $attribute->helper_text ?: false
+                    'helper_text' => $attribute->helper_text ?: false,
                 ];
             }
         }
@@ -114,7 +114,7 @@ class ProductController extends Controller
             'product' => $productData,
             'breadcrumbs' => $breadcrumbs,
             'brand' => $product->presenter()->brand(),
-            'attributeFeature' => $attributeFeature
+            'attributeFeature' => $attributeFeature,
         ]);
     }
 }

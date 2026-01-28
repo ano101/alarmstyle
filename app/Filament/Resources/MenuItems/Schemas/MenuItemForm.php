@@ -23,8 +23,7 @@ class MenuItemForm
 
                 Select::make('parent_id')
                     ->label('Родитель')
-                    ->options(fn ($get) =>
-                    MenuItem::query()
+                    ->options(fn ($get) => MenuItem::query()
                         ->where('menu_id', $get('menu_id'))
                         ->pluck('label', 'id')
                     )
@@ -41,9 +40,9 @@ class MenuItemForm
                     ->label('Тип ссылки')
                     ->required()
                     ->options([
-                        'group'         => 'Вкладка (без ссылки)',
+                        'group' => 'Вкладка (без ссылки)',
                         'internal_path' => 'Внутренняя (path)',
-                        'external_url'  => 'Внешняя (URL)',
+                        'external_url' => 'Внешняя (URL)',
                     ])
                     ->reactive(),
 

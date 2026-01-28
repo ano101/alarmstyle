@@ -23,7 +23,7 @@ class Blocks
         ProductsSliderBlock::class,
         HeroBlock::class,
         OurServicesBlock::class,
-        FeaturesBlock::class
+        FeaturesBlock::class,
     ];
 
     public static function builder(string $field = 'blocks'): Builder

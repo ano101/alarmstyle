@@ -6,8 +6,8 @@ use App\Models\Category;
 use App\Models\CategoryLanding;
 use App\Models\Product;
 use Filament\Forms\Components\MorphToSelect;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
 class SeoMaskForm

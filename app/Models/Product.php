@@ -15,7 +15,7 @@ use Laravel\Scout\Searchable;
 
 class Product extends Model
 {
-    use SoftDeletes, HasSlug, Searchable, HasSeo;
+    use HasSeo, HasSlug, Searchable, SoftDeletes;
 
     protected $table = 'products';
 
@@ -51,20 +51,20 @@ class Product extends Model
     public function toSearchableArray(): array
     {
         return [
-            'id'                  => $this->id,
-            'name'                => $this->name,
+            'id' => $this->id,
+            'name' => $this->name,
             'image' => $this->image,
-            'category_ids'        => $this->categories->pluck('id')->values()->all(),
-            'main_category_id'    => $this->mainCategory()->first()?->id,
-            'price'               => (double)optional($this->basePrice)->price,
-            'brand'             => $this->attributeValues?->firstWhere('attribute_id', 58)?->value ?? '',
+            'category_ids' => $this->categories->pluck('id')->values()->all(),
+            'main_category_id' => $this->mainCategory()->first()?->id,
+            'price' => (float) optional($this->basePrice)->price,
+            'brand' => $this->attributeValues?->firstWhere('attribute_id', 58)?->value ?? '',
             'gps' => $this->attributeValues?->firstWhere('attribute_id', 56)?->value !== 'Нет',
             'gsm' => $this->attributeValues?->firstWhere('attribute_id', 55)?->value !== 'Нет',
             'auto' => $this->attributeValues?->firstWhere('attribute_id', 31)?->value !== 'Нет',
             // массив ID выбранных значений атрибутов
             'attribute_value_ids' => $this->attributeValues->pluck('id')->values()->all(),
-            'popular'             => (int) $this->popular,
-            'slug' => $this->getSlug()
+            'popular' => (int) $this->popular,
+            'slug' => $this->getSlug(),
         ];
     }
 
@@ -108,7 +108,7 @@ class Product extends Model
             ->where('type', ProductPrice::TYPE_WITHOUT_INSTALL);
     }
 
-    public function attributeValues():BelongsToMany
+    public function attributeValues(): BelongsToMany
     {
         return $this->belongsToMany(AttributeValue::class, 'product_attributes');
     }
@@ -149,8 +149,6 @@ class Product extends Model
 
     /**
      * Задать главную категорию товара.
-     *
-     * @param  \App\Models\Category|int  $category
      */
     public function setMainCategory(Category|int $category): void
     {

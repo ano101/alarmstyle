@@ -15,10 +15,10 @@ class CallbackThrottle
 
     public function handle(Request $request, Closure $next): Response
     {
-        $ipKey = 'callback:ip:' . $request->ip();
+        $ipKey = 'callback:ip:'.$request->ip();
 
         $phone = preg_replace('/\D+/', '', (string) $request->input('phone'));
-        $phoneKey = $phone ? 'callback:phone:' . $phone : null;
+        $phoneKey = $phone ? 'callback:phone:'.$phone : null;
 
         // IP — 5 запросов / 10 минут
         if ($this->limiter->tooManyAttempts($ipKey, 5)) {

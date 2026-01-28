@@ -20,7 +20,7 @@ class JsonLdService
     /**
      * Полностью заменить набор блоков.
      *
-     * @param array<int,array<string,mixed>> $schemas
+     * @param  array<int,array<string,mixed>>  $schemas
      */
     public function set(array $schemas): static
     {
@@ -63,7 +63,7 @@ class JsonLdService
         if (count($data) > 1) {
             $data = [
                 '@context' => 'https://schema.org',
-                '@graph'   => $data,
+                '@graph' => $data,
             ];
         } else {
             $data = $data[0];

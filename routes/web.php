@@ -6,7 +6,6 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 
-
 Route::get('/category/{path?}', [\App\Http\Controllers\CatalogController::class, 'index'])
     ->where('path', '.*')
     ->name('catalog');
@@ -26,7 +25,6 @@ Route::post('/orders', [OrderController::class, 'store'])
 Route::post('/callback', [CallbackRequestController::class, 'store'])
     ->middleware('callback.throttle')
     ->name('callback.store');
-
 
 Route::get('/{slug?}', [PageController::class, 'show'])
     ->where('slug', '.*')

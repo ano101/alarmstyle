@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\AttributeValues\Schemas;
 
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class AttributeValueForm
@@ -26,7 +26,6 @@ class AttributeValueForm
                             ->label('Значение')
                             ->placeholder('Например: Красный, 2024, Да')
                             ->required(),
-
 
                     ])
                     ->columns(2),

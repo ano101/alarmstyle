@@ -31,12 +31,12 @@ class CatalogQuickLink extends Model
 
         return match ($this->type) {
             'catalog_category' => route('catalog', ['path' => $category?->getSlug()]),
-            'catalog_landing'  => ($this->linkable instanceof \App\Models\CategoryLanding)
+            'catalog_landing' => ($this->linkable instanceof \App\Models\CategoryLanding)
                 ? $this->linkable->getCatalogUrl()
                 : route('catalog', ['path' => $category?->getSlug()]),
-            'catalog_path'     => route('catalog', ['path' => trim((string)$this->path, '/')]),
-            'custom_url'       => (string) $this->url,
-            default            => route('catalog', ['path' => $category?->getSlug()]),
+            'catalog_path' => route('catalog', ['path' => trim((string) $this->path, '/')]),
+            'custom_url' => (string) $this->url,
+            default => route('catalog', ['path' => $category?->getSlug()]),
         };
     }
 }

@@ -1,91 +1,91 @@
 <?php
 
 return [
-    'disk'        => 'public',
+    'disk' => 'public',
     'source_path' => 'images',
-    'cache_path'  => 'images/cache',
+    'cache_path' => 'images/cache',
 
-    'format'          => 'webp',
-    'quality'         => 80,
+    'format' => 'webp',
+    'quality' => 80,
     'fallback_format' => 'jpeg',
-    'cache_ttl_days'  => 30,
+    'cache_ttl_days' => 30,
 
     'presets' => [
         'product' => [
             'card' => [
-                'width'   => 800,
-                'height'  => 800,
-                'fit'     => 'contain',
+                'width' => 800,
+                'height' => 800,
+                'fit' => 'contain',
                 'upscale' => false,
             ],
             'card_2x' => [
-                'width'   => 1600,
-                'height'  => 1600,
-                'fit'     => 'contain',
+                'width' => 1600,
+                'height' => 1600,
+                'fit' => 'contain',
                 'upscale' => false,
             ],
             'thumbnail' => [
-                'width'   => 120,
-                'height'  => 120,
-                'fit'     => 'crop',
+                'width' => 120,
+                'height' => 120,
+                'fit' => 'crop',
                 'upscale' => false,
             ],
             'thumbnail_2x' => [
-                'width'   => 240,
-                'height'  => 240,
-                'fit'     => 'crop',
+                'width' => 240,
+                'height' => 240,
+                'fit' => 'crop',
                 'upscale' => false,
             ],
             'lightbox' => [
-                'width'   => 2560,
-                'height'  => 1920,
-                'fit'     => 'contain',
+                'width' => 2560,
+                'height' => 1920,
+                'fit' => 'contain',
                 'upscale' => false,
             ],
             'lightbox_2x' => [
-                'width'   => 3840,
-                'height'  => 2880,
-                'fit'     => 'contain',
+                'width' => 3840,
+                'height' => 2880,
+                'fit' => 'contain',
                 'upscale' => false,
             ],
         ],
 
         'category' => [
             'card' => [
-                'width'  => 600,
+                'width' => 600,
                 'height' => 400,
-                'fit'    => 'crop',
+                'fit' => 'crop',
             ],
             'banner' => [
-                'width'  => 1440,
+                'width' => 1440,
                 'height' => 500,
-                'fit'    => 'crop',
+                'fit' => 'crop',
             ],
         ],
 
         'banner' => [
             'slider_full' => [
-                'width'  => 1920,
+                'width' => 1920,
                 'height' => 600,
-                'fit'    => 'crop',
+                'fit' => 'crop',
             ],
             'slider_mobile' => [
-                'width'  => 800,
+                'width' => 800,
                 'height' => 600,
-                'fit'    => 'crop',
+                'fit' => 'crop',
             ],
         ],
 
         'user' => [
             'avatar_small' => [
-                'width'  => 64,
+                'width' => 64,
                 'height' => 64,
-                'fit'    => 'crop',
+                'fit' => 'crop',
             ],
             'avatar_large' => [
-                'width'  => 300,
+                'width' => 300,
                 'height' => 300,
-                'fit'    => 'crop',
+                'fit' => 'crop',
             ],
         ],
     ],

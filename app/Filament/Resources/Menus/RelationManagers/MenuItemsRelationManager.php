@@ -36,9 +36,9 @@ class MenuItemsRelationManager extends RelationManager
                 ->label('Тип ссылки')
                 ->required()
                 ->options([
-                    'group'         => 'Вкладка (без ссылки)',
+                    'group' => 'Вкладка (без ссылки)',
                     'internal_path' => 'Внутренняя (path)',
-                    'external_url'  => 'Внешняя (URL)',
+                    'external_url' => 'Внешняя (URL)',
                 ])
                 ->reactive(),
 
@@ -108,10 +108,10 @@ class MenuItemsRelationManager extends RelationManager
                     ->label('Тип')
                     ->badge()
                     ->formatStateUsing(fn ($state) => match ($state) {
-                        'group'         => 'Группа',
+                        'group' => 'Группа',
                         'internal_path' => 'Внутренняя',
-                        'external_url'  => 'Внешняя',
-                        default         => $state,
+                        'external_url' => 'Внешняя',
+                        default => $state,
                     }),
 
                 Tables\Columns\TextColumn::make('resolved_href')

@@ -4,14 +4,13 @@ namespace Database\Seeders;
 
 use App\Models\Attribute;
 use App\Models\AttributeGroup;
-use App\Models\AttributeValue;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class AttributeSeeder extends Seeder
 {
-        public function run(): void
+    public function run(): void
     {
         DB::transaction(function () {
             // Группы + атрибуты + значения из таблицы
@@ -53,7 +52,7 @@ class AttributeSeeder extends Seeder
                     ['name' => 'контроль канала связи',                            'value' => 'есть'],
                     ['name' => 'число кнопок брелка',                              'value' => '3'],
                     ['name' => 'вибро режим в брелке',                             'value' => 'есть'],
-                    ['name' => 'режим напоминания о пропущенной тревоге на брелке','value' => 'есть'],
+                    ['name' => 'режим напоминания о пропущенной тревоге на брелке', 'value' => 'есть'],
                     ['name' => 'часы в брелке',                                    'value' => 'есть'],
                     ['name' => 'подсветка ЖК-дисплея брелока',                     'value' => 'есть'],
                     ['name' => 'индикация напряжения аккумулятора автомобиля',     'value' => 'есть'],
@@ -87,7 +86,7 @@ class AttributeSeeder extends Seeder
 
                 'функции телематики' => [
                     ['name' => 'управление по GSM',   'value' => 'нет'],
-                    ['name' => 'получение данных GPS','value' => 'нет'],
+                    ['name' => 'получение данных GPS', 'value' => 'нет'],
                 ],
             ];
 
@@ -98,7 +97,7 @@ class AttributeSeeder extends Seeder
 
                 foreach ($attributes as $item) {
                     $attrName = $item['name'];
-                    $value    = $item['value'];
+                    $value = $item['value'];
 
                     // type = 1, если значение "есть / нет / опция"
                     $isType1 = in_array(mb_strtolower($value), ['есть', 'нет', 'опция'], true);
@@ -107,7 +106,7 @@ class AttributeSeeder extends Seeder
                     $attribute = Attribute::updateOrCreate(
                         [
                             'attribute_group_id' => $group->id,
-                            'name'               => Str::ucfirst($attrName),
+                            'name' => Str::ucfirst($attrName),
                         ],
                         [
                             'type' => $isType1 ? 1 : 2,

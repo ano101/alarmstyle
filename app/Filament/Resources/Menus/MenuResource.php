@@ -20,7 +20,9 @@ class MenuResource extends Resource
     protected static ?string $model = Menu::class;
 
     protected static ?string $navigationLabel = 'Меню';
+
     protected static ?string $pluralModelLabel = 'Меню';
+
     protected static ?string $modelLabel = 'Меню';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Bars3;
@@ -38,7 +40,7 @@ class MenuResource extends Resource
     public static function getRelations(): array
     {
         return [
-            'items' => MenuItemsRelationManager::class
+            'items' => MenuItemsRelationManager::class,
         ];
     }
 
