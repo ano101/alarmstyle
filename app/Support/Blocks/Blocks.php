@@ -2,9 +2,11 @@
 
 namespace App\Support\Blocks;
 
+use App\Support\Blocks\Definitions\FeaturesBlock;
 use App\Support\Blocks\Definitions\HeadingBlock;
 use App\Support\Blocks\Definitions\HeroBlock;
 use App\Support\Blocks\Definitions\ImageBlock;
+use App\Support\Blocks\Definitions\OurServicesBlock;
 use App\Support\Blocks\Definitions\ProductsSliderBlock;
 use App\Support\Blocks\Definitions\TextBlock;
 use Filament\Forms\Components\Builder;
@@ -20,6 +22,8 @@ class Blocks
         ImageBlock::class,
         ProductsSliderBlock::class,
         HeroBlock::class,
+        OurServicesBlock::class,
+        FeaturesBlock::class
     ];
 
     public static function builder(string $field = 'blocks'): Builder

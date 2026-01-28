@@ -32,7 +32,7 @@ const imageSrc = background.value || 'https://images.unsplash.com/photo-14921445
 
 <template>
     <section
-        class="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-emerald-50/30 pt-32 sm:pt-20"
+        class="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-emerald-50/30 py-20 sm:py-32"
     >
         <!-- Background decoration -->
         <div class="absolute inset-0 overflow-hidden">
@@ -40,7 +40,7 @@ const imageSrc = background.value || 'https://images.unsplash.com/photo-14921445
             <div class="absolute bottom-1/4 -left-48 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl" />
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-32 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
             <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                 <!-- Text content -->
                 <motion.div

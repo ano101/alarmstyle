@@ -8,8 +8,11 @@ const props = defineProps({
 const resolveComponent = (type) => {
     if (!type) return null
 
+    // Нормализуем тип: ourService → our_services
+    const normalizedType = type.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase()
+
     // products_slider → ProductsSliderBlock
-    const name = type
+    const name = normalizedType
         .split('_')
         .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
         .join('') + 'Block'
@@ -22,7 +25,7 @@ const resolveComponent = (type) => {
 
 
 <template>
-    <div class="space-y-6">
+    <div class="">
         <template v-for="(block, index) in blocks" :key="index">
             <component
                 :is="resolveComponent(block.type)"
