@@ -1,5 +1,27 @@
 # Production Dockerfile
-FROM php:8.5-fpm-alpine AS base
+
+# Stage 1: Build frontend assets
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json* ./
+
+# Install all dependencies (including dev)
+RUN npm ci
+
+# Copy necessary files for build
+COPY resources ./resources
+COPY vite.config.js ./
+COPY tailwind.config.js* ./
+COPY postcss.config.js* ./
+
+# Build frontend assets
+RUN npm run build
+
+# Stage 2: Final production image
+FROM php:8.5-fpm-alpine
 
 # Set working directory
 WORKDIR /var/www/html
@@ -16,8 +38,6 @@ RUN apk add --no-cache \
     oniguruma-dev \
     mysql-client \
     supervisor \
-    nodejs \
-    npm \
     icu-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
@@ -46,17 +66,12 @@ COPY composer.json composer.lock ./
 # Install PHP dependencies
 RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
 
-# Copy package files
-COPY package.json package-lock.json* ./
-
-# Install Node dependencies
-RUN npm ci --omit=dev
-
 # Copy application code
 COPY . .
 
-# Build frontend assets
-RUN npm run build
+# Copy built frontend assets from frontend-builder stage
+COPY --from=frontend-builder /app/public/build ./public/build
+COPY --from=frontend-builder /app/bootstrap/ssr ./bootstrap/ssr
 
 # Generate optimized autoload files
 RUN composer dump-autoload --optimize --no-dev
