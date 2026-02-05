@@ -69,6 +69,26 @@ ssh -i ~/.ssh/github_deploy deploy@your-server-ip
 GitHub Actions автоматически использует `GITHUB_TOKEN` для публикации образов в GitHub Container Registry (ghcr.io).
 Никаких дополнительных секретов не требуется.
 
+### Для приватных репозиториев (опционально)
+
+Если ваш репозиторий приватный и образы в GHCR также приватные, на production сервере необходимо настроить аутентификацию:
+
+1. Создайте Personal Access Token (PAT) на GitHub:
+   - Settings → Developer settings → Personal access tokens → Tokens (classic)
+   - Создайте новый токен с правами: `read:packages`
+   - Скопируйте токен
+
+2. Добавьте переменные окружения на production сервере:
+   ```bash
+   # В .env на сервере или в переменных окружения
+   export GHCR_PAT="ghp_your_personal_access_token"
+   export GHCR_USERNAME="your_github_username"
+   ```
+
+3. Скрипт `deploy.sh` автоматически использует эти переменные для логина в GHCR
+
+**Важно**: PAT должен быть доступен при запуске deploy.sh на сервере.
+
 ## Проверка workflow
 
 После настройки секретов:
