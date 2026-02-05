@@ -37,7 +37,15 @@ echo "$GHCR_PAT" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
 # ----------------------------
 # Pull images
 # ----------------------------
+echo -e "${GREEN}📥 Pulling latest images...${NC}"
 $COMPOSE pull
+
+# ----------------------------
+# Copy public from image to host
+# ----------------------------
+echo -e "${GREEN}📦 Copying public assets from image...${NC}"
+chmod +x copy-public.sh
+./copy-public.sh
 
 # ----------------------------
 # FULL recreate containers

@@ -11,8 +11,8 @@ services:
       - "${APP_PORT:-8080}:80"
       - "${APP_SSL_PORT:-8443}:443"
     volumes:
-      # ✅ public шарим из named volume (read-only)
-      - public-data:/var/www/html/public:ro
+      # public из хоста (заполняется через entrypoint app контейнера)
+      - ./public:/var/www/html/public:ro
 
       # nginx конфиги и логи
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
@@ -35,8 +35,6 @@ services:
     restart: unless-stopped
     user: "${UID:-1000}:${GID:-1000}"
     volumes:
-      # ✅ public шарим в named volume (rw)
-      - public-data:/var/www/html/public
 
       # persistent runtime dirs
       - ./storage:/var/www/html/storage
@@ -253,11 +251,6 @@ networks:
     driver: bridge
 
 volumes:
-  # ✅ новый volume для public (решает 404 по ассетам)
-  public-data:
-    driver: local
-
-  # ✅ существующие volumes — данные сохраняются
   mysql-data:
     driver: local
   redis-data:
