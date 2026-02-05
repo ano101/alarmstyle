@@ -5,9 +5,8 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
-Route::get('/', function () {
-    return '123';
-});
+Route::get('/', fn () => 'OK');
+
 // API Routes
 Route::get('/api/search', [\App\Http\Controllers\Api\SearchController::class, 'search'])
     ->name('api.search');
