@@ -27,6 +27,14 @@ sleep 10
 echo "📊 Running migrations..."
 docker compose -f compose.prod.yaml exec -T app php artisan migrate --force
 
+echo "🔍 Checking APP_URL configuration..."
+APP_URL=$(docker compose -f compose.prod.yaml exec -T app php -r "echo env('APP_URL');")
+echo "   Current APP_URL: $APP_URL"
+if [[ ! "$APP_URL" =~ ^https:// ]]; then
+    echo "⚠️  WARNING: APP_URL should start with https:// for production!"
+    echo "   Please update APP_URL in your .env file"
+fi
+
 echo "🗑️  Clearing cache..."
 docker compose -f compose.prod.yaml exec -T app php artisan config:clear
 docker compose -f compose.prod.yaml exec -T app php artisan cache:clear

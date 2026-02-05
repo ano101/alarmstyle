@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Trust all proxies for Docker/reverse proxy setup
+        $middleware->trustProxies(at: '*');
+
         $middleware->web(prepend: [
             RedirectTrailingSlash::class,
             HandleRedirects::class,
