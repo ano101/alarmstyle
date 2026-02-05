@@ -1,4 +1,6 @@
+name: alarmstyle-prod
 services:
+
   # Nginx web server
   nginx:
     image: nginx:alpine
@@ -26,7 +28,6 @@ services:
     restart: unless-stopped
     user: "${UID:-1000}:${GID:-1000}"
     volumes:
-      - ./public:/var/www/html/public
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
     environment:
