@@ -17,7 +17,8 @@ docker compose -f compose.prod.yaml pull
 docker compose -f compose.prod.yaml up -d
 
 echo -e "${GREEN}⏳ Waiting services...${NC}"
-sleep 15
+# Ждём app
+wait_for_app
 
 # МИГРАЦИИ — ТОЛЬКО ДОПОЛНЕНИЕ
 echo -e "${GREEN}📊 Running migrations${NC}"
@@ -35,3 +36,19 @@ docker compose -f compose.prod.yaml exec -T app php artisan horizon:terminate
 docker compose -f compose.prod.yaml restart ssr
 
 echo -e "${GREEN}✅ Deploy done${NC}"
+
+wait_for_app() {
+  echo -e "${YELLOW}⏳ Waiting for app container to be running...${NC}"
+
+  while true; do
+    STATUS=$(docker inspect -f '{{.State.Status}}' alarmstyle-prod-app-1 2>/dev/null || echo "starting")
+
+    if [ "$STATUS" = "running" ]; then
+      echo -e "${GREEN}✅ App container is running${NC}"
+      break
+    fi
+
+    echo "Current status: $STATUS"
+    sleep 2
+  done
+}
