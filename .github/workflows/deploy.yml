@@ -65,10 +65,12 @@ jobs:
           username: ${{ secrets.PROD_USERNAME }}
           key: ${{ secrets.PROD_SSH_KEY }}
           port: ${{ secrets.PROD_SSH_PORT }}
-          envs: GHCR_PAT,GHCR_USERNAME,APP_PORT,HEALTHCHECK_PATH,GITHUB_REPOSITORY
+          envs: GHCR_PAT,GHCR_USERNAME,GITHUB_REPOSITORY
           script: |
-            cd ${{ secrets.PROD_APP_PATH }}
+            export GHCR_PAT="${{ secrets.GHCR_PAT }}"
+            export GHCR_USERNAME="${{ secrets.GHCR_USERNAME }}"
             export GITHUB_REPOSITORY="${{ github.repository }}"
+            cd ${{ secrets.PROD_APP_PATH }}
             chmod +x deploy.sh
             ./deploy.sh
 

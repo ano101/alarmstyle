@@ -1,80 +1,43 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
+#!/bin/bash
+set -e
 
 echo "🚀 Starting deployment..."
 
-COMPOSE_FILE="compose.prod.yaml"
-APP_PORT="${APP_PORT:-8080}"
-HEALTHCHECK_PATH="${HEALTHCHECK_PATH:-/}"
-
-cleanup() {
-    docker logout ghcr.io >/dev/null 2>&1 || true
-}
-trap cleanup EXIT
-
-# --- GHCR login ---
-if [ -n "${GHCR_PAT:-}" ]; then
-    echo "🔐 Logging in to ghcr.io..."
-    printf '%s' "$GHCR_PAT" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
+# Логин в GitHub Container Registry
+if [ -n "$GHCR_PAT" ] && [ -n "$GHCR_USERNAME" ]; then
+    echo "🔐 Logging in to GitHub Container Registry..."
+    echo "$GHCR_PAT" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
+else
+    echo "⚠️  GHCR credentials not provided, skipping login..."
 fi
 
 echo "📦 Updating code (reset to origin/master)..."
 git fetch origin master
 git reset --hard origin/master
 
-# --- Docker ---
 echo "🐳 Pulling Docker images..."
-docker compose -f "$COMPOSE_FILE" pull
+docker compose -f compose.prod.yaml pull
 
-echo "🔄 Restarting containers..."
-docker compose -f "$COMPOSE_FILE" up -d --force-recreate
+echo "🔄 Restarting services..."
+docker compose -f compose.prod.yaml up -d --remove-orphans
 
-# --- Wait for health ---
-echo "⏳ Waiting for containers..."
-DEADLINE=120
-START=$(date +%s)
+echo "⏳ Waiting for services to be healthy..."
+sleep 10
 
-while true; do
-    UNHEALTHY=$(docker compose -f "$COMPOSE_FILE" ps -q \
-      | xargs -r docker inspect -f '{{.State.Health.Status}}' \
-      | grep -v healthy || true)
+echo "📊 Running migrations..."
+docker compose -f compose.prod.yaml exec -T app php artisan migrate --force
 
-    [ -z "$UNHEALTHY" ] && break
+echo "🗑️  Clearing cache..."
+docker compose -f compose.prod.yaml exec -T app php artisan config:clear
+docker compose -f compose.prod.yaml exec -T app php artisan cache:clear
 
-    (( $(date +%s) - START > DEADLINE )) && {
-        echo "❌ Healthcheck timeout"
-        docker compose -f "$COMPOSE_FILE" ps
-        exit 1
-    }
+echo "⚡ Optimizing..."
+docker compose -f compose.prod.yaml exec -T app php artisan config:cache
+docker compose -f compose.prod.yaml exec -T app php artisan route:cache
+docker compose -f compose.prod.yaml exec -T app php artisan view:cache
+docker compose -f compose.prod.yaml exec -T app php artisan filament:cache-components
 
-    sleep 3
-done
+echo "🔄 Restarting Horizon..."
+docker compose -f compose.prod.yaml exec -T app php artisan horizon:terminate
 
-# --- Laravel ---
-echo "🗄️ Running migrations..."
-docker compose -f "$COMPOSE_FILE" exec -T app php artisan migrate --force
-
-echo "🔧 Optimizing..."
-docker compose -f "$COMPOSE_FILE" exec -T app php artisan config:clear
-docker compose -f "$COMPOSE_FILE" exec -T app php artisan config:cache
-docker compose -f "$COMPOSE_FILE" exec -T app php artisan route:cache
-docker compose -f "$COMPOSE_FILE" exec -T app php artisan view:cache
-
-# --- Workers ---
-echo "🌅 Restarting Horizon & Scheduler..."
-docker compose -f "$COMPOSE_FILE" restart horizon scheduler
-
-# --- HTTP health ---
-echo "🏥 HTTP health check..."
-CODE=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:${APP_PORT}${HEALTHCHECK_PATH}")
-
-[ "$CODE" = "200" ] || {
-  echo "❌ Health check failed: $CODE"
-  exit 1
-}
-
-echo "🧹 Cleaning images..."
-docker image prune -f
-
-echo "🎉 Deploy completed successfully!"
+echo "✅ Deployment completed successfully!"
