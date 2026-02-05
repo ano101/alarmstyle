@@ -21,6 +21,7 @@ fi
 
 echo "📦 Updating code (reset to origin/master)..."
 git fetch origin master
+git checkout master  # ← Добавьте эту строку
 git reset --hard origin/master
 
 # --- Docker ---
