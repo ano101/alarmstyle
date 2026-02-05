@@ -56,7 +56,7 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.PROD_HOST }}
-          username: deploy
+          username: fastuser
           key: ${{ secrets.PROD_SSH_KEY }}
           port: ${{ secrets.PROD_SSH_PORT }}
           envs: GHCR_PAT,GHCR_USERNAME,APP_PORT,HEALTHCHECK_PATH
