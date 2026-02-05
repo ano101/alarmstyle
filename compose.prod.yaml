@@ -178,7 +178,7 @@ services:
       - APP_URL=${APP_URL}
     networks:
       - app-network
-    command: ["node", "/var/www/html/bootstrap/ssr/ssr.mjs"]
+    command: ["node", "/var/www/html/bootstrap/ssr/ssr.js"]
 
   # ----------------------------
   # MySQL database

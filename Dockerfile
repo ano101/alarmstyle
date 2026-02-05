@@ -29,11 +29,17 @@ RUN npm ci
 
 # App
 COPY . .
+
+# Генерируем временный APP_KEY для сборки (нужен для artisan команд)
+ENV APP_KEY=base64:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa=
+ENV APP_ENV=production
+
 RUN composer dump-autoload --optimize --no-dev \
  && php artisan ziggy:generate resources/js/ziggy.js \
  && php artisan vendor:publish --tag=livewire:assets --ansi --force \
  && php artisan filament:assets \
- && npm run build
+ && npm run build \
+ && ls -la bootstrap/ssr/ || echo "SSR directory check"
 
 
 # Stage 2: runtime
