@@ -3,7 +3,7 @@ name: Deploy to Production
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 env:
@@ -65,9 +65,10 @@ jobs:
           username: ${{ secrets.PROD_USERNAME }}
           key: ${{ secrets.PROD_SSH_KEY }}
           port: ${{ secrets.PROD_SSH_PORT }}
-          envs: GHCR_PAT,GHCR_USERNAME,APP_PORT,HEALTHCHECK_PATH
+          envs: GHCR_PAT,GHCR_USERNAME,APP_PORT,HEALTHCHECK_PATH,GITHUB_REPOSITORY
           script: |
             cd ${{ secrets.PROD_APP_PATH }}
+            export GITHUB_REPOSITORY="${{ github.repository }}"
             chmod +x deploy.sh
             ./deploy.sh
 
