@@ -59,6 +59,9 @@ COPY . .
 # Generate optimized autoload files
 RUN composer dump-autoload --optimize --no-dev
 
+# Generate Ziggy routes for JavaScript
+RUN php artisan ziggy:generate resources/js/ziggy.js
+
 # Build frontend assets (now vendor/tightenco/ziggy is available)
 RUN npm run build
 

@@ -35,6 +35,7 @@ yarn-error.log
 # Build artifacts (will be built in Docker)
 public/build/
 public/hot/
+resources/js/ziggy.js
 
 # OS
 .DS_Store
