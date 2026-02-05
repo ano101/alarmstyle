@@ -54,15 +54,24 @@ docker compose -f compose.prod.yaml up -d
 echo -e "${GREEN}⏳ Waiting for services to be healthy...${NC}"
 sleep 10
 
+# Load database credentials from .env
+if [ -f .env ]; then
+    export $(grep -E "^(DB_USERNAME|DB_PASSWORD|DB_DATABASE)=" .env | xargs)
+fi
+
 # Check if this is first deployment (check if migrations table exists)
 echo -e "${GREEN}🔍 Checking deployment status...${NC}"
-TABLE_COUNT=$(docker compose -f compose.prod.yaml exec -T app php artisan tinker --execute="echo \DB::table('migrations')->count();" 2>/dev/null || echo "0")
+
+# Check if migrations table exists using direct SQL query
+MIGRATIONS_TABLE_EXISTS=$(docker compose -f compose.prod.yaml exec -T mysql mysql -u${DB_USERNAME} -p${DB_PASSWORD} ${DB_DATABASE} -sN -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = '${DB_DATABASE}' AND table_name = 'migrations';" 2>/dev/null || echo "0")
 IS_FIRST_DEPLOY=false
 
-if [ "$TABLE_COUNT" = "0" ] || [ -z "$TABLE_COUNT" ]; then
+if [ "$MIGRATIONS_TABLE_EXISTS" = "0" ] || [ -z "$MIGRATIONS_TABLE_EXISTS" ]; then
     IS_FIRST_DEPLOY=true
-    echo -e "${YELLOW}📦 First deployment detected - will run full setup${NC}"
+    echo -e "${YELLOW}📦 First deployment detected - migrations table does not exist${NC}"
 else
+    # Table exists, count migrations
+    TABLE_COUNT=$(docker compose -f compose.prod.yaml exec -T mysql mysql -u${DB_USERNAME} -p${DB_PASSWORD} ${DB_DATABASE} -sN -e "SELECT COUNT(*) FROM migrations;" 2>/dev/null || echo "0")
     echo -e "${GREEN}♻️  Existing database found ($TABLE_COUNT migrations applied) - will preserve data${NC}"
 fi
 
