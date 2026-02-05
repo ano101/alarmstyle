@@ -5,23 +5,26 @@ FROM php:8.5-fpm-alpine AS builder
 
 WORKDIR /var/www/html
 
-# Install system dependencies for build
+# Install system dependencies and PHP extensions for build
 RUN apk add --no-cache \
     bash \
     curl \
     git \
+    mysql-client \
+    nodejs \
+    npm \
     libpng-dev \
     libjpeg-turbo-dev \
     freetype-dev \
     libzip-dev \
     oniguruma-dev \
-    mysql-client \
-    nodejs \
-    npm \
     icu-dev \
+    zlib-dev \
+    libsodium-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         pdo_mysql \
+        mysqli \
         mbstring \
         exif \
         pcntl \
@@ -29,7 +32,15 @@ RUN apk add --no-cache \
         gd \
         zip \
         intl \
+        opcache \
+        sodium \
     && rm -rf /var/cache/apk/*
+
+# Install Redis extension
+RUN apk add --no-cache $PHPIZE_DEPS \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && apk del $PHPIZE_DEPS
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -56,7 +67,7 @@ FROM php:8.5-fpm-alpine
 
 WORKDIR /var/www/html
 
-# Install runtime and build dependencies
+# Install runtime and build dependencies, compile extensions, then remove build deps
 RUN apk add --no-cache \
     bash \
     curl \
@@ -66,11 +77,14 @@ RUN apk add --no-cache \
     libjpeg-turbo-dev \
     freetype-dev \
     libzip-dev \
+    oniguruma-dev \
     icu-dev \
     zlib-dev \
+    libsodium-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         pdo_mysql \
+        mysqli \
         mbstring \
         exif \
         pcntl \
@@ -78,19 +92,25 @@ RUN apk add --no-cache \
         gd \
         zip \
         intl \
+        opcache \
+        sodium \
     && apk del --no-cache \
         libpng-dev \
         libjpeg-turbo-dev \
         freetype-dev \
         libzip-dev \
+        oniguruma-dev \
         icu-dev \
         zlib-dev \
+        libsodium-dev \
     && apk add --no-cache \
         libpng \
         libjpeg-turbo \
         freetype \
         libzip \
+        oniguruma \
         icu-libs \
+        libsodium \
     && rm -rf /var/cache/apk/*
 
 # Install Redis extension
