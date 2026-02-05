@@ -18,6 +18,7 @@ RUN apk add --no-cache \
     supervisor \
     nodejs \
     npm \
+    icu-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         pdo_mysql \
@@ -27,6 +28,7 @@ RUN apk add --no-cache \
         bcmath \
         gd \
         zip \
+        intl \
     && rm -rf /var/cache/apk/*
 
 # Install Redis extension
