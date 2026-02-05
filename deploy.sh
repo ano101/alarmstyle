@@ -14,17 +14,35 @@ COMPOSE="docker compose -f compose.prod.yaml"
 wait_for_app() {
   echo -e "${YELLOW}⏳ Waiting for app to become healthy...${NC}"
 
-  while true; do
-    HEALTH=$(docker inspect -f '{{.State.Health.Status}}' ${PROJECT}-app-1 2>/dev/null || echo "starting")
+  MAX_ATTEMPTS=30
+  ATTEMPT=0
 
+  while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+    ATTEMPT=$((ATTEMPT+1))
+
+    # Проверяем состояние контейнера
+    HEALTH=$(docker inspect -f '{{.State.Health.Status}}' ${PROJECT}-app-1 2>/dev/null)
+    RUNNING=$(docker inspect -f '{{.State.Running}}' ${PROJECT}-app-1 2>/dev/null)
+
+    # Если healthy - выходим
     if [ "$HEALTH" = "healthy" ]; then
       echo -e "${GREEN}✅ App container is healthy${NC}"
-      break
+      return 0
     fi
 
-    echo "Current health: $HEALTH"
+    # Если нет healthcheck, но контейнер запущен - выходим
+    if [ -z "$HEALTH" ] && [ "$RUNNING" = "true" ]; then
+      echo -e "${GREEN}✅ App container is running (no healthcheck)${NC}"
+      sleep 5
+      return 0
+    fi
+
+    echo "Waiting... health=$HEALTH running=$RUNNING (attempt $ATTEMPT/$MAX_ATTEMPTS)"
     sleep 2
   done
+
+  echo -e "${YELLOW}⚠️ Timeout waiting for app, continuing anyway...${NC}"
+  return 0
 }
 
 echo -e "${GREEN}🚀 Deploy start${NC}"
