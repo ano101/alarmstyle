@@ -81,8 +81,8 @@ docker compose -f compose.prod.yaml exec -T app php artisan migrate --force
 
 # Publish vendor assets (Livewire, Filament)
 echo -e "${GREEN}📦 Publishing vendor assets...${NC}"
-docker compose -f compose.prod.yaml exec -T app php artisan livewire:publish --assets --force
-docker compose -f compose.prod.yaml exec -T app php artisan filament:assets --force
+docker compose -f compose.prod.yaml exec -T app php artisan livewire:publish --assets
+docker compose -f compose.prod.yaml exec -T app php artisan filament:assets
 
 # Run seeders only on first deploy
 if [ "$IS_FIRST_DEPLOY" = true ]; then
