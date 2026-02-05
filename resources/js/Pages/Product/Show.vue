@@ -7,7 +7,7 @@ import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import Button from "../../Components/ui/Button.vue";
 import { Splide, SplideSlide } from '@splidejs/vue-splide';
 import '@splidejs/splide/dist/css/splide.min.css';
-import GLightbox from 'glightbox';
+// GLightbox импортируется динамически в onMounted (не работает в SSR)
 import 'glightbox/dist/css/glightbox.min.css';
 import { Tooltip, TooltipTrigger, TooltipContent } from "../../Components/ui/Tooltip.vue";
 import OrderModal from "@/Components/OrderModal.vue"
@@ -112,6 +112,9 @@ onMounted(async () => {
 
     // Ждем завершения анимаций motion-v перед инициализацией GLightbox
     await new Promise(resolve => setTimeout(resolve, 600))
+
+    // Динамический импорт GLightbox (не работает в SSR - нет window)
+    const GLightbox = (await import('glightbox')).default
 
     // Initialize GLightbox
     lightbox = GLightbox({
