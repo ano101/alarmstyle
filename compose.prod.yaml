@@ -1,7 +1,9 @@
 name: alarmstyle-prod
-services:
 
+services:
+  # ----------------------------
   # Nginx web server
+  # ----------------------------
   nginx:
     image: nginx:alpine
     restart: unless-stopped
@@ -9,6 +11,10 @@ services:
       - "${APP_PORT:-8080}:80"
       - "${APP_SSL_PORT:-8443}:443"
     volumes:
+      # ✅ public шарим из named volume (read-only)
+      - public-data:/var/www/html/public:ro
+
+      # nginx конфиги и логи
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
       - ./storage/logs/nginx:/var/log/nginx
@@ -17,7 +23,9 @@ services:
     networks:
       - app-network
 
+  # ----------------------------
   # PHP-FPM application
+  # ----------------------------
   app:
     image: ghcr.io/${GITHUB_REPOSITORY:-${COMPOSE_PROJECT_NAME}}:latest
     build:
@@ -27,6 +35,10 @@ services:
     restart: unless-stopped
     user: "${UID:-1000}:${GID:-1000}"
     volumes:
+      # ✅ public шарим в named volume (rw)
+      - public-data:/var/www/html/public
+
+      # persistent runtime dirs
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
     environment:
@@ -60,7 +72,9 @@ services:
       - app-network
     command: ["php-fpm"]
 
+  # ----------------------------
   # Laravel Horizon (Queue Worker)
+  # ----------------------------
   horizon:
     image: ghcr.io/${GITHUB_REPOSITORY:-${COMPOSE_PROJECT_NAME}}:latest
     build:
@@ -70,6 +84,9 @@ services:
     restart: unless-stopped
     user: "${UID:-1000}:${GID:-1000}"
     volumes:
+      # ✅ public не обязательно, но можно шарить чтобы одинаковая FS (безопасно)
+      - public-data:/var/www/html/public
+
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
     environment:
@@ -101,7 +118,9 @@ services:
       - app-network
     command: ["php", "/var/www/html/artisan", "horizon"]
 
+  # ----------------------------
   # Laravel Scheduler
+  # ----------------------------
   scheduler:
     image: ghcr.io/${GITHUB_REPOSITORY:-${COMPOSE_PROJECT_NAME}}:latest
     build:
@@ -111,6 +130,7 @@ services:
     restart: unless-stopped
     user: "${UID:-1000}:${GID:-1000}"
     volumes:
+      - public-data:/var/www/html/public
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
     environment:
@@ -142,7 +162,9 @@ services:
       - app-network
     command: ["php", "/var/www/html/artisan", "schedule:work"]
 
+  # ----------------------------
   # Inertia SSR server
+  # ----------------------------
   ssr:
     image: ghcr.io/${GITHUB_REPOSITORY:-${COMPOSE_PROJECT_NAME}}:latest
     build:
@@ -169,7 +191,9 @@ services:
       timeout: 5s
       interval: 30s
 
+  # ----------------------------
   # MySQL database
+  # ----------------------------
   mysql:
     image: mysql:8.4
     restart: unless-stopped
@@ -188,7 +212,9 @@ services:
       retries: 3
       timeout: 5s
 
+  # ----------------------------
   # Redis cache and queue
+  # ----------------------------
   redis:
     image: redis:alpine
     restart: unless-stopped
@@ -203,7 +229,9 @@ services:
       retries: 3
       timeout: 5s
 
+  # ----------------------------
   # Meilisearch
+  # ----------------------------
   meilisearch:
     image: getmeili/meilisearch:latest
     restart: unless-stopped
@@ -225,6 +253,11 @@ networks:
     driver: bridge
 
 volumes:
+  # ✅ новый volume для public (решает 404 по ассетам)
+  public-data:
+    driver: local
+
+  # ✅ существующие volumes — данные сохраняются
   mysql-data:
     driver: local
   redis-data:
