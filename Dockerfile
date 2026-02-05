@@ -1,32 +1,11 @@
 # Production Dockerfile
 
-# Stage 1: Build frontend assets
-FROM node:20-alpine AS frontend-builder
+# Stage 1: Build stage with all dependencies
+FROM php:8.5-fpm-alpine AS builder
 
-WORKDIR /app
-
-# Copy package files
-COPY package.json package-lock.json* ./
-
-# Install all dependencies (including dev)
-RUN npm ci
-
-# Copy necessary files for build
-COPY resources ./resources
-COPY vite.config.js ./
-COPY tailwind.config.js* ./
-COPY postcss.config.js* ./
-
-# Build frontend assets
-RUN npm run build
-
-# Stage 2: Final production image
-FROM php:8.5-fpm-alpine
-
-# Set working directory
 WORKDIR /var/www/html
 
-# Install system dependencies
+# Install system dependencies for build
 RUN apk add --no-cache \
     bash \
     curl \
@@ -37,8 +16,57 @@ RUN apk add --no-cache \
     libzip-dev \
     oniguruma-dev \
     mysql-client \
-    supervisor \
+    nodejs \
+    npm \
     icu-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+        pdo_mysql \
+        mbstring \
+        exif \
+        pcntl \
+        bcmath \
+        gd \
+        zip \
+        intl \
+    && rm -rf /var/cache/apk/*
+
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Copy composer files and install dependencies
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+
+# Copy package files and install node dependencies
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+# Copy application code
+COPY . .
+
+# Generate optimized autoload files
+RUN composer dump-autoload --optimize --no-dev
+
+# Build frontend assets (now vendor/tightenco/ziggy is available)
+RUN npm run build
+
+# Stage 2: Final production image (smaller, without build tools)
+FROM php:8.5-fpm-alpine
+
+WORKDIR /var/www/html
+
+# Install only runtime dependencies
+RUN apk add --no-cache \
+    bash \
+    curl \
+    mysql-client \
+    supervisor \
+    libpng \
+    libjpeg-turbo \
+    freetype \
+    libzip \
+    icu-libs \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         pdo_mysql \
@@ -57,28 +85,11 @@ RUN apk add --no-cache $PHPIZE_DEPS \
     && docker-php-ext-enable redis \
     && apk del $PHPIZE_DEPS
 
-# Install Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
-# Copy composer files
-COPY composer.json composer.lock ./
-
-# Install PHP dependencies
-RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
-
-# Copy application code
-COPY . .
-
-# Copy built frontend assets from frontend-builder stage
-COPY --from=frontend-builder /app/public/build ./public/build
-COPY --from=frontend-builder /app/bootstrap/ssr ./bootstrap/ssr
-
-# Generate optimized autoload files
-RUN composer dump-autoload --optimize --no-dev
+# Copy application from builder
+COPY --from=builder --chown=www-data:www-data /var/www/html /var/www/html
 
 # Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage \
+RUN chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
 # Copy supervisor configuration
