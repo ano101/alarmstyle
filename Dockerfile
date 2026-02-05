@@ -51,11 +51,7 @@ COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions
 COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
 
 # Copy app
-COPY --from=builder --chown=www-data:www-data /var/www/html /var/www/html
-
-# Permissions
-RUN chmod -R 755 /var/www/html/storage \
- && chmod -R 755 /var/www/html/bootstrap/cache
+COPY --from=builder /var/www/html /var/www/html
 
 # Configs
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/app.ini
