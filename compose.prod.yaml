@@ -174,7 +174,6 @@ services:
     volumes:
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
-      - ./bootstrap/ssr:/var/www/html/bootstrap/ssr:ro
     environment:
       - APP_ENV=${APP_ENV:-production}
       - APP_DEBUG=${APP_DEBUG:-false}
@@ -183,11 +182,6 @@ services:
     networks:
       - app-network
     command: ["node", "/var/www/html/bootstrap/ssr/ssr.mjs"]
-    healthcheck:
-      test: ["CMD", "php", "/var/www/html/artisan", "inertia:check-ssr"]
-      retries: 3
-      timeout: 5s
-      interval: 30s
 
   # ----------------------------
   # MySQL database
