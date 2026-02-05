@@ -5,50 +5,73 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-echo -e "${GREEN}🚀 Deploy start${NC}"
+PROJECT="alarmstyle-prod"
+COMPOSE="docker compose -f compose.prod.yaml"
 
-# Login GHCR
-echo "$GHCR_PAT" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
-
-# Pull images
-docker compose -f compose.prod.yaml pull
-
-# Start containers (БЕЗ down!)
-docker compose -f compose.prod.yaml up -d
-
-echo -e "${GREEN}⏳ Waiting services...${NC}"
-# Ждём app
-wait_for_app
-
-# МИГРАЦИИ — ТОЛЬКО ДОПОЛНЕНИЕ
-echo -e "${GREEN}📊 Running migrations${NC}"
-docker compose -f compose.prod.yaml exec -T app php artisan migrate --force
-
-# Cache
-docker compose -f compose.prod.yaml exec -T app php artisan optimize:clear
-docker compose -f compose.prod.yaml exec -T app php artisan optimize
-docker compose -f compose.prod.yaml exec -T app php artisan filament:cache-components
-
-# Horizon
-docker compose -f compose.prod.yaml exec -T app php artisan horizon:terminate
-
-# SSR
-docker compose -f compose.prod.yaml restart ssr
-
-echo -e "${GREEN}✅ Deploy done${NC}"
-
+# ----------------------------
+# Wait for app healthcheck
+# ----------------------------
 wait_for_app() {
-  echo -e "${YELLOW}⏳ Waiting for app container to be running...${NC}"
+  echo -e "${YELLOW}⏳ Waiting for app to become healthy...${NC}"
 
   while true; do
-    STATUS=$(docker inspect -f '{{.State.Status}}' alarmstyle-prod-app-1 2>/dev/null || echo "starting")
+    HEALTH=$(docker inspect -f '{{.State.Health.Status}}' ${PROJECT}-app-1 2>/dev/null || echo "starting")
 
-    if [ "$STATUS" = "running" ]; then
-      echo -e "${GREEN}✅ App container is running${NC}"
+    if [ "$HEALTH" = "healthy" ]; then
+      echo -e "${GREEN}✅ App container is healthy${NC}"
       break
     fi
 
-    echo "Current status: $STATUS"
+    echo "Current health: $HEALTH"
     sleep 2
   done
 }
+
+echo -e "${GREEN}🚀 Deploy start${NC}"
+
+# ----------------------------
+# Login GHCR
+# ----------------------------
+echo "$GHCR_PAT" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
+
+# ----------------------------
+# Pull images
+# ----------------------------
+$COMPOSE pull
+
+# ----------------------------
+# FULL recreate containers
+# ----------------------------
+echo -e "${GREEN}🔄 Recreating all containers...${NC}"
+$COMPOSE down
+$COMPOSE up -d --force-recreate
+
+# ----------------------------
+# Wait for app
+# ----------------------------
+wait_for_app
+
+# ----------------------------
+# Migrations
+# ----------------------------
+echo -e "${GREEN}📊 Running migrations${NC}"
+$COMPOSE exec -T app php artisan migrate --force
+
+# ----------------------------
+# Cache
+# ----------------------------
+$COMPOSE exec -T app php artisan optimize:clear
+$COMPOSE exec -T app php artisan optimize
+$COMPOSE exec -T app php artisan filament:cache-components
+
+# ----------------------------
+# Horizon
+# ----------------------------
+$COMPOSE exec -T app php artisan horizon:terminate
+
+# ----------------------------
+# SSR
+# ----------------------------
+$COMPOSE restart ssr
+
+echo -e "${GREEN}✅ Deploy done${NC}"
