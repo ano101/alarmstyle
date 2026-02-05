@@ -2,9 +2,6 @@
 
 set -euo pipefail
 
-# --- FIX git ownership ---
-git config --global --add safe.directory "$(pwd)"
-
 echo "🚀 Starting deployment..."
 
 COMPOSE_FILE="compose.prod.yaml"
@@ -22,9 +19,9 @@ if [ -n "${GHCR_PAT:-}" ]; then
     printf '%s' "$GHCR_PAT" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
 fi
 
-# --- Update repo ---
-echo "📦 Pulling latest changes..."
-git pull --rebase
+echo "📦 Updating code (reset to origin/master)..."
+git fetch origin master
+git reset --hard origin/master
 
 # --- Docker ---
 echo "🐳 Pulling Docker images..."
