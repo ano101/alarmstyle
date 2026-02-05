@@ -35,13 +35,13 @@ RUN composer dump-autoload --optimize --no-dev \
 
 
 # Stage 2: runtime
-FROM php:8.5-fpm-alpine
+FROM php:8.5-fpm-alpine AS runtime
 
 WORKDIR /var/www/html
 
 # Only runtime libs (без -dev)
 RUN apk add --no-cache \
-    bash curl mysql-client supervisor \
+    bash curl mysql-client \
     libpng libjpeg-turbo freetype \
     libzip oniguruma icu-libs libsodium \
   && rm -rf /var/cache/apk/*
@@ -58,9 +58,9 @@ RUN chmod -R 755 /var/www/html/storage \
  && chmod -R 755 /var/www/html/bootstrap/cache
 
 # Configs
-COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/app.ini
 COPY docker/php/www.conf /usr/local/etc/php-fpm.d/www.conf
 
 EXPOSE 9000
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+USER www-data
+CMD ["php-fpm"]

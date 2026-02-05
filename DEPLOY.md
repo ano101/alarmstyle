@@ -431,8 +431,20 @@ sudo chmod -R 775 storage bootstrap/cache
 
 ### Horizon не работает
 ```bash
-docker compose -f compose.prod.yaml exec app supervisorctl status
-docker compose -f compose.prod.yaml exec app supervisorctl restart horizon
+# Проверить логи Horizon
+docker compose -f compose.prod.yaml logs horizon
+
+# Перезапустить Horizon
+docker compose -f compose.prod.yaml restart horizon
+```
+
+### Scheduler не работает
+```bash
+# Проверить логи планировщика
+docker compose -f compose.prod.yaml logs scheduler
+
+# Перезапустить планировщик
+docker compose -f compose.prod.yaml restart scheduler
 ```
 
 ### Firewall

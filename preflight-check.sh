@@ -68,7 +68,6 @@ echo "📁 Checking files and directories..."
 REQUIRED_FILES=(
     "compose.prod.yaml"
     "Dockerfile"
-    "docker/supervisor/supervisord.conf"
     "docker/nginx/nginx.conf"
     "docker/nginx/conf.d/default.conf"
     "docker/php/php.ini"

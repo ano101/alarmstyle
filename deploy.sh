@@ -34,9 +34,9 @@ docker compose -f compose.prod.yaml exec -T app php artisan route:cache
 docker compose -f compose.prod.yaml exec -T app php artisan view:cache
 docker compose -f compose.prod.yaml exec -T app php artisan filament:cache-components
 
-# Restart Horizon gracefully
-echo "🌅 Restarting Horizon..."
-docker compose -f compose.prod.yaml exec -T app php artisan horizon:terminate
+# Restart Horizon and Scheduler
+echo "🌅 Restarting Horizon and Scheduler..."
+docker compose -f compose.prod.yaml restart horizon scheduler
 
 # Clean up old images
 echo "🧹 Cleaning up..."
