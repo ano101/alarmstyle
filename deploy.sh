@@ -81,7 +81,7 @@ docker compose -f compose.prod.yaml exec -T app php artisan migrate --force
 
 # Publish vendor assets (Livewire, Filament)
 echo -e "${GREEN}📦 Publishing vendor assets...${NC}"
-docker compose -f compose.prod.yaml exec -T app php artisan livewire:publish --assets
+docker compose -f compose.prod.yaml exec -T app php artisan vendor:publish --tag=livewire:assets --ansi --force
 docker compose -f compose.prod.yaml exec -T app php artisan filament:assets
 
 # Run seeders only on first deploy
@@ -104,6 +104,12 @@ docker compose -f compose.prod.yaml exec -T app php artisan filament:cache-compo
 # Restart Horizon
 echo -e "${GREEN}🔄 Restarting Horizon...${NC}"
 docker compose -f compose.prod.yaml exec -T app php artisan horizon:terminate
+
+# Check SSR server health
+echo -e "${GREEN}🔍 Checking SSR server...${NC}"
+docker compose -f compose.prod.yaml restart ssr
+sleep 5
+docker compose -f compose.prod.yaml exec -T ssr php /var/www/html/artisan inertia:check-ssr || echo -e "${YELLOW}⚠️  SSR server not responding${NC}"
 
 echo -e "${GREEN}✅ Deployment completed successfully!${NC}"
 

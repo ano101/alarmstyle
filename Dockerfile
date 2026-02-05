@@ -31,7 +31,7 @@ RUN npm ci
 COPY . .
 RUN composer dump-autoload --optimize --no-dev \
  && php artisan ziggy:generate resources/js/ziggy.js \
- && php artisan livewire:publish --assets \
+ && php artisan vendor:publish --tag=livewire:assets --ansi --force \
  && php artisan filament:assets \
  && npm run build
 
@@ -43,7 +43,7 @@ WORKDIR /var/www/html
 
 # Only runtime libs (без -dev)
 RUN apk add --no-cache \
-    bash curl mysql-client \
+    bash curl mysql-client nodejs \
     libpng libjpeg-turbo freetype \
     libzip oniguruma icu-libs libsodium \
   && rm -rf /var/cache/apk/*
