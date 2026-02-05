@@ -79,6 +79,11 @@ fi
 echo -e "${GREEN}📊 Running migrations...${NC}"
 docker compose -f compose.prod.yaml exec -T app php artisan migrate --force
 
+# Publish vendor assets (Livewire, Filament)
+echo -e "${GREEN}📦 Publishing vendor assets...${NC}"
+docker compose -f compose.prod.yaml exec -T app php artisan livewire:publish --assets --force
+docker compose -f compose.prod.yaml exec -T app php artisan filament:assets --force
+
 # Run seeders only on first deploy
 if [ "$IS_FIRST_DEPLOY" = true ]; then
     echo -e "${GREEN}🌱 Running seeders...${NC}"
