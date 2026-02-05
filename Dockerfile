@@ -31,6 +31,8 @@ RUN npm ci
 COPY . .
 RUN composer dump-autoload --optimize --no-dev \
  && php artisan ziggy:generate resources/js/ziggy.js \
+ && php artisan livewire:publish --assets \
+ && php artisan filament:assets \
  && npm run build
 
 
