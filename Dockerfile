@@ -56,17 +56,18 @@ FROM php:8.5-fpm-alpine
 
 WORKDIR /var/www/html
 
-# Install only runtime dependencies
+# Install runtime and build dependencies
 RUN apk add --no-cache \
     bash \
     curl \
     mysql-client \
     supervisor \
-    libpng \
-    libjpeg-turbo \
-    freetype \
-    libzip \
-    icu-libs \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    libzip-dev \
+    icu-dev \
+    zlib-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         pdo_mysql \
@@ -77,6 +78,19 @@ RUN apk add --no-cache \
         gd \
         zip \
         intl \
+    && apk del --no-cache \
+        libpng-dev \
+        libjpeg-turbo-dev \
+        freetype-dev \
+        libzip-dev \
+        icu-dev \
+        zlib-dev \
+    && apk add --no-cache \
+        libpng \
+        libjpeg-turbo \
+        freetype \
+        libzip \
+        icu-libs \
     && rm -rf /var/cache/apk/*
 
 # Install Redis extension
