@@ -3,13 +3,12 @@ import MainLayout from "@/Layouts/MainLayout.vue"
 import { motion } from 'motion-v'
 import Image from "../../Components/ui/Image.vue";
 import { Star, Shield, Clock, Wrench, ShoppingCart, Phone, Check, ChevronDown, Info } from 'lucide-vue-next'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import Button from "../../Components/ui/Button.vue";
 import { Splide, SplideSlide } from '@splidejs/vue-splide';
 import '@splidejs/splide/dist/css/splide.min.css';
-import PhotoSwipeLightbox from 'photoswipe/lightbox';
-import 'photoswipe/style.css';
-import { nextTick } from 'vue'
+import GLightbox from 'glightbox';
+import 'glightbox/dist/css/glightbox.min.css';
 import { Tooltip, TooltipTrigger, TooltipContent } from "../../Components/ui/Tooltip.vue";
 import OrderModal from "@/Components/OrderModal.vue"
 import CallbackModal from "@/Components/CallbackModal.vue"
@@ -105,22 +104,34 @@ const thumbsOptions = {
 
 let lightbox = null
 
-onMounted(() => {
+onMounted(async () => {
     // Sync main and thumbnails
     if (mainSplide.value && thumbsSplide.value) {
         mainSplide.value.sync(thumbsSplide.value.splide)
     }
 
+    // Ждем завершения анимаций motion-v перед инициализацией GLightbox
+    await new Promise(resolve => setTimeout(resolve, 600))
 
-    // Initialize PhotoSwipe
-    lightbox = new PhotoSwipeLightbox({
-        gallery: '#product-gallery',
-        children: 'a',
-        pswpModule: () => import('photoswipe'),
-        padding: { top: 30, bottom: 30, left: 20, right: 20 },
-        bgOpacity: 0.9,
+    // Initialize GLightbox
+    lightbox = GLightbox({
+        selector: '.glightbox',
+        touchNavigation: true,
+        loop: true,
+        autoplayVideos: false,
+        zoomable: true,
+        draggable: true,
+        openEffect: 'fade',
+        closeEffect: 'fade',
+        slideEffect: 'slide',
+        moreLength: 0,
     })
-    lightbox.init()
+})
+
+onBeforeUnmount(() => {
+    if (lightbox) {
+        lightbox.destroy()
+    }
 })
 </script>
 
@@ -142,7 +153,7 @@ onMounted(() => {
             </div>
 
             <!-- Main Gallery -->
-            <div id="product-gallery" class="rounded-2xl overflow-hidden bg-white shadow-xl border border-gray-200">
+            <div class="rounded-2xl overflow-hidden bg-white shadow-xl border border-gray-200">
                 <Splide
                     ref="mainSplide"
                     :options="mainOptions"
@@ -151,17 +162,15 @@ onMounted(() => {
                     <SplideSlide v-for="(image, index) in galleryImages" :key="index">
                         <a
                             :href="route('images.show', { path: image, preset: 'product.lightbox_2x' })"
-                            :data-pswp-width="3840"
-                            :data-pswp-height="2880"
-                            target="_blank"
-                            rel="noreferrer"
-                            class="block cursor-zoom-in"
+                            class="glightbox block cursor-zoom-in group"
+                            :data-gallery="'product-gallery'"
+                            :data-title="`${product.name} ${index + 1}`"
                         >
                             <Image
                                 :src="image"
                                 preset="product.card"
                                 :alt="`${product.name} ${index + 1}`"
-                                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                                class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
                             />
                         </a>
                     </SplideSlide>
@@ -200,7 +209,7 @@ onMounted(() => {
             <h1 class="text-4xl font-bold text-gray-900 mb-6">{{ product.name }}</h1>
             <div class="flex items-baseline gap-3 mb-10">
                 <div class="text-5xl font-bold text-gray-900">
-                    {{product.price.toLocaleString()}} ₽
+                    {{ Math.round(product.price).toLocaleString('ru-RU') }} ₽
                 </div>
                 <div class="text-lg text-gray-500">
                     c установкой
@@ -251,88 +260,77 @@ onMounted(() => {
                 </div>
             </div>
         </motion.div>
+        </div><!-- Закрытие grid lg:grid-cols-2 -->
 
+        <!-- Технические характеристики на всю ширину -->
         <motion.div
             :initial="{ opacity: 0, y: 20 }"
             :animate="{ opacity: 1, y: 0 }"
             :transition="{ duration: 0.5, delay: 0.4 }"
             class="mt-16"
         >
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Технические характеристики</h2>
-        <div class="space-y-3">
-            <div v-for="(group, index) in product.attributeGroups" :key="index" class="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                <button
-                    @click="toggleGroup(index)"
-                    class="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
-                >
-                    <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">{{ group.name }}</h3>
-                    <ChevronDown
-                        class="w-5 h-5 text-gray-400 transition-transform duration-300 ease-in-out"
-                        :class="{ 'rotate-180': isGroupOpen(index) }"
-                    />
-                </button>
-                <Transition
-                    enter-active-class="transition-all duration-300 ease-in-out"
-                    leave-active-class="transition-all duration-300 ease-in-out"
-                    enter-from-class="grid-rows-[0fr] opacity-0"
-                    enter-to-class="grid-rows-[1fr] opacity-100"
-                    leave-from-class="grid-rows-[1fr] opacity-100"
-                    leave-to-class="grid-rows-[0fr] opacity-0"
-                >
-                    <div v-show="isGroupOpen(index)" class="grid overflow-hidden">
-                        <div class="min-h-0 border-t border-gray-200">
-                            <div class="grid sm:grid-cols-2 xl:grid-cols-4">
-                                <div v-for="(attribute, key) in group.attributes"
-                                    :key="key"
-                                    class="flex flex-col gap-1 px-4 py-3 border-b border-r border-gray-100 last:border-r-0"
-                                >
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="text-xs text-gray-500">{{attribute.name}}</span>
-                                        <Tooltip v-if="attribute.helper_text">
-                                            <TooltipTrigger asChild>
-                                                <button class="text-gray-400 hover:text-gray-600 transition-colors">
-                                                    <Info class="w-3.5 h-3.5" />
-                                                </button>
-                                            </TooltipTrigger>
-                                            <TooltipContent side="top" class="max-w-xs bg-gray-900 text-white p-3 rounded-lg">
-                                                <p class="text-xs leading-relaxed">{{attribute.helper_text}}</p>
-                                            </TooltipContent>
-                                        </Tooltip>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Технические характеристики</h2>
+            <div class="space-y-3">
+                <div v-for="(group, index) in product.attributeGroups" :key="index" class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <button
+                        @click="toggleGroup(index)"
+                        class="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
+                    >
+                        <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">{{ group.name }}</h3>
+                        <ChevronDown
+                            class="w-5 h-5 text-gray-400 transition-transform duration-300 ease-in-out"
+                            :class="{ 'rotate-180': isGroupOpen(index) }"
+                        />
+                    </button>
+                    <Transition
+                        enter-active-class="transition-all duration-300 ease-in-out"
+                        leave-active-class="transition-all duration-300 ease-in-out"
+                        enter-from-class="grid-rows-[0fr] opacity-0"
+                        enter-to-class="grid-rows-[1fr] opacity-100"
+                        leave-from-class="grid-rows-[1fr] opacity-100"
+                        leave-to-class="grid-rows-[0fr] opacity-0"
+                    >
+                        <div v-show="isGroupOpen(index)" class="grid overflow-hidden">
+                            <div class="min-h-0 border-t border-gray-200">
+                                <div class="grid sm:grid-cols-2 xl:grid-cols-4">
+                                    <div v-for="(attribute, key) in group.attributes"
+                                        :key="key"
+                                        class="flex flex-col gap-1 px-4 py-3 border-b border-r border-gray-100 last:border-r-0"
+                                    >
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="text-xs text-gray-500">{{attribute.name}}</span>
+                                            <Tooltip v-if="attribute.helper_text">
+                                                <TooltipTrigger asChild>
+                                                    <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                                                        <Info class="w-3.5 h-3.5" />
+                                                    </button>
+                                                </TooltipTrigger>
+                                                <TooltipContent side="top" class="max-w-xs bg-gray-900 text-white p-3 rounded-lg">
+                                                    <p class="text-xs leading-relaxed">{{attribute.helper_text}}</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </div>
+                                        <span class="text-sm font-medium text-gray-900">{{attribute.value}}</span>
                                     </div>
-                                    <span class="text-sm font-medium text-gray-900">{{attribute.value}}</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </Transition>
+                    </Transition>
+                </div>
             </div>
-        </div>
-    </motion.div>
-    <motion.div
-        :initial="{ opacity: 0, y: 20 }"
-        :animate="{ opacity: 1, y: 0 }"
-        :transition="{ duration: 0.5, delay: 0.6 }"
-        class="mt-12 bg-white rounded-2xl p-8 sm:p-12 border border-gray-200"
-    >
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6">О проукте</h2>
-        <div class="prose prose-gray max-w-none text-gray-700 space-y-4 leading-relaxed">
-            <p>
-                Современная автомобильная сигнализация с диалоговым кодом обеспечивает надежную защиту вашего
-                автомобиля от угона. Передовые технологии шифрования делают невозможным перехват и клонирование
-                сигнала брелока.
-            </p>
-            <p>
-                Система интегрируется с CAN-шиной автомобиля, что позволяет контролировать все важные параметры
-                и блокировать двигатель при попытке угона. Встроенный GSM-модуль обеспечивает связь с владельцем
-                через мобильное приложение.
-            </p>
-            <p>
-                Профессиональная установка нашими специалистами гарантирует корректную работу всех функций
-                сигнализации. Мы предоставляем гарантию на оборудование и выполненные работы.
-            </p>
-        </div>
-    </motion.div>
-    </div><!-- Закрытие grid lg:grid-cols-2 -->
+        </motion.div>
+
+        <!-- Описание товара на всю ширину -->
+        <motion.div
+            v-if="product.description"
+            :initial="{ opacity: 0, y: 20 }"
+            :animate="{ opacity: 1, y: 0 }"
+            :transition="{ duration: 0.5, delay: 0.6 }"
+            class="mt-12 bg-white rounded-2xl p-8 sm:p-12 border border-gray-200"
+        >
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Описание</h2>
+            <div class="prose prose-gray max-w-none text-gray-700 leading-relaxed" v-html="product.description"></div>
+        </motion.div>
     </div><!-- Закрытие контейнера max-w-7xl -->
 
     <!-- Модалки -->
@@ -435,4 +433,22 @@ onMounted(() => {
 .product-gallery-thumbs :deep(.splide__list) {
     justify-content: flex-start !important;
 }
+
+/* GLightbox кастомизация */
+:deep(.glightbox-container) {
+    background: rgba(0, 0, 0, 0.95) !important;
+}
+
+:deep(.gslide-image img) {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+:deep(.gslide-media) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 </style>

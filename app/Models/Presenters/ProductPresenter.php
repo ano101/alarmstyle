@@ -3,6 +3,7 @@
 namespace App\Models\Presenters;
 
 use App\Models\Product;
+use App\Models\Setting;
 use Illuminate\Support\Str;
 
 class ProductPresenter
@@ -16,6 +17,11 @@ class ProductPresenter
      */
     protected ?array $attrs = null;
 
+    /**
+     * Кэш маппинга атрибутов из настроек
+     */
+    protected ?array $attributeMapping = null;
+
     protected function attrs(): array
     {
         if ($this->attrs !== null) {
@@ -27,6 +33,27 @@ class ProductPresenter
             ?->all() ?? [];
 
         return $this->attrs;
+    }
+
+    protected function getAttributeMapping(): array
+    {
+        if ($this->attributeMapping !== null) {
+            return $this->attributeMapping;
+        }
+
+        $this->attributeMapping = Setting::getData('product_attribute_mapping', [
+            'brand' => 58,
+            'gps' => 56,
+            'gsm' => 55,
+            'auto_start' => 31,
+        ]);
+
+        return $this->attributeMapping;
+    }
+
+    protected function getMappedAttributeId(string $key): ?int
+    {
+        return $this->getAttributeMapping()[$key] ?? null;
     }
 
     protected function attr(int $attributeId, mixed $default = ''): mixed
@@ -50,22 +77,30 @@ class ProductPresenter
 
     public function brand(): string
     {
-        return (string) $this->attr(58, '');
+        $attributeId = $this->getMappedAttributeId('brand');
+
+        return $attributeId ? (string) $this->attr($attributeId, '') : '';
     }
 
     public function gps(): bool
     {
-        return $this->attrYes(56);
+        $attributeId = $this->getMappedAttributeId('gps');
+
+        return $attributeId ? $this->attrYes($attributeId) : false;
     }
 
     public function gsm(): bool
     {
-        return $this->attrYes(55);
+        $attributeId = $this->getMappedAttributeId('gsm');
+
+        return $attributeId ? $this->attrYes($attributeId) : false;
     }
 
     public function autoStart(): bool
     {
-        return $this->attrYes(31);
+        $attributeId = $this->getMappedAttributeId('auto_start');
+
+        return $attributeId ? $this->attrYes($attributeId) : false;
     }
 
     public function formattedPrice(): string

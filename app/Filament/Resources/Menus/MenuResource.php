@@ -27,6 +27,13 @@ class MenuResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Bars3;
 
+    protected static ?int $navigationSort = 2;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Контент';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return MenuForm::configure($schema);

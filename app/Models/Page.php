@@ -40,7 +40,12 @@ class Page extends Model
                 static::where('id', '!=', $page->id)
                     ->where('is_homepage', true)
                     ->update(['is_homepage' => false]);
+            }
+        });
 
+        static::saved(function (Page $page) {
+            // Обрабатываем slug после сохранения, когда у модели уже есть ID
+            if ($page->is_homepage) {
                 // Для главной страницы слаг должен быть пустым
                 $page->setSlug('');
             } else {

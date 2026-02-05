@@ -88,5 +88,44 @@ return [
                 'fit' => 'crop',
             ],
         ],
+
+        'about' => [
+            'company_image' => [
+                'width' => 600,
+                'height' => 400,
+                'fit' => 'cover',
+                'upscale' => false,
+            ],
+            'company_image_2x' => [
+                'width' => 1200,
+                'height' => 800,
+                'fit' => 'cover',
+                'upscale' => false,
+            ],
+            'license' => [
+                'width' => 300,
+                'height' => 400,
+                'fit' => 'contain',
+                'upscale' => false,
+            ],
+            'license_2x' => [
+                'width' => 600,
+                'height' => 800,
+                'fit' => 'contain',
+                'upscale' => false,
+            ],
+            'team_image' => [
+                'width' => 600,
+                'height' => 400,
+                'fit' => 'cover',
+                'upscale' => false,
+            ],
+            'team_image_2x' => [
+                'width' => 1200,
+                'height' => 800,
+                'fit' => 'cover',
+                'upscale' => false,
+            ],
+        ],
     ],
 ];

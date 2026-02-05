@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Facades\JsonLd;
 use App\Facades\Seo;
 use App\Models\Menu;
+use App\Models\PopularSearch;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -105,6 +106,11 @@ class HandleInertiaRequests extends Middleware
                 )?->tree() ?? [],
 
             ],
+            'popularSearches' => fn () => PopularSearch::query()
+                ->active()
+                ->ordered()
+                ->pluck('query')
+                ->toArray(),
         ]);
     }
 }

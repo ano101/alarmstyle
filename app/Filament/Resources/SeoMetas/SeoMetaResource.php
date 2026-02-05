@@ -18,7 +18,22 @@ class SeoMetaResource extends Resource
 {
     protected static ?string $model = SeoMeta::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedGlobeAlt;
+
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $navigationLabel = 'SEO метатеги';
+
+    protected static ?string $modelLabel = 'SEO метатег';
+
+    protected static ?string $pluralModelLabel = 'SEO метатеги';
+
+    protected static ?string $recordTitleAttribute = 'title';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'SEO';
+    }
 
     public static function form(Schema $schema): Schema
     {

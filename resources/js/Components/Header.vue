@@ -1,7 +1,8 @@
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { Link, router, usePage } from '@inertiajs/vue3'
 import { Phone, Mail, MapPin, Search } from 'lucide-vue-next'
+import axios from 'axios'
 
 const props = defineProps({
     mobileMenuOpen: Boolean,
@@ -15,24 +16,80 @@ const settings = computed(() => page.props.settings ?? {})
 const contacts = computed(() => settings.value.contacts ?? {})
 const menus = computed(() => page.props.menus ?? {})
 const headerMenu = computed(() => menus.value.header ?? [])
+const popularSearches = computed(() => page.props.popularSearches ?? [])
 
 const searchQuery = ref('')
 const searchFocused = ref(false)
+const searchResults = ref([])
+const isSearching = ref(false)
 
-const popularSearches = [
-    'Автосигнализация',
-    'GPS-трекер',
-    'Автозапуск',
-    'Видеорегистратор'
-]
+// Debounce функция
+let searchTimeout = null
+const debounceSearch = (query) => {
+    clearTimeout(searchTimeout)
+    searchTimeout = setTimeout(async () => {
+        if (query.trim().length < 2) {
+            searchResults.value = []
+            return
+        }
+
+        isSearching.value = true
+        try {
+            const response = await axios.get('/api/search', {
+                params: { q: query }
+            })
+            searchResults.value = response.data.results || []
+        } catch (error) {
+            console.error('Search error:', error)
+            searchResults.value = []
+        } finally {
+            isSearching.value = false
+        }
+    }, 300)
+}
+
+// Следим за изменениями в поисковом запросе
+watch(searchQuery, (newValue) => {
+    if (newValue.trim().length >= 2) {
+        debounceSearch(newValue)
+    } else {
+        searchResults.value = []
+    }
+})
+
+// Проверка активного пункта меню
+const isActiveLink = (href) => {
+    if (!href) return false
+    const currentPath = page.url
+    // Для главной страницы
+    if (href === '/') {
+        return currentPath === '/'
+    }
+    // Для остальных страниц
+    return currentPath.startsWith(href)
+}
+
 
 const handleSearchSelect = (query) => {
     searchQuery.value = query
+    debounceSearch(query)
+}
+
+const handleProductClick = (product) => {
     searchFocused.value = false
-    router.visit('/uslugi', {
-        preserveScroll: true,
-        preserveState: true,
-    })
+    searchQuery.value = ''
+    searchResults.value = []
+    router.visit(product.url)
+}
+
+const viewAllResults = () => {
+    if (searchQuery.value.trim()) {
+        searchFocused.value = false
+        router.visit('/category', {
+            data: { search: searchQuery.value },
+            preserveState: true,
+        })
+    }
 }
 
 // Close search dropdown on click outside
@@ -163,6 +220,68 @@ onUnmounted(() => {
                             v-if="searchFocused"
                             class="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 z-50"
                         >
+                            <!-- Search Results -->
+                            <div v-if="searchResults.length > 0" class="mb-4">
+                                <h3 class="text-sm font-bold text-gray-900 mb-3">Результаты поиска</h3>
+                                <div class="space-y-2 max-h-96 overflow-y-auto">
+                                    <button
+                                        v-for="product in searchResults"
+                                        :key="product.id"
+                                        @click="handleProductClick(product)"
+                                        class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                                    >
+                                        <img
+                                            v-if="product.image"
+                                            :src="product.image"
+                                            :alt="product.name"
+                                            class="w-16 h-16 object-cover rounded-lg flex-shrink-0"
+                                        />
+                                        <div v-else class="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="font-medium text-gray-900 truncate">{{ product.name }}</div>
+                                            <div v-if="product.brand" class="text-sm text-emerald-600">{{ product.brand }}</div>
+                                            <div v-if="product.category" class="text-xs text-gray-500">{{ product.category }}</div>
+                                            <div v-if="product.price" class="text-sm font-bold text-gray-900 mt-1">
+                                                {{ Number(product.price).toLocaleString('ru-RU') }} ₽
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div class="mt-3 pt-3 border-t border-gray-200">
+                                    <button
+                                        @click="viewAllResults"
+                                        class="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+                                    >
+                                        Посмотреть все результаты →
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Loading State -->
+                            <div v-else-if="isSearching" class="mb-4">
+                                <div class="flex items-center justify-center py-8">
+                                    <svg class="animate-spin h-8 w-8 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- No Results -->
+                            <div v-else-if="searchQuery.trim().length >= 2 && searchResults.length === 0 && !isSearching" class="mb-4">
+                                <div class="text-center py-6">
+                                    <svg class="w-12 h-12 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                    </svg>
+                                    <p class="text-sm text-gray-500">Ничего не найдено</p>
+                                </div>
+                            </div>
+
+                            <!-- Popular Searches -->
                             <div class="flex items-center gap-2 mb-3">
                                 <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
@@ -190,7 +309,12 @@ onUnmounted(() => {
                         <Link
                             v-if="!item.children?.length"
                             :href="item.href || '#'"
-                            class="text-sm font-medium text-gray-700 hover:text-emerald-600 transition-colors"
+                            :class="[
+                                'text-sm font-medium transition-colors',
+                                isActiveLink(item.href)
+                                    ? 'text-emerald-600 font-semibold'
+                                    : 'text-gray-700 hover:text-emerald-600'
+                            ]"
                             :target="item.newTab ? '_blank' : null"
                         >
                             {{ item.label }}
@@ -224,7 +348,12 @@ onUnmounted(() => {
                                         v-for="child in item.children"
                                         :key="child.label"
                                         :href="child.href || '#'"
-                                        class="block w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+                                        :class="[
+                                            'block w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                                            isActiveLink(child.href)
+                                                ? 'bg-emerald-100 text-emerald-700 font-semibold'
+                                                : 'text-gray-700 hover:bg-emerald-50 hover:text-emerald-700'
+                                        ]"
                                         :target="child.newTab ? '_blank' : null"
                                     >
                                         {{ child.label }}
@@ -282,6 +411,67 @@ onUnmounted(() => {
                             v-if="searchFocused"
                             class="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 z-50"
                         >
+                            <!-- Search Results Mobile -->
+                            <div v-if="searchResults.length > 0" class="mb-4">
+                                <h3 class="text-sm font-bold text-gray-900 mb-3">Результаты</h3>
+                                <div class="space-y-2 max-h-80 overflow-y-auto">
+                                    <button
+                                        v-for="product in searchResults"
+                                        :key="product.id"
+                                        @click="handleProductClick(product)"
+                                        class="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                                    >
+                                        <img
+                                            v-if="product.image"
+                                            :src="product.image"
+                                            :alt="product.name"
+                                            class="w-12 h-12 object-cover rounded-lg flex-shrink-0"
+                                        />
+                                        <div v-else class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <div class="font-medium text-sm text-gray-900 truncate">{{ product.name }}</div>
+                                            <div v-if="product.brand" class="text-xs text-emerald-600">{{ product.brand }}</div>
+                                            <div v-if="product.price" class="text-sm font-bold text-gray-900 mt-0.5">
+                                                {{ Number(product.price).toLocaleString('ru-RU') }} ₽
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div class="mt-3 pt-3 border-t border-gray-200">
+                                    <button
+                                        @click="viewAllResults"
+                                        class="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+                                    >
+                                        Все результаты →
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Loading State Mobile -->
+                            <div v-else-if="isSearching" class="mb-4">
+                                <div class="flex items-center justify-center py-6">
+                                    <svg class="animate-spin h-6 w-6 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- No Results Mobile -->
+                            <div v-else-if="searchQuery.trim().length >= 2 && searchResults.length === 0 && !isSearching" class="mb-4">
+                                <div class="text-center py-4">
+                                    <svg class="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                    </svg>
+                                    <p class="text-sm text-gray-500">Ничего не найдено</p>
+                                </div>
+                            </div>
+
+                            <!-- Popular Searches Mobile -->
                             <div class="flex items-center gap-2 mb-3">
                                 <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>

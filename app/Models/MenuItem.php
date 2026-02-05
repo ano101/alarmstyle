@@ -53,9 +53,9 @@ class MenuItem extends Model
         return match ($this->type) {
             'group' => null, // вкладка, не ссылка
             'external_url' => $this->url ?: null,
-            'internal_path' => $this->path
-                ? (str_starts_with($this->path, '/') ? $this->path : '/'.$this->path)
-                : null,
+            'internal_path' => $this->path === ''
+                ? '/'
+                : ($this->path ? (str_starts_with($this->path, '/') ? $this->path : '/'.$this->path) : null),
             default => null,
         };
     }

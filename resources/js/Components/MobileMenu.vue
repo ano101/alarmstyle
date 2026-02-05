@@ -13,6 +13,18 @@ const settings = computed(() => page.props.settings ?? {})
 const contacts = computed(() => settings.value.contacts ?? {})
 const menuItems = computed(() => page.props.menus?.mob_menu ?? [])
 
+// Проверка активного пункта меню
+const isActiveLink = (href) => {
+    if (!href) return false
+    const currentPath = page.url
+    // Для главной страницы
+    if (href === '/') {
+        return currentPath === '/'
+    }
+    // Для остальных страниц
+    return currentPath.startsWith(href)
+}
+
 const close = () => {
     emit('update:open', false)
 }
@@ -143,15 +155,43 @@ const openCallback = () => {
 
             <!-- Navigation -->
             <nav class="p-6 space-y-2">
-                <Link
-                    v-for="item in menuItems"
-                    :key="item.label"
-                    :href="item.href"
-                    @click="close"
-                    class="flex items-center w-full text-left px-6 py-4 rounded-2xl font-medium transition-all duration-200 text-gray-700 hover:bg-white hover:shadow-md"
-                >
-                    {{ item.label }}
-                </Link>
+                <template v-for="item in menuItems" :key="item.label">
+                    <!-- Menu item with children (group) -->
+                    <div v-if="item.children && item.children.length > 0" class="space-y-1">
+                        <div class="px-6 py-3 text-sm font-semibold text-gray-500 uppercase tracking-wider">
+                            {{ item.label }}
+                        </div>
+                        <Link
+                            v-for="child in item.children"
+                            :key="child.label"
+                            :href="child.href"
+                            @click="close"
+                            :class="[
+                                'flex items-center w-full text-left px-6 py-4 rounded-2xl font-medium transition-all duration-200',
+                                isActiveLink(child.href)
+                                    ? 'bg-emerald-100 text-emerald-700 font-semibold shadow-sm'
+                                    : 'text-gray-700 hover:bg-white hover:shadow-md'
+                            ]"
+                        >
+                            {{ child.label }}
+                        </Link>
+                    </div>
+
+                    <!-- Regular menu item (link) -->
+                    <Link
+                        v-else
+                        :href="item.href"
+                        @click="close"
+                        :class="[
+                            'flex items-center w-full text-left px-6 py-4 rounded-2xl font-medium transition-all duration-200',
+                            isActiveLink(item.href)
+                                ? 'bg-emerald-100 text-emerald-700 font-semibold shadow-sm'
+                                : 'text-gray-700 hover:bg-white hover:shadow-md'
+                        ]"
+                    >
+                        {{ item.label }}
+                    </Link>
+                </template>
 
                 <button
                     @click="openCallback"

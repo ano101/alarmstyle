@@ -19,7 +19,22 @@ class PageResource extends Resource
 {
     protected static ?string $model = Page::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
+
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $navigationLabel = 'Страницы';
+
+    protected static ?string $modelLabel = 'страница';
+
+    protected static ?string $pluralModelLabel = 'Страницы';
+
+    protected static ?string $recordTitleAttribute = 'title';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Контент';
+    }
 
     public static function form(Schema $schema): Schema
     {

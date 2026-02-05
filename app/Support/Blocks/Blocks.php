@@ -2,6 +2,8 @@
 
 namespace App\Support\Blocks;
 
+use App\Support\Blocks\Definitions\AboutBlock;
+use App\Support\Blocks\Definitions\ContactBlock;
 use App\Support\Blocks\Definitions\FeaturesBlock;
 use App\Support\Blocks\Definitions\HeadingBlock;
 use App\Support\Blocks\Definitions\HeroBlock;
@@ -24,6 +26,8 @@ class Blocks
         HeroBlock::class,
         OurServicesBlock::class,
         FeaturesBlock::class,
+        ContactBlock::class,
+        AboutBlock::class,
     ];
 
     public static function builder(string $field = 'blocks'): Builder

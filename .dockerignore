@@ -1,0 +1,61 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# CI/CD
+.github
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# Development
+.env.example
+.env.testing
+compose.yaml
+phpunit.xml
+tests/
+.phpunit.cache
+.phpunit.result.cache
+
+# IDE
+.vscode
+.idea
+.fleet
+.phpactor.json
+.zed
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build artifacts (will be built in Docker)
+public/build/
+public/hot/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Storage (mounted as volume)
+storage/framework/cache/**
+storage/framework/sessions/**
+storage/framework/views/**
+storage/logs/**
+!storage/framework/.gitignore
+!storage/framework/cache/.gitignore
+!storage/framework/sessions/.gitignore
+!storage/framework/views/.gitignore
+!storage/logs/.gitignore
+
+# Vendor (will be installed in Docker)
+vendor/
+
+# Misc
+*.log
+auth.json
+.phpstorm.meta.php
+_ide_helper.php

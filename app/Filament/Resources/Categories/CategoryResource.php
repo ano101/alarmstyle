@@ -20,9 +20,22 @@ class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
 
-    protected static ?string $recordTitleAttribute = 'Категория';
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationLabel = 'Категории';
+
+    protected static ?string $modelLabel = 'категория';
+
+    protected static ?string $pluralModelLabel = 'Категории';
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Каталог';
+    }
 
     public static function form(Schema $schema): Schema
     {

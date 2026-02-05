@@ -1,54 +1,241 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# AlarmStyle
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?style=flat&logo=laravel)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.5-777BB4?style=flat&logo=php)](https://php.net)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker)](https://docker.com)
+[![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?style=flat&logo=github-actions)](https://github.com/features/actions)
 
-## About Laravel
+Современная платформа электронной коммерции для продажи товаров безопасности, построенная на Laravel 12.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Технологический стек
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Backend**: Laravel 12 (PHP 8.5)
+- **Frontend**: Inertia.js + Vue 3 + Tailwind CSS 4
+- **Admin Panel**: Filament 4
+- **Database**: MySQL 8.4
+- **Cache & Queues**: Redis
+- **Search**: Meilisearch (Laravel Scout)
+- **Queue Management**: Laravel Horizon
+- **Container**: Docker + Docker Compose
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 📋 Возможности
 
-## Learning Laravel
+- 🛍️ Полнофункциональный интернет-магазин
+- 📦 Управление каталогом продуктов с атрибутами
+- 🔍 Быстрый полнотекстовый поиск (Meilisearch)
+- 📊 Административная панель (Filament)
+- 🎨 Современный responsive UI (Vue 3 + Tailwind)
+- ⚡ Server-Side Rendering (SSR) с Inertia
+- 📱 Адаптивный дизайн
+- 🔄 Фоновая обработка задач (Horizon)
+- 📈 SEO оптимизация
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 🏃 Быстрый старт
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Локальная разработка (Laravel Sail)
 
-## Laravel Sponsors
+```bash
+# Клонирование репозитория
+git clone https://github.com/your-username/alarmstyle.git
+cd alarmstyle
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Установка зависимостей (первый раз без Sail)
+composer install
+npm install
 
-### Premium Partners
+# Настройка окружения
+cp .env.example .env
+php artisan key:generate
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# Запуск через Sail
+vendor/bin/sail up -d
 
-## Contributing
+# Миграции и сиды
+vendor/bin/sail artisan migrate --seed
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Сборка фронтенда
+vendor/bin/sail npm run dev
+```
 
-## Code of Conduct
+Приложение будет доступно по адресу: http://localhost
+
+### Production деплой
+
+Подробная инструкция: [QUICKSTART.md](QUICKSTART.md)
+
+```bash
+# Быстрый старт на production сервере
+docker compose -f compose.prod.yaml up -d --build
+docker compose -f compose.prod.yaml exec app php artisan migrate --force
+
+# Или используйте скрипт деплоя
+./deploy.sh
+```
+
+## 📚 Документация
+
+- [Быстрый старт (Production)](QUICKSTART.md) - Пошаговая инструкция для запуска на production
+- [Полная документация деплоя](DEPLOYMENT.md) - Подробное руководство по настройке и обслуживанию
+- [GitHub Actions секреты](.github/SECRETS.md) - Настройка автоматического деплоя
+
+### Дополнительная документация
+
+- [Поиск](docs/SEARCH.md) - Настройка и работа с Meilisearch
+- [Атрибуты](docs/ATTRIBUTE_MAPPING.md) - Система атрибутов продуктов
+- [Популярные поиски](docs/POPULAR_SEARCHES.md) - Управление популярными запросами
+- [Редиректы](docs/REDIRECTS.md) - Управление редиректами
+
+## 🛠️ Полезные команды
+
+### Локальная разработка
+
+```bash
+# Запуск окружения
+vendor/bin/sail up -d
+
+# Остановка
+vendor/bin/sail stop
+
+# Запуск тестов
+vendor/bin/sail artisan test
+
+# Форматирование кода
+vendor/bin/sail bin pint
+
+# Открыть в браузере
+vendor/bin/sail open
+```
+
+### Production (используйте Makefile)
+
+```bash
+make help           # Показать все команды
+make prod-up        # Запустить production
+make prod-logs      # Показать логи
+make monitor        # Открыть dashboard мониторинга
+make backup         # Создать бэкап базы данных
+make deploy         # Деплой приложения
+make optimize       # Оптимизировать приложение
+```
+
+## 🔧 Конфигурация
+
+### Переменные окружения
+
+Основные переменные для настройки:
+
+```env
+APP_NAME=AlarmStyle
+APP_ENV=production
+APP_URL=https://yourdomain.com
+
+DB_DATABASE=alarmstyle
+DB_USERNAME=alarmstyle
+DB_PASSWORD=secure_password
+
+REDIS_PASSWORD=secure_redis_password
+MEILISEARCH_KEY=secure_meilisearch_key
+```
+
+Полный пример: [.env.production.example](.env.production.example)
+
+## 🧪 Тестирование
+
+```bash
+# Запуск всех тестов
+vendor/bin/sail artisan test
+
+# Запуск конкретного теста
+vendor/bin/sail artisan test --filter=TestName
+
+# С coverage
+vendor/bin/sail artisan test --coverage
+```
+
+## 📊 Мониторинг
+
+### Horizon Dashboard
+Управление очередями: `/horizon`
+
+### Health Check
+Проверка работоспособности: `/health`
+
+### Мониторинг через CLI
+```bash
+./monitor.sh          # Полный dashboard
+./monitor.sh health   # Health check всех сервисов
+./monitor.sh horizon  # Статус Horizon
+./monitor.sh logs     # Просмотр логов
+```
+
+## 🚢 CI/CD
+
+Проект использует GitHub Actions для автоматического тестирования и деплоя:
+
+- **Tests & Code Quality** - Запускается при каждом push/PR
+- **Deploy to Production** - Автоматический деплой при push в `main`
+
+Настройка: [.github/workflows/](.github/workflows/)
+
+## 🤝 Разработка
+
+### Структура проекта
+
+```
+app/
+├── Filament/        # Административная панель
+├── Http/            # Controllers, Middleware, Requests
+├── Models/          # Eloquent модели
+├── Services/        # Бизнес-логика
+└── Support/         # Вспомогательные классы
+
+resources/
+├── js/              # Vue компоненты и логика
+│   └── Pages/       # Inertia страницы
+├── views/           # Blade шаблоны
+└── css/             # Стили
+
+docker/              # Production Docker конфигурация
+├── nginx/           # Nginx конфигурация
+├── php/             # PHP-FPM настройки
+├── supervisor/      # Supervisor конфигурация
+└── mysql/           # MySQL конфигурация
+```
+
+### Соглашения о коде
+
+- Следуйте [PSR-12](https://www.php-fig.org/psr/psr-12/)
+- Используйте Laravel Pint для форматирования
+- Пишите тесты для нового функционала
+- Используйте meaningful commit messages
+
+## 📝 License
+
+Проект использует открытую лицензию. Детали в файле LICENSE.
+
+## 🆘 Поддержка
+
+При возникновении проблем:
+
+1. Проверьте [DEPLOYMENT.md](DEPLOYMENT.md) для troubleshooting
+2. Проверьте логи: `./monitor.sh logs`
+3. Создайте issue в репозитории
 
 In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+
+## Meilisearch Синхронизация
+
+Для синхронизации настроек индексов Meilisearch и импорта данных используйте команду:
+
+```bash
+vendor/bin/sail artisan meilisearch:sync
+```
+
+Доступные опции:
+- `--no-import` - только синхронизация настроек без импорта данных
+- `--flush` - полная очистка индекса перед импортом
+
+Подробную документацию смотрите в [docs/MEILISEARCH_SYNC.md](docs/MEILISEARCH_SYNC.md)
 
 ## Security Vulnerabilities
 

@@ -141,8 +141,7 @@ return [
         'key' => env('MEILISEARCH_KEY', null),
 
         'index-settings' => [
-            // имя индекса = searchableAs() у модели Product
-            'products' => [
+            \App\Models\Product::class => [
                 'filterableAttributes' => [
                     'category_ids',
                     'main_category_id',

@@ -9,6 +9,7 @@ use App\Models\Page;
 use App\Models\Product;
 use Filament\Forms\Components\MorphToSelect;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class SlugForm
@@ -17,21 +18,43 @@ class SlugForm
     {
         return $schema
             ->components([
-                MorphToSelect::make('sluggable')
-                    ->types([
-                        MorphToSelect\Type::make(Product::class)
-                            ->titleAttribute('name'),
-                        MorphToSelect\Type::make(Category::class)
-                            ->titleAttribute('name'),
-                        MorphToSelect\Type::make(AttributeValue::class)
-                            ->titleAttribute('value'),
-                        MorphToSelect\Type::make(Attribute::class)
-                            ->titleAttribute('name'),
-                        MorphToSelect\Type::make(Page::class)
-                            ->titleAttribute('title'),
-                    ]),
-                TextInput::make('slug')
-                    ->required(),
+                Section::make('URL Slug')
+                    ->description('Создайте или отредактируйте URL адрес для сущности')
+                    ->schema([
+                        MorphToSelect::make('sluggable')
+                            ->label('Связанная сущность')
+                            ->types([
+                                MorphToSelect\Type::make(Product::class)
+                                    ->titleAttribute('name')
+                                    ->label('Товар'),
+                                MorphToSelect\Type::make(Category::class)
+                                    ->titleAttribute('name')
+                                    ->label('Категория'),
+                                MorphToSelect\Type::make(AttributeValue::class)
+                                    ->titleAttribute('value')
+                                    ->label('Значение атрибута'),
+                                MorphToSelect\Type::make(Attribute::class)
+                                    ->titleAttribute('name')
+                                    ->label('Атрибут'),
+                                MorphToSelect\Type::make(Page::class)
+                                    ->titleAttribute('title')
+                                    ->label('Страница'),
+                            ])
+                            ->searchable()
+                            ->required()
+                            ->helperText('Выберите объект, для которого создается slug')
+                            ->columnSpanFull(),
+
+                        TextInput::make('slug')
+                            ->label('URL Slug')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->maxLength(255)
+                            ->placeholder('o-kompanii')
+                            ->helperText('Только латинские буквы, цифры и дефисы. Пример: tovary-dlya-doma')
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(1),
             ]);
     }
 }

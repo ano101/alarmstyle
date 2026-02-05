@@ -18,9 +18,22 @@ class SlugResource extends Resource
 {
     protected static ?string $model = Slug::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedLink;
 
-    protected static ?string $recordTitleAttribute = 'Slug';
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $navigationLabel = 'URL слаги';
+
+    protected static ?string $modelLabel = 'слаг';
+
+    protected static ?string $pluralModelLabel = 'Слаги';
+
+    protected static ?string $recordTitleAttribute = 'slug';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'SEO';
+    }
 
     public static function form(Schema $schema): Schema
     {

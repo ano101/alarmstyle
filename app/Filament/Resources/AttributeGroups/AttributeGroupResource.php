@@ -18,7 +18,9 @@ class AttributeGroupResource extends Resource
 {
     protected static ?string $model = AttributeGroup::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFolderOpen;
+
+    protected static ?int $navigationSort = 5;
 
     // лучше привязать к реальному полю модели
     protected static ?string $recordTitleAttribute = 'name';

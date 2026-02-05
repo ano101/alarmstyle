@@ -20,7 +20,22 @@ class CategoryLandingResource extends Resource
 {
     protected static ?string $model = CategoryLanding::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRocketLaunch;
+
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $navigationLabel = 'Посадочные страницы';
+
+    protected static ?string $modelLabel = 'посадочная страница';
+
+    protected static ?string $pluralModelLabel = 'Посадочные страницы';
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Каталог';
+    }
 
     public static function form(Schema $schema): Schema
     {

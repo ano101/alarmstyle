@@ -50,6 +50,13 @@ class Product extends Model
 
     public function toSearchableArray(): array
     {
+        $mapping = Setting::getData('product_attribute_mapping', [
+            'brand' => null,
+            'gps' => null,
+            'gsm' => null,
+            'auto_start' => null,
+        ]);
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -57,10 +64,12 @@ class Product extends Model
             'category_ids' => $this->categories->pluck('id')->values()->all(),
             'main_category_id' => $this->mainCategory()->first()?->id,
             'price' => (float) optional($this->basePrice)->price,
-            'brand' => $this->attributeValues?->firstWhere('attribute_id', 58)?->value ?? '',
-            'gps' => $this->attributeValues?->firstWhere('attribute_id', 56)?->value !== 'Нет',
-            'gsm' => $this->attributeValues?->firstWhere('attribute_id', 55)?->value !== 'Нет',
-            'auto' => $this->attributeValues?->firstWhere('attribute_id', 31)?->value !== 'Нет',
+            'brand' => $mapping['brand']
+                ? ($this->attributeValues?->firstWhere('attribute_id', $mapping['brand'])?->value ?? '')
+                : '',
+            'gps' => $mapping['gps'] && $this->attributeValues?->firstWhere('attribute_id', $mapping['gps'])?->value !== 'Нет',
+            'gsm' => $mapping['gsm'] && $this->attributeValues?->firstWhere('attribute_id', $mapping['gsm'])?->value !== 'Нет',
+            'auto' => $mapping['auto_start'] && $this->attributeValues?->firstWhere('attribute_id', $mapping['auto_start'])?->value !== 'Нет',
             // массив ID выбранных значений атрибутов
             'attribute_value_ids' => $this->attributeValues->pluck('id')->values()->all(),
             'popular' => (int) $this->popular,

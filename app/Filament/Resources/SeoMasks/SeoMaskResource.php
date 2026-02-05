@@ -18,7 +18,22 @@ class SeoMaskResource extends Resource
 {
     protected static ?string $model = SeoMask::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquare3Stack3d;
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationLabel = 'SEO маски';
+
+    protected static ?string $modelLabel = 'SEO маска';
+
+    protected static ?string $pluralModelLabel = 'SEO маски';
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return 'SEO';
+    }
 
     public static function form(Schema $schema): Schema
     {

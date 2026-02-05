@@ -6,6 +6,7 @@ use App\Facades\Seo;
 use App\Models\Page;
 use App\Models\Slug;
 use App\Support\Blocks\BlocksResolver;
+use App\Support\Breadcrumbs\Breadcrumbs;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -44,12 +45,19 @@ class PageController extends Controller
 
         $blocks = $blocksResolver->resolve($page->blocksForRender ?? $page->blocks ?? []);
 
+        // Формируем хлебные крошки только для НЕ главной страницы
+        $breadcrumbs = null;
+        if (! $page->is_homepage) {
+            $breadcrumbs = Breadcrumbs::page($page);
+        }
+
         return Inertia::render('Page/Show', [
             'page' => [
                 'title' => $page->title,
                 'slug' => $page->slug,
                 'blocks' => $blocks,
             ],
+            'breadcrumbs' => $breadcrumbs,
         ]);
     }
 }

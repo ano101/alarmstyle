@@ -6,11 +6,16 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 
+// API Routes
+Route::get('/api/search', [\App\Http\Controllers\Api\SearchController::class, 'search'])
+    ->name('api.search');
+
 Route::get('/category/{path?}', [\App\Http\Controllers\CatalogController::class, 'index'])
     ->where('path', '.*')
     ->name('catalog');
 
-Route::get('/product/{slug}', [\App\Http\Controllers\ProductController::class, 'index']);
+Route::get('/product/{slug}', [\App\Http\Controllers\ProductController::class, 'index'])
+    ->name('product.show');
 
 Route::get('/img/{preset}/{path}', ImageController::class)
     ->where('path', '.*')   // разрешаем вложенные папки

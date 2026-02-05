@@ -18,7 +18,9 @@ class CategoryRequiredAttributeResource extends Resource
 {
     protected static ?string $model = CategoryRequiredAttribute::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedExclamationTriangle;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCheckCircle;
+
+    protected static ?int $navigationSort = 7;
 
     protected static ?string $recordTitleAttribute = 'id';
 
