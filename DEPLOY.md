@@ -47,6 +47,10 @@ cd alarmstyle
 ```bash
 cp .env.production.example .env
 nano .env
+
+# ВАЖНО: Установите UID и GID вашего пользователя для правильной работы с правами доступа
+echo "UID=$(id -u)" >> .env
+echo "GID=$(id -g)" >> .env
 ```
 
 **Обязательно настроить:**
@@ -424,9 +428,54 @@ docker compose -f compose.prod.yaml up -d
 ```
 
 ### Проблемы с правами
+
+#### Permission denied в storage/logs или bootstrap/cache
+
+Начиная с версии с PHP 8.5, приложение использует UID/GID пользователя хоста для запуска контейнеров.
+
+**Решение:**
+
+1. Убедитесь, что в `.env` установлены правильные UID и GID:
 ```bash
+echo "UID=$(id -u)" >> .env
+echo "GID=$(id -g)" >> .env
+```
+
+2. Пересоздайте контейнеры:
+```bash
+docker compose -f compose.prod.yaml down
+docker compose -f compose.prod.yaml up -d --build
+```
+
+3. Если проблема сохраняется, исправьте права вручную:
+```bash
+chmod -R 775 storage bootstrap/cache
+```
+
+**Старый способ (не рекомендуется):**
+```bash
+# Работает, но нарушает работу с файлами от имени хост-пользователя
 sudo chown -R www-data:www-data storage bootstrap/cache
 sudo chmod -R 775 storage bootstrap/cache
+```
+
+### PHP 8.5 Deprecation Warnings
+
+Если вы видите предупреждения типа:
+```
+PHP Deprecated: Constant PDO::MYSQL_ATTR_SSL_CA is deprecated since 8.5
+```
+
+Это нормально для PHP 8.5. Приложение уже обновлено для использования новых констант `\Pdo\Mysql::ATTR_SSL_CA`.
+
+Если предупреждения мешают, можно отключить вывод deprecated warnings в `docker/php/php.ini`:
+```ini
+error_reporting = E_ALL & ~E_DEPRECATED
+```
+
+Затем пересобрать образ:
+```bash
+docker compose -f compose.prod.yaml up -d --build
 ```
 
 ### Horizon не работает

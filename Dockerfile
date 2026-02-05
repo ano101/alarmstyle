@@ -60,7 +60,11 @@ RUN chmod -R 755 /var/www/html/storage \
 # Configs
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/app.ini
 COPY docker/php/www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY docker/php/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 EXPOSE 9000
-USER www-data
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["php-fpm"]

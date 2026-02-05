@@ -101,6 +101,21 @@ if [ -f ".env" ]; then
     [ -n "$REDIS_PASSWORD" ] && check_pass "REDIS_PASSWORD is set" || check_warn "REDIS_PASSWORD is not set (recommended)"
     [ -n "$MEILISEARCH_KEY" ] && check_pass "MEILISEARCH_KEY is set" || check_fail "MEILISEARCH_KEY is not set"
 
+    # Check UID/GID for proper file permissions
+    CURRENT_UID=$(id -u)
+    CURRENT_GID=$(id -g)
+    if [ -n "$UID" ] && [ "$UID" = "$CURRENT_UID" ]; then
+        check_pass "UID is set correctly: $UID"
+    else
+        check_warn "UID not set or incorrect. Current UID: $CURRENT_UID. Add to .env: echo 'UID=$CURRENT_UID' >> .env"
+    fi
+
+    if [ -n "$GID" ] && [ "$GID" = "$CURRENT_GID" ]; then
+        check_pass "GID is set correctly: $GID"
+    else
+        check_warn "GID not set or incorrect. Current GID: $CURRENT_GID. Add to .env: echo 'GID=$CURRENT_GID' >> .env"
+    fi
+
     # Check if APP_ENV is production
     if [ "$APP_ENV" = "production" ]; then
         check_pass "APP_ENV is set to production"
