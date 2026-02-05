@@ -83,8 +83,6 @@ services:
     user: "${UID:-1000}:${GID:-1000}"
     volumes:
       # ✅ public не обязательно, но можно шарить чтобы одинаковая FS (безопасно)
-      - public-data:/var/www/html/public
-
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
     environment:
@@ -128,7 +126,6 @@ services:
     restart: unless-stopped
     user: "${UID:-1000}:${GID:-1000}"
     volumes:
-      - public-data:/var/www/html/public
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
     environment:
