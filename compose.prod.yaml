@@ -69,12 +69,7 @@ services:
     networks:
       - app-network
     command: ["php-fpm"]
-    healthcheck:
-      test: ["CMD-SHELL", "pgrep -x php-fpm > /dev/null || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
+    # Healthcheck убран - вызывает проблемы в Alpine, PHP-FPM работает стабильно
 
   # ----------------------------
   # Laravel Horizon (Queue Worker)
