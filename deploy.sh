@@ -86,6 +86,8 @@ wait_for_app
 # ----------------------------
 # Migrations
 # ----------------------------
+$COMPOSE exec -T app cat .env | grep DB_
+$COMPOSE exec -T app env | grep DB_
 echo -e "${GREEN}📊 Running migrations${NC}"
 $COMPOSE exec -T app php artisan migrate --force
 
