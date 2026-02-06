@@ -228,11 +228,5 @@ networks:
 
 volumes:
   mysql-data:
-    name: alarmstyle-mysql-data
-    external: true
   redis-data:
-    name: alarmstyle-redis-data
-    external: true
   meilisearch-data:
-    name: alarmstyle-meilisearch-data
-    external: true
