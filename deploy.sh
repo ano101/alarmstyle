@@ -9,35 +9,26 @@ PROJECT="alarmstyle-prod"
 COMPOSE="docker compose -f compose.prod.yaml"
 
 # ----------------------------
-# Wait for app healthcheck
+# Wait for app to start
 # ----------------------------
 wait_for_app() {
-  echo -e "${YELLOW}⏳ Waiting for app to become healthy...${NC}"
+  echo -e "${YELLOW}⏳ Waiting for app container to start...${NC}"
 
-  MAX_ATTEMPTS=30
+  MAX_ATTEMPTS=15
   ATTEMPT=0
 
   while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
     ATTEMPT=$((ATTEMPT+1))
 
-    # Проверяем состояние контейнера
-    HEALTH=$(docker inspect -f '{{.State.Health.Status}}' ${PROJECT}-app-1 2>/dev/null)
     RUNNING=$(docker inspect -f '{{.State.Running}}' ${PROJECT}-app-1 2>/dev/null)
 
-    # Если healthy - выходим
-    if [ "$HEALTH" = "healthy" ]; then
-      echo -e "${GREEN}✅ App container is healthy${NC}"
+    if [ "$RUNNING" = "true" ]; then
+      echo -e "${GREEN}✅ App container is running${NC}"
+      sleep 3
       return 0
     fi
 
-    # Если нет healthcheck, но контейнер запущен - выходим
-    if [ -z "$HEALTH" ] && [ "$RUNNING" = "true" ]; then
-      echo -e "${GREEN}✅ App container is running (no healthcheck)${NC}"
-      sleep 5
-      return 0
-    fi
-
-    echo "Waiting... health=$HEALTH running=$RUNNING (attempt $ATTEMPT/$MAX_ATTEMPTS)"
+    echo "Waiting for app container... (attempt $ATTEMPT/$MAX_ATTEMPTS)"
     sleep 2
   done
 
@@ -66,11 +57,25 @@ chmod +x copy-public.sh
 ./copy-public.sh
 
 # ----------------------------
-# FULL recreate containers
+# Ensure databases are running (НЕ пересоздаём их!)
 # ----------------------------
-echo -e "${GREEN}🔄 Recreating all containers...${NC}"
-$COMPOSE down
-$COMPOSE up -d --force-recreate
+echo -e "${GREEN}📦 Ensuring databases are running...${NC}"
+$COMPOSE up -d mysql redis meilisearch
+
+# Ждём пока databases станут healthy
+echo -e "${YELLOW}⏳ Waiting for databases...${NC}"
+sleep 10
+
+# ----------------------------
+# Recreate app containers (keep databases running!)
+# ----------------------------
+echo -e "${GREEN}🔄 Recreating app containers...${NC}"
+# Останавливаем только app-related контейнеры (НЕ mysql, redis, meilisearch!)
+$COMPOSE stop app horizon scheduler ssr nginx || true
+$COMPOSE rm -f app horizon scheduler ssr nginx || true
+
+# Запускаем всё (databases уже запущены, app контейнеры пересоздадутся)
+$COMPOSE up -d
 
 # ----------------------------
 # Wait for app
