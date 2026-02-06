@@ -9,7 +9,7 @@ echo "🚀 Deploy started for $PROJECT"
 # 1️⃣ Обновляем код
 echo "📦 Updating code"
 git fetch origin
-git reset --hard origin/main
+git reset --hard origin/master
 
 # 2️⃣ Логинимся в GHCR
 echo "🔐 Login to GHCR"
