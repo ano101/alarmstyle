@@ -31,30 +31,10 @@ services:
     restart: unless-stopped
     user: "${UID:-1000}:${GID:-1000}"
     volumes:
-
+      - ./.env.env:/var/www/html/.env
       # persistent runtime dirs
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
-    environment:
-      - APP_ENV=${APP_ENV:-production}
-      - APP_DEBUG=${APP_DEBUG:-false}
-      - APP_KEY=${APP_KEY}
-      - APP_URL=${APP_URL}
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - REDIS_HOST=redis
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
-      - REDIS_PORT=6379
-      - MEILISEARCH_HOST=http://meilisearch:7700
-      - MEILISEARCH_KEY=${MEILISEARCH_KEY}
-      - QUEUE_CONNECTION=redis
-      - SESSION_DRIVER=redis
-      - CACHE_STORE=redis
-      - INERTIA_SSR_ENABLED=true
-      - INERTIA_SSR_URL=http://ssr:13714
     depends_on:
       mysql:
         condition: service_healthy
@@ -75,27 +55,10 @@ services:
     restart: unless-stopped
     user: "${UID:-1000}:${GID:-1000}"
     volumes:
+      - ./.env.env:/var/www/html/.env
       # ✅ public не обязательно, но можно шарить чтобы одинаковая FS (безопасно)
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
-    environment:
-      - APP_ENV=${APP_ENV:-production}
-      - APP_DEBUG=${APP_DEBUG:-false}
-      - APP_KEY=${APP_KEY}
-      - APP_URL=${APP_URL}
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - REDIS_HOST=redis
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
-      - REDIS_PORT=6379
-      - MEILISEARCH_HOST=http://meilisearch:7700
-      - MEILISEARCH_KEY=${MEILISEARCH_KEY}
-      - QUEUE_CONNECTION=redis
-      - SESSION_DRIVER=redis
-      - CACHE_STORE=redis
     depends_on:
       mysql:
         condition: service_healthy
@@ -117,24 +80,7 @@ services:
     volumes:
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
-    environment:
-      - APP_ENV=${APP_ENV:-production}
-      - APP_DEBUG=${APP_DEBUG:-false}
-      - APP_KEY=${APP_KEY}
-      - APP_URL=${APP_URL}
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - REDIS_HOST=redis
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
-      - REDIS_PORT=6379
-      - MEILISEARCH_HOST=http://meilisearch:7700
-      - MEILISEARCH_KEY=${MEILISEARCH_KEY}
-      - QUEUE_CONNECTION=redis
-      - SESSION_DRIVER=redis
-      - CACHE_STORE=redis
+      - ./.env.env:/var/www/html/.env
     depends_on:
       mysql:
         condition: service_healthy
