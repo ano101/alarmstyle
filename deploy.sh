@@ -6,7 +6,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 PROJECT="alarmstyle-prod"
-COMPOSE="docker compose -f compose.prod.yaml"
+COMPOSE="docker compose -p $PROJECT -f compose.prod.yaml"
 
 # ----------------------------
 # Wait for app to start
@@ -57,10 +57,19 @@ chmod +x copy-public.sh
 ./copy-public.sh
 
 # ----------------------------
+# Ensure volumes exist (создаём если нет)
+# ----------------------------
+echo -e "${GREEN}📦 Ensuring volumes exist...${NC}"
+docker volume create alarmstyle-mysql-data 2>/dev/null || true
+docker volume create alarmstyle-redis-data 2>/dev/null || true
+docker volume create alarmstyle-meilisearch-data 2>/dev/null || true
+
+# ----------------------------
 # Ensure databases are running (НЕ пересоздаём их!)
 # ----------------------------
 echo -e "${GREEN}📦 Ensuring databases are running...${NC}"
-$COMPOSE up -d mysql redis meilisearch
+# ВАЖНО: --no-recreate чтобы НЕ пересоздавать контейнеры (иначе потеряем данные!)
+$COMPOSE up -d --no-recreate mysql redis meilisearch
 
 # Ждём пока databases станут healthy
 echo -e "${YELLOW}⏳ Waiting for databases...${NC}"
