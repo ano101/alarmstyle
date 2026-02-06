@@ -244,8 +244,11 @@ networks:
 
 volumes:
   mysql-data:
-    driver: local
+    name: alarmstyle-mysql-data
+    external: false
   redis-data:
-    driver: local
+    name: alarmstyle-redis-data
+    external: false
   meilisearch-data:
-    driver: local
+    name: alarmstyle-meilisearch-data
+    external: false
