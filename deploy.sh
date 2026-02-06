@@ -57,14 +57,6 @@ chmod +x copy-public.sh
 ./copy-public.sh
 
 # ----------------------------
-# Ensure volumes exist (создаём если нет)
-# ----------------------------
-echo -e "${GREEN}📦 Ensuring volumes exist...${NC}"
-docker volume create alarmstyle-mysql-data 2>/dev/null || true
-docker volume create alarmstyle-redis-data 2>/dev/null || true
-docker volume create alarmstyle-meilisearch-data 2>/dev/null || true
-
-# ----------------------------
 # Ensure databases are running (НЕ пересоздаём их!)
 # ----------------------------
 echo -e "${GREEN}📦 Ensuring databases are running...${NC}"
