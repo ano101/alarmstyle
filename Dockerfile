@@ -56,10 +56,12 @@ ENV APP_KEY=base64:temporary_build_key_only_do_not_use_in_prod=
 # Build steps
 # ----------------------------
 RUN composer dump-autoload --optimize \
- && php artisan ziggy:generate resources/js/ziggy.js \
  && php artisan vendor:publish --tag=livewire:assets --force \
  && php artisan filament:assets \
  && npm run build
+
+# ❗ Ziggy НЕ генерируется здесь, потому что APP_URL неизвестен на этапе сборки
+# Ziggy генерируется при деплое в deploy.sh, когда уже известен реальный APP_URL
 
 # ❗ НИЧЕГО не чистим — runtime сам лёгкий
 
