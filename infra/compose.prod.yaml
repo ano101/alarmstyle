@@ -1,13 +1,9 @@
-version: "3.9"
-
-name: alarmstyle-prod
-
 services:
   app:
     image: ghcr.io/ano101/alarmstyle:latest
     restart: always
     env_file:
-      - ../.env
+      - .env
     volumes:
       - app-storage:/var/www/html/storage
     depends_on:
@@ -31,7 +27,7 @@ services:
     restart: always
     command: php artisan horizon
     env_file:
-      - ../.env
+      - .env
     volumes:
       - app-storage:/var/www/html/storage
     depends_on:
@@ -43,7 +39,7 @@ services:
     restart: always
     command: php artisan schedule:work
     env_file:
-      - ../.env
+      - .env
     volumes:
       - app-storage:/var/www/html/storage
     depends_on:
@@ -54,8 +50,10 @@ services:
     container_name: alarmstyle-ssr
     restart: always
     env_file:
-      - ../.env
-    command: ["npm", "run", "ssr"]
+      - .env
+    command: [ "npm", "run", "ssr" ]
+    depends_on:
+      - app
 
   mysql:
     image: mysql:8.0
@@ -76,7 +74,7 @@ services:
     image: getmeili/meilisearch:v1.6
     restart: always
     env_file:
-      - ../.env
+      - .env
     volumes:
       - meili-data:/meili_data
 

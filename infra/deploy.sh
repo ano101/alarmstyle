@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+docker compose -p alarmstyle-prod down --remove-orphans || true
 
 PROJECT="alarmstyle-prod"
 COMPOSE="docker compose -p $PROJECT -f compose.prod.yaml"
