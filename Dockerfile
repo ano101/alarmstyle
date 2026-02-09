@@ -78,7 +78,7 @@ RUN apk add --no-cache \
     bash curl \
     mysql-client \
     nodejs \
-    libpng libjpeg-turbo freetype \
+    libpng libjpeg-turbo freetype libwebp \
     libzip oniguruma icu-libs libsodium \
   && rm -rf /var/cache/apk/*
 
