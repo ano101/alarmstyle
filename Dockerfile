@@ -56,7 +56,6 @@ ENV APP_KEY=base64:temporary_build_key_only_do_not_use_in_prod=
 # Build steps
 # ----------------------------
 RUN composer dump-autoload --optimize \
- && php artisan ziggy:generate resources/js/ziggy.js \
  && php artisan vendor:publish --tag=livewire:assets --force \
  && php artisan filament:assets \
  && npm run build
@@ -78,7 +77,7 @@ WORKDIR /var/www/html
 RUN apk add --no-cache \
     bash curl \
     mysql-client \
-    nodejs npm \
+    nodejs \
     libpng libjpeg-turbo freetype \
     libzip oniguruma icu-libs libsodium \
   && rm -rf /var/cache/apk/*
