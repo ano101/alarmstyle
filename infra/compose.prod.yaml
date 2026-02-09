@@ -1,0 +1,84 @@
+version: "3.9"
+
+name: alarmstyle-prod
+
+services:
+  app:
+    image: ghcr.io/ano101/alarmstyle:latest
+    restart: always
+    env_file:
+      - ../.env
+    volumes:
+      - app-storage:/var/www/html/storage
+    depends_on:
+      - mysql
+      - redis
+      - meilisearch
+
+  nginx:
+    image: nginx:1.25-alpine
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - app-storage:/var/www/html/storage:ro
+    depends_on:
+      - app
+
+  horizon:
+    image: ghcr.io/ano101/alarmstyle:latest
+    restart: always
+    command: php artisan horizon
+    env_file:
+      - ../.env
+    volumes:
+      - app-storage:/var/www/html/storage
+    depends_on:
+      - app
+      - redis
+
+  scheduler:
+    image: ghcr.io/ano101/alarmstyle:latest
+    restart: always
+    command: php artisan schedule:work
+    env_file:
+      - ../.env
+    volumes:
+      - app-storage:/var/www/html/storage
+    depends_on:
+      - app
+
+  ssr:
+    image: ghcr.io/ano101/alarmstyle-ssr:latest
+    restart: always
+    env_file:
+      - ../.env
+
+  mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.6
+    restart: always
+    env_file:
+      - ../.env
+    volumes:
+      - meili-data:/meili_data
+
+volumes:
+  mysql-data:
+  meili-data:
+  app-storage:
