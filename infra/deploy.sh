@@ -23,9 +23,6 @@ echo "✅ MySQL is ready"
 $COMPOSE exec -T app php artisan migrate --force
 $COMPOSE exec -T app php artisan storage:link
 
-# Генерация Ziggy routes с корректным APP_URL из .env
-echo "🔄 Generating Ziggy routes..."
-$COMPOSE exec -T app php artisan ziggy:generate resources/js/ziggy.js
 
 $COMPOSE exec -T app php artisan optimize:clear
 $COMPOSE exec -T app php artisan optimize
