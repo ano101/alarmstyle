@@ -19,6 +19,5 @@ $COMPOSE exec -T app php artisan optimize:clear
 $COMPOSE exec -T app php artisan optimize
 $COMPOSE exec -T app php artisan horizon:terminate
 
-$COMPOSE restart ssr
 
 echo "✅ Deploy done"

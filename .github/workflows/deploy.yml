@@ -72,10 +72,6 @@ jobs:
             export GITHUB_REPOSITORY="${{ github.repository }}"
             cd ${{ secrets.PROD_APP_PATH }}
 
-            # Обновляем код из репозитория (важно для compose.prod.yaml!)
-            git fetch origin
-            git reset --hard origin/master
-
             # Запускаем деплой
             chmod +x deploy.sh
             ./deploy.sh
