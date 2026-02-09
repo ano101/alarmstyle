@@ -6,6 +6,7 @@ services:
       - .env
     volumes:
       - app-storage:/var/www/html/storage
+      - app-public:/var/www/html/public
     depends_on:
       - mysql
       - redis
@@ -19,6 +20,7 @@ services:
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - app-public:/var/www/html/public:ro
     depends_on:
       - app
 
@@ -82,3 +84,4 @@ volumes:
   mysql-data:
   meili-data:
   app-storage:
+  app-public:
