@@ -51,7 +51,7 @@ services:
     restart: always
     env_file:
       - .env
-    command: [ "npm", "run", "ssr" ]
+    command: [ "php", "artisan", "inertia:start-ssr", "--host=0.0.0.0", "--port=13714" ]
     depends_on:
       - app
 
