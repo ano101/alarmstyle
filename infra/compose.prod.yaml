@@ -21,6 +21,7 @@ services:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
       - app-public:/var/www/html/public:ro
+      - app-storage:/var/www/html/storage:ro
     depends_on:
       - app
 
