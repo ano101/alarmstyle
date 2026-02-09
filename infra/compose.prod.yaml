@@ -50,10 +50,12 @@ services:
       - app
 
   ssr:
-    image: ghcr.io/ano101/alarmstyle-ssr:latest
+    image: ghcr.io/ano101/alarmstyle:latest
+    container_name: alarmstyle-ssr
     restart: always
     env_file:
       - ../.env
+    command: ["npm", "run", "ssr"]
 
   mysql:
     image: mysql:8.0
