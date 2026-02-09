@@ -13,9 +13,9 @@ RUN apk add --no-cache \
     nodejs npm \
     mysql-client \
     $PHPIZE_DEPS \
-    libpng-dev libjpeg-turbo-dev freetype-dev \
+    libpng-dev libjpeg-turbo-dev freetype-dev libwebp-dev \
     libzip-dev oniguruma-dev icu-dev zlib-dev libsodium-dev \
-  && docker-php-ext-configure gd --with-freetype --with-jpeg \
+  && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp \
   && docker-php-ext-install -j$(nproc) \
       pdo_mysql mysqli mbstring exif pcntl bcmath gd zip intl sodium \
   && pecl install redis \
