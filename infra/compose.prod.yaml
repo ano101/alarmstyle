@@ -7,7 +7,7 @@ services:
     image: ghcr.io/ano101/alarmstyle:latest
     restart: always
     env_file:
-      - .env
+      - ../.env
     volumes:
       - app-storage:/var/www/html/storage
     depends_on:
@@ -31,7 +31,7 @@ services:
     restart: always
     command: php artisan horizon
     env_file:
-      - .env
+      - ../.env
     volumes:
       - app-storage:/var/www/html/storage
     depends_on:
@@ -43,7 +43,7 @@ services:
     restart: always
     command: php artisan schedule:work
     env_file:
-      - .env
+      - ../.env
     volumes:
       - app-storage:/var/www/html/storage
     depends_on:
@@ -53,7 +53,7 @@ services:
     image: ghcr.io/ano101/alarmstyle-ssr:latest
     restart: always
     env_file:
-      - .env
+      - ../.env
 
   mysql:
     image: mysql:8.0
@@ -74,7 +74,7 @@ services:
     image: getmeili/meilisearch:v1.6
     restart: always
     env_file:
-      - .env
+      - ../.env
     volumes:
       - meili-data:/meili_data
 
