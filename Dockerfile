@@ -77,7 +77,7 @@ WORKDIR /var/www/html
 RUN apk add --no-cache \
     bash curl \
     mysql-client \
-    nodejs \
+    nodejs npm \
     libpng libjpeg-turbo freetype \
     libzip oniguruma icu-libs libsodium \
   && rm -rf /var/cache/apk/*
