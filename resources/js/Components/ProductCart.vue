@@ -18,7 +18,7 @@ const props = defineProps({
         :initial="{ opacity: 0, y: 20 }"
         :whileInView="{ opacity: 1, y: 0 }"
         :inViewOptions="{ once: true }"
-        class="group bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 hover:shadow-lg hover:border-emerald-500 transition-all duration-300 flex flex-col h-full"
+        class="group bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 hover:shadow-lg hover:border-emerald-500 transition-all duration-300 flex flex-col h-full min-w-0"
     >
         <div class="relative overflow-hidden bg-gray-100 aspect-[4/3]">
             <Link :href="`/product/${product.slug}`" class="block w-full h-full">
@@ -38,10 +38,10 @@ const props = defineProps({
             </div>
         </div>
 
-        <div class="p-3 sm:p-5 flex flex-col flex-1">
-            <div class="text-xs sm:text-sm text-emerald-600 font-medium mb-1">{{ product.brand }}</div>
+        <div class="p-3 sm:p-5 flex flex-col flex-1 min-w-0">
+            <div class="text-xs sm:text-sm text-emerald-600 font-medium mb-1 truncate">{{ product.brand }}</div>
             <Link :href="`/product/${product.slug}`">
-                <h3 class="font-bold text-gray-900 mb-3 sm:mb-4 line-clamp-2 text-base sm:text-lg hover:text-emerald-600 transition-colors duration-200">
+                <h3 class="font-bold text-gray-900 mb-3 sm:mb-4 line-clamp-2 text-base sm:text-lg hover:text-emerald-600 transition-colors duration-200 break-words">
                     {{ product.name }}
                 </h3>
             </Link>
@@ -61,8 +61,8 @@ const props = defineProps({
                 </div>
             </div>
 
-            <div class="mb-3 sm:mb-4">
-                <div class="text-2xl sm:text-3xl font-bold text-gray-900 mb-0.5 sm:mb-1">{{ product.price.toLocaleString() }} ₽</div>
+            <div class="mb-3 sm:mb-4 min-w-0">
+                <div class="text-2xl sm:text-3xl font-bold text-gray-900 mb-0.5 sm:mb-1 break-words">{{ product.price.toLocaleString() }} ₽</div>
                 <div class="text-xs sm:text-sm text-gray-500">с установкой</div>
             </div>
 

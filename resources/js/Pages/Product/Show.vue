@@ -81,26 +81,30 @@ const mainOptions = {
 }
 
 const thumbsOptions = {
-    fixedWidth: 100,
-    fixedHeight: 100,
-    gap: 12,
+    type: 'slide',
+    perPage: 5,
+    perMove: 1,
+    gap: 8,
     rewind: true,
     pagination: false,
-    arrows: false,
+    arrows: true,
     isNavigation: true,
     cover: true,
-
-    // было: focus: 'center',
     focus: 0,
-
-    // было: trimSpace: false,
-    trimSpace: true,
-
-    autoHeight: true,
+    trimSpace: false,
     breakpoints: {
+        1024: {
+            perPage: 4,
+            gap: 8,
+        },
+        768: {
+            perPage: 4,
+            gap: 6,
+        },
         640: {
-            fixedWidth: 70,
-            fixedHeight: 70,
+            perPage: 4,
+            gap: 6,
+            arrows: false,
         },
     },
 }
@@ -185,14 +189,14 @@ onBeforeUnmount(() => {
             </div>
 
             <!-- Thumbnail Gallery -->
-            <div v-if="galleryImages.length > 1" class="pb-4">
+            <div v-if="galleryImages.length > 1">
                 <Splide
                     ref="thumbsSplide"
                     :options="thumbsOptions"
                     class="product-gallery-thumbs"
                 >
                     <SplideSlide v-for="(image, index) in galleryImages" :key="index">
-                        <div class="cursor-pointer rounded-lg overflow-hidden border-2 border-gray-200 hover:border-emerald-400 transition-all">
+                        <div class="cursor-pointer rounded-lg overflow-hidden border-2 border-gray-200 hover:border-emerald-400 transition-all aspect-square">
                             <Image
                                 :src="image"
                                 preset="product.thumbnail"
@@ -410,7 +414,7 @@ onBeforeUnmount(() => {
     height: auto !important;
     min-height: auto !important;
     display: flex !important;
-    align-items: center !important;
+    align-items: stretch !important;
 }
 
 .product-gallery-thumbs :deep(.splide__slide) {
@@ -447,8 +451,31 @@ onBeforeUnmount(() => {
 .product-gallery-thumbs :deep(.splide__slide:focus-visible) .cursor-pointer {
     outline: none !important;
 }
-.product-gallery-thumbs :deep(.splide__list) {
-    justify-content: flex-start !important;
+
+/* Стрелки для thumbnails */
+.product-gallery-thumbs :deep(.splide__arrow) {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    box-shadow: 0 2px 4px -1px rgb(0 0 0 / 0.1);
+    transition: all 0.2s;
+}
+
+.product-gallery-thumbs :deep(.splide__arrow:hover) {
+    background: #059669;
+    color: white;
+}
+
+.product-gallery-thumbs :deep(.splide__arrow svg) {
+    fill: currentColor;
+}
+
+@media (max-width: 640px) {
+    .product-gallery-thumbs :deep(.splide__arrow) {
+        display: none;
+    }
 }
 
 /* GLightbox кастомизация */
