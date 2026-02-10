@@ -1,6 +1,6 @@
 import './bootstrap'
 
-import { createSSRApp, h } from 'vue'
+import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
 import { ZiggyVue } from 'ziggy-js'
 
@@ -11,7 +11,7 @@ createInertiaApp({
     },
 
     setup({ el, App, props, plugin }) {
-        createSSRApp({ render: () => h(App, props) })
+        createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue) // ← ВАЖНО: без Ziggy
             .mount(el)
