@@ -9,6 +9,9 @@ import Label from "./ui/Label.vue"
 import Input from "./ui/Input.vue"
 import Button from "./ui/Button.vue"
 import Textarea from "./ui/Textarea.vue"
+defineOptions({
+    inheritAttrs: false,
+})
 const route = inject('route')
 
 const props = defineProps({
