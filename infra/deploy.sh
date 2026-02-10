@@ -9,8 +9,14 @@ echo "🚀 Deploy start"
 
 echo "$GHCR_PAT" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
 
+# Остановка SSR для сброса кэша
+$COMPOSE exec -T app php artisan inertia:stop-ssr 2>/dev/null || true
+
+# Удаляем volume со статикой для обновления
+docker volume rm ${PROJECT}_app-public 2>/dev/null || true
+
 $COMPOSE pull
-$COMPOSE up -d
+$COMPOSE up -d --force-recreate
 
 echo "⏳ Waiting for MySQL..."
 
