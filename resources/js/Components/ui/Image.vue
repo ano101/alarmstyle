@@ -1,4 +1,7 @@
 <script setup>
+import { useRoute } from '@/Composables/useRoute'
+
+const route = useRoute()
 const props = defineProps({
     src: {
         type: String,

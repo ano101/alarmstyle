@@ -3,6 +3,11 @@ import { computed, watch, ref, inject } from 'vue'
 import { useForm } from '@inertiajs/vue3'
 import { motion, AnimatePresence } from 'motion-v'
 import { usePhoneMask } from '@/Composables/usePhoneMask'
+
+defineOptions({
+    inheritAttrs: false,
+})
+
 const route = inject('route')
 
 const props = defineProps({

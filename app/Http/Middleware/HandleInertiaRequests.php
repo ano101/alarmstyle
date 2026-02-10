@@ -8,6 +8,7 @@ use App\Models\Menu;
 use App\Models\PopularSearch;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Tighten\Ziggy\Ziggy;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -111,6 +112,11 @@ class HandleInertiaRequests extends Middleware
                 ->ordered()
                 ->pluck('query')
                 ->toArray(),
+            'ziggy' => function () use ($request) {
+                return array_merge((new Ziggy)->toArray(), [
+                    'location' => $request->url(),
+                ]);
+            },
         ]);
     }
 }
