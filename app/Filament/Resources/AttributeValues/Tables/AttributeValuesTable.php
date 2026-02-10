@@ -15,9 +15,18 @@ class AttributeValuesTable
         return $table
             ->columns([
                 TextColumn::make('attribute.name')
-                    ->searchable(),
+                    ->label('Атрибут')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('value')
+                    ->label('Значение')
                     ->searchable(),
+                TextColumn::make('feature')
+                    ->label('Основная особенность')
+                    ->searchable()
+                    ->limit(50)
+                    ->placeholder('—')
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
