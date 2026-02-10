@@ -58,6 +58,7 @@ ENV APP_KEY=base64:temporary_build_key_only_do_not_use_in_prod=
 RUN composer dump-autoload --optimize \
  && php artisan vendor:publish --tag=livewire:assets --force \
  && php artisan filament:assets \
+ && php artisan ziggy:generate \
  && npm run build
 
 
