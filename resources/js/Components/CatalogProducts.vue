@@ -147,7 +147,7 @@ function formatPrice(price) {
         <!-- СКЕЛЕТЫ -->
         <div
             v-if="loading"
-            class="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 min-w-0"
+            class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 min-w-0"
         >
             <div
                 v-for="n in 8"
@@ -165,7 +165,7 @@ function formatPrice(price) {
         <!-- РЕАЛЬНЫЕ ТОВАРЫ -->
         <div
             v-else
-            class="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 mb-8 min-w-0"
+            class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 mb-8 min-w-0"
         >
             <template v-if="items.data && items.data.length">
                 <ProductCart v-for="item in items.data" :key="item.id" :product="item"/>

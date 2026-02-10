@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\AttributeValues\Schemas;
 
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -26,6 +27,13 @@ class AttributeValueForm
                             ->label('Значение')
                             ->placeholder('Например: Красный, 2024, Да')
                             ->required(),
+
+                        Textarea::make('feature')
+                            ->label('Основная особенность')
+                            ->placeholder('Краткое описание ключевой функции (например: Интеграция с CAN-шиной автомобиля)')
+                            ->helperText('Заполняется только для самых важных характеристик, которые будут отображаться в блоке "Основные особенности"')
+                            ->rows(2)
+                            ->columnSpanFull(),
 
                     ])
                     ->columns(2),

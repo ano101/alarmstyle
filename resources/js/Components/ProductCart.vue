@@ -18,7 +18,7 @@ const props = defineProps({
         :initial="{ opacity: 0, y: 20 }"
         :whileInView="{ opacity: 1, y: 0 }"
         :inViewOptions="{ once: true }"
-        class="group bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 hover:shadow-lg hover:border-emerald-500 transition-all duration-300 flex flex-col h-full min-w-0"
+        class="group bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 hover:shadow-lg hover:border-emerald-500 transition-all duration-300"
     >
         <div class="relative overflow-hidden bg-gray-100 aspect-[4/3]">
             <Link :href="`/product/${product.slug}`" class="block w-full h-full">
