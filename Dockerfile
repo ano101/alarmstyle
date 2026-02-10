@@ -51,7 +51,7 @@ COPY . .
 # ----------------------------
 ENV APP_ENV=production
 ENV APP_KEY=base64:temporary_build_key_only_do_not_use_in_prod=
-
+ENV APP_URL=https://test.alarmstyle.ru
 # ----------------------------
 # Build steps
 # ----------------------------
