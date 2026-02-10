@@ -166,23 +166,26 @@ onBeforeUnmount(() => {
             @navigate="navigate"
             @close-mobile="showFilters = false"
         />
-                            <CatalogProducts
-                                :items="items"
-                                :category-slug="categorySlug"
-                                :selected-slugs="selectedValueSlugs"
-                                :filters="filters"
-                                :attributes="attributes"
-                                :loading="isLoading"
-                                @navigate="navigate"
-                                @open-filters="showFilters = true"
-                            />
 
-                            <!-- LANDING -->
-                            <CatalogLanding
-                                v-if="items.current_page === 1"
-                                :landing="landing"
-                                :category="category"
-                            />
+        <div class="flex-1 flex flex-col">
+            <CatalogProducts
+                :items="items"
+                :category-slug="categorySlug"
+                :selected-slugs="selectedValueSlugs"
+                :filters="filters"
+                :attributes="attributes"
+                :loading="isLoading"
+                @navigate="navigate"
+                @open-filters="showFilters = true"
+            />
+
+            <!-- LANDING под сеткой товаров -->
+            <CatalogLanding
+                v-if="items.current_page === 1"
+                :landing="landing"
+                :category="category"
+            />
+        </div>
     </div>
     </div><!-- Закрытие контейнера max-w-7xl -->
 
