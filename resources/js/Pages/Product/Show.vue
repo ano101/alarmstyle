@@ -72,8 +72,12 @@ const mainOptions = {
     rewind: true,
     pagination: false,
     arrows: true,
-    heightRatio: 0.75,
     cover: true,
+    breakpoints: {
+        1024: {
+            heightRatio: 0.75,
+        },
+    },
 }
 
 const thumbsOptions = {
@@ -156,11 +160,11 @@ onBeforeUnmount(() => {
             </div>
 
             <!-- Main Gallery -->
-            <div class="rounded-2xl overflow-hidden bg-white shadow-xl border border-gray-200">
+            <div class="rounded-2xl overflow-hidden bg-white shadow-xl border border-gray-200 aspect-[4/3] lg:aspect-auto">
                 <Splide
                     ref="mainSplide"
                     :options="mainOptions"
-                    class="product-gallery-main"
+                    class="product-gallery-main h-full"
                 >
                     <SplideSlide v-for="(image, index) in galleryImages" :key="index">
                         <a
@@ -209,30 +213,30 @@ onBeforeUnmount(() => {
             <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 rounded-full mb-4" v-if="brand">
                 <span class="text-sm font-medium text-emerald-700">{{ brand }}</span>
             </div>
-            <h1 class="text-4xl font-bold text-gray-900 mb-6">{{ product.name }}</h1>
-            <div class="flex items-baseline gap-3 mb-10">
-                <div class="text-5xl font-bold text-gray-900">
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 sm:mb-6">{{ product.name }}</h1>
+            <div class="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-3 mb-6 sm:mb-10">
+                <div class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
                     {{ Math.round(product.price).toLocaleString('ru-RU') }} ₽
                 </div>
-                <div class="text-lg text-gray-500">
+                <div class="text-base sm:text-lg text-gray-500">
                     c установкой
                 </div>
             </div>
-            <div class="grid grid-cols-3 gap-4 mb-10">
-                <div class="bg-white rounded-xl p-4 border border-gray-200 text-center">
-                    <Shield class="w-6 h-6 text-emerald-600 mx-auto mb-2" />
-                    <div class="text-sm text-gray-700 font-medium">Гарантия 1 год</div>
+            <div class="grid grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-10">
+                <div class="bg-white rounded-xl p-3 sm:p-4 border border-gray-200 text-center">
+                    <Shield class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600 mx-auto mb-1 sm:mb-2" />
+                    <div class="text-xs sm:text-sm text-gray-700 font-medium">Гарантия 1 год</div>
                 </div>
-                <div class="bg-white rounded-xl p-4 border border-gray-200 text-center">
-                    <Clock class="w-6 h-6 text-emerald-600 mx-auto mb-2" />
-                    <div class="text-sm text-gray-700 font-medium">Установка 2-3 часа</div>
+                <div class="bg-white rounded-xl p-3 sm:p-4 border border-gray-200 text-center">
+                    <Clock class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600 mx-auto mb-1 sm:mb-2" />
+                    <div class="text-xs sm:text-sm text-gray-700 font-medium">Установка 2-3 часа</div>
                 </div>
-                <div class="bg-white rounded-xl p-4 border border-gray-200 text-center">
-                    <Wrench class="w-6 h-6 text-emerald-600 mx-auto mb-2" />
-                    <div class="text-sm text-gray-700 font-medium">Бесплатная настройка</div>
+                <div class="bg-white rounded-xl p-3 sm:p-4 border border-gray-200 text-center">
+                    <Wrench class="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600 mx-auto mb-1 sm:mb-2" />
+                    <div class="text-xs sm:text-sm text-gray-700 font-medium">Бесплатная настройка</div>
                 </div>
             </div>
-            <div class="flex gap-4 mb-12">
+            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-12">
                 <Button
                     @click="openOrderModal"
                     size="lg"
@@ -345,14 +349,24 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+.product-gallery-main {
+    height: 100%;
+}
+
 .product-gallery-main :deep(.splide__track) {
     border-radius: 1rem;
+    height: 100%;
+}
+
+.product-gallery-main :deep(.splide__list) {
+    height: 100%;
 }
 
 .product-gallery-main :deep(.splide__slide) {
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 100%;
 }
 
 .product-gallery-main :deep(.splide__arrow) {
