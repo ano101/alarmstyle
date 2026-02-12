@@ -156,6 +156,8 @@ class ProductForm
                             ->label('Галерея изображений')
                             ->relationship('images')
                             ->defaultItems(0)
+                            ->reorderable('sort_order')
+                            ->orderColumn('sort_order')
                             ->schema([
                                 FileUpload::make('url')
                                     ->disk('public')
@@ -166,7 +168,8 @@ class ProductForm
                                     ->openable()
                                     ->downloadable(),
                             ])
-                            ->addActionLabel('Добавить изображение'),
+                            ->addActionLabel('Добавить изображение')
+                            ->columnSpan(2),
                     ])
                     ->columns(2),
             ])->columns(1);
