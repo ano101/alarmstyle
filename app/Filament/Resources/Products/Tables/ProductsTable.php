@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
@@ -38,6 +40,12 @@ class ProductsTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                Action::make('view')
+                    ->label('Перейти на товар')
+                    ->icon(Heroicon::OutlinedEye)
+                    ->url(fn ($record) => $record->getSlug() ? route('product.show', ['slug' => $record->getSlug()]) : null)
+                    ->openUrlInNewTab()
+                    ->hidden(fn ($record) => ! $record->getSlug()),
                 EditAction::make(),
             ])
             ->toolbarActions([
