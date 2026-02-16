@@ -42,7 +42,6 @@ class SlugForm
                             ])
                             ->searchable()
                             ->required()
-                            ->helperText('Выберите объект, для которого создается slug')
                             ->columnSpanFull(),
 
                         TextInput::make('slug')

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\CategoryLandings\Schemas;
 
 use App\Models\AttributeValue;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -135,12 +136,10 @@ class CategoryLandingForm
 
                 Section::make('Содержимое')
                     ->schema([
-                        Textarea::make('content')
-                            ->label('Текст лендинга')
-                            ->rows(8)
-                            ->autosize()
-                            ->placeholder('Опишите здесь основной контент лендинга...')
+                        RichEditor::make('content')
+                            ->label('Текст лендинга')->placeholder('Опишите здесь основной контент лендинга...')
                             ->columnSpanFull(),
+
                     ]),
             ]);
     }
