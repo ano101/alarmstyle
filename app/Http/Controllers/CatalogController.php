@@ -76,14 +76,6 @@ class CatalogController extends Controller
             $landing
         );
 
-        // H1: теперь из маски meta_h1_pattern (только категория/landing) или фоллбек
-        $pageTitle = $this->catalogService->buildCatalogH1(
-            $category,
-            $attributeValues,
-            $request,
-            $landing
-        );
-
         // хлебные крошки
         $breadcrumbs = Breadcrumbs::home();
 
@@ -125,7 +117,6 @@ class CatalogController extends Controller
             'filters' => $request->query(),
             'quickLinks' => $quickLinks,
 
-            'pageTitle' => $pageTitle,
             'breadcrumbs' => $breadcrumbs,
         ]);
     }

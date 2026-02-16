@@ -189,4 +189,28 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
     }
+
+    /* Custom scrollbar for catalog sidebar */
+    .catalog-sidebar-scroll::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .catalog-sidebar-scroll::-webkit-scrollbar-track {
+        background: transparent;
+        margin: 8px 0;
+    }
+
+    .catalog-sidebar-scroll::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 3px;
+    }
+
+    .catalog-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+        background: #9ca3af;
+    }
+
+    .catalog-sidebar-scroll {
+        scrollbar-width: thin;
+        scrollbar-color: #d1d5db transparent;
+    }
 }
