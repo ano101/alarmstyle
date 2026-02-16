@@ -12,6 +12,7 @@ const page = usePage()
 const settings = computed(() => page.props.settings ?? {})
 const contacts = computed(() => settings.value.contacts ?? {})
 const menuItems = computed(() => page.props.menus?.mob_menu ?? [])
+const hasMessengers = computed(() => contacts.value.whatsapp || contacts.value.telegram)
 
 // Проверка активного пункта меню
 const isActiveLink = (href) => {
@@ -126,8 +127,9 @@ const openCallback = () => {
                     </a>
 
                     <!-- Messengers -->
-                    <div class="flex gap-2 pt-2">
+                    <div v-if="hasMessengers" class="flex gap-2 pt-2">
                         <a
+                            v-if="contacts.whatsapp"
                             :href="contacts.whatsapp"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -139,6 +141,7 @@ const openCallback = () => {
                             </svg>
                         </a>
                         <a
+                            v-if="contacts.telegram"
                             :href="contacts.telegram"
                             target="_blank"
                             rel="noopener noreferrer"

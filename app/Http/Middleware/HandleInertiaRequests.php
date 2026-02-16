@@ -7,6 +7,7 @@ use App\Facades\Seo;
 use App\Models\Menu;
 use App\Models\PopularSearch;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
 
@@ -40,6 +41,9 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        // Добавляем JSON-LD Organization на все страницы автоматически
+        JsonLd::addOrganization();
+
         return array_merge(parent::share($request), [
             'pageTitle' => null,
             'breadcrumbs' => [],
@@ -78,40 +82,50 @@ class HandleInertiaRequests extends Middleware
                 ],
             ],
             'menus' => fn () => [
-                'header' => optional(
-                    Menu::query()
-                        ->where('key', 'header')
-                        ->where('is_active', true)
-                        ->first()
-                )?->tree() ?? [],
+                'header' => Cache::remember('menu:header', now()->addDay(), function () {
+                    return optional(
+                        Menu::query()
+                            ->where('key', 'header')
+                            ->where('is_active', true)
+                            ->first()
+                    )?->tree() ?? [];
+                }),
 
-                'mob_menu' => optional(
-                    Menu::query()
-                        ->where('key', 'mob_menu')
-                        ->where('is_active', true)
-                        ->first()
-                )?->tree() ?? [],
+                'mob_menu' => Cache::remember('menu:mob_menu', now()->addDay(), function () {
+                    return optional(
+                        Menu::query()
+                            ->where('key', 'mob_menu')
+                            ->where('is_active', true)
+                            ->first()
+                    )?->tree() ?? [];
+                }),
 
-                'footer1' => optional(
-                    Menu::query()
-                        ->where('key', 'footer1')
-                        ->where('is_active', true)
-                        ->first()
-                )?->tree() ?? [],
+                'footer1' => Cache::remember('menu:footer1', now()->addDay(), function () {
+                    return optional(
+                        Menu::query()
+                            ->where('key', 'footer1')
+                            ->where('is_active', true)
+                            ->first()
+                    )?->tree() ?? [];
+                }),
 
-                'footer2' => optional(
-                    Menu::query()
-                        ->where('key', 'footer2')
-                        ->where('is_active', true)
-                        ->first()
-                )?->tree() ?? [],
+                'footer2' => Cache::remember('menu:footer2', now()->addDay(), function () {
+                    return optional(
+                        Menu::query()
+                            ->where('key', 'footer2')
+                            ->where('is_active', true)
+                            ->first()
+                    )?->tree() ?? [];
+                }),
 
             ],
-            'popularSearches' => fn () => PopularSearch::query()
-                ->active()
-                ->ordered()
-                ->pluck('query')
-                ->toArray(),
+            'popularSearches' => fn () => Cache::remember('popular_searches', now()->addDay(), function () {
+                return PopularSearch::query()
+                    ->active()
+                    ->ordered()
+                    ->pluck('query')
+                    ->toArray();
+            }),
             'ziggy' => function () use ($request) {
                 return array_merge((new Ziggy)->toArray(), [
                     'location' => $request->url(),

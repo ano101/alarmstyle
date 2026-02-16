@@ -48,6 +48,12 @@ return [
                 'fit' => 'contain',
                 'upscale' => false,
             ],
+            'og' => [
+                'width' => 1200,
+                'height' => 630,
+                'fit' => 'contain',
+                'upscale' => false,
+            ],
         ],
 
         'category' => [

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Facades\JsonLd;
 use App\Facades\Seo;
 use App\Models\Attribute;
 use App\Models\AttributeValue;
@@ -586,6 +587,68 @@ class CatalogService
         } else {
             Seo::setCanonical($request->fullUrl());
         }
+
+        // =========================
+        // OG и Twitter fallback
+        // =========================
+
+        // Определяем источник изображения:
+        // 1. Если есть landing с seoMeta->og_image - берём его
+        // 2. Иначе если есть category->seoMeta->og_image - берём его
+        // 3. Иначе если есть category->image - используем route с preset
+        $categoryImageUrl = null;
+
+        $seoMeta = $seoSource->seoMeta ?? null;
+
+        if ($seoMeta && !empty($seoMeta->og_image)) {
+            // Используем изображение из seoMeta (уже должен быть полный URL или путь)
+            $categoryImageUrl = $seoMeta->og_image;
+        } elseif ($category->image) {
+            // Используем изображение категории через route с preset
+            $categoryImageUrl = route('images.show', ['preset' => 'category.card', 'path' => $category->image]);
+        }
+
+        // OG fallback
+        Seo::setOgTitleIfEmpty($currentTitle);
+        Seo::setOgDescriptionIfEmpty($currentDescription);
+        Seo::setOgImageIfEmpty($categoryImageUrl);
+        Seo::setOgTypeIfEmpty('website');
+
+        // Twitter fallback
+        Seo::setTwitterTitleIfEmpty($currentTitle);
+        Seo::setTwitterDescriptionIfEmpty($currentDescription);
+        Seo::setTwitterImageIfEmpty($categoryImageUrl);
+        Seo::setTwitterCardIfEmpty('summary_large_image');
+
+        // =========================
+        // JSON-LD разметка
+        // =========================
+
+        // JSON-LD для категории (ItemList)
+        if ($items->isNotEmpty() && ! $isPaginated && ! $shouldNoIndex) {
+            $itemListElements = [];
+
+            foreach ($items->take(12) as $index => $item) {
+                $itemListElements[] = [
+                    '@type' => 'ListItem',
+                    'position' => $index + 1,
+                    'url' => route('product.show', ['slug' => $item['slug'] ?? '']),
+                ];
+            }
+
+            if (! empty($itemListElements)) {
+                JsonLd::add([
+                    '@context' => 'https://schema.org',
+                    '@type' => 'ItemList',
+                    'name' => $currentTitle,
+                    'description' => $currentDescription,
+                    'numberOfItems' => min(count($itemListElements), $totalItems),
+                    'itemListElement' => $itemListElements,
+                ]);
+            }
+        }
+
+        // JSON-LD для хлебных крошек (если они есть в контроллере, добавим там)
     }
 
     protected function renderSeoMask(?string $pattern, array $vars): ?string

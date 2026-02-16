@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\JsonLd;
 use App\Models\Category;
 use App\Services\CatalogService;
 use App\Support\Breadcrumbs\Breadcrumbs;
@@ -103,6 +104,26 @@ class CatalogController extends Controller
                 ];
             }
         }
+
+        // JSON-LD BreadcrumbList
+        $breadcrumbItems = [];
+        foreach ($breadcrumbs as $index => $breadcrumb) {
+            $breadcrumbItems[] = [
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'name' => $breadcrumb['label'],
+                'item' => $breadcrumb['url'] ?? $request->fullUrl(),
+            ];
+        }
+
+        if (count($breadcrumbItems) > 0) {
+            JsonLd::add([
+                '@context' => 'https://schema.org',
+                '@type' => 'BreadcrumbList',
+                'itemListElement' => $breadcrumbItems,
+            ]);
+        }
+
 
         return Inertia::render('Catalog/Index', [
             'category' => $category,

@@ -74,4 +74,60 @@ class JsonLdService
             JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT
         );
     }
+
+    /**
+     * Добавить JSON-LD разметку Organization (информация об организации).
+     * Использует данные из settings (контакты, название компании и т.д.)
+     */
+    public function addOrganization(): static
+    {
+        $companyName = setting('company.name', config('app.name', 'AlarmStyle'));
+        $companyTagline = setting('company.tagline', 'Противоугонные системы и автоэлектроника');
+        $phone = setting('contacts.phone');
+        $email = setting('contacts.email');
+        $address = setting('contacts.address');
+
+        $organization = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => $companyName,
+            'description' => $companyTagline,
+            'url' => url('/'),
+        ];
+
+        // Добавляем телефон если есть
+        if ($phone) {
+            $organization['telephone'] = $phone;
+        }
+
+        // Добавляем email если есть
+        if ($email) {
+            $organization['email'] = $email;
+        }
+
+        // Добавляем адрес если есть
+        if ($address) {
+            $organization['address'] = [
+                '@type' => 'PostalAddress',
+                'addressLocality' => $address,
+            ];
+        }
+
+        // Добавляем социальные сети если есть
+        $sameAs = [];
+        if ($whatsapp = setting('contacts.whatsapp')) {
+            $sameAs[] = $whatsapp;
+        }
+        if ($telegram = setting('contacts.telegram')) {
+            $sameAs[] = $telegram;
+        }
+        if (!empty($sameAs)) {
+            $organization['sameAs'] = $sameAs;
+        }
+
+        $this->add($organization);
+
+        return $this;
+    }
 }
+
