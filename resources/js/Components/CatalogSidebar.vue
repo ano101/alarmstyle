@@ -258,7 +258,7 @@ const sortedAttributes = computed(() => {
 
     <!-- Десктопная версия сайдбара -->
     <aside class="hidden lg:block w-72 flex-shrink-0">
-        <div class="sticky top-36 space-y-6">
+        <div class="sticky top-36 max-h-[calc(100vh-10rem)] overflow-y-auto space-y-6 pr-1 catalog-sidebar-scroll">
             <div class="bg-white rounded-xl p-5 border border-gray-200">
                 <h3 class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">Категории</h3>
                 <div class="space-y-2 flex flex-col">

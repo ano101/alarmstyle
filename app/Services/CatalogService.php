@@ -418,62 +418,6 @@ class CatalogService
      * - затем meta_h1_pattern (только для чистой категории или landing)
      * - для фильтров без landing (noindex) делаем фоллбек: "Категория + h1Suffix"
      */
-    public function buildCatalogH1(
-        Category $category,
-        Collection $selectedAttributeValues,
-        Request $request,
-        ?CategoryLanding $landing = null
-    ): string {
-        $isLanding = $landing !== null;
-        $hasFilters = $selectedAttributeValues->isNotEmpty();
-        $seoSource = $landing ?? $category;
-
-        // 1) Приоритет: явный h1 из seoMeta
-        $seoMeta = $seoSource->seoMeta ?? null;
-        if ($seoMeta && ! empty($seoMeta->h1)) {
-            return $seoMeta->h1;
-        }
-
-        // 2) Маски используем только для чистой категории или landing
-        $useMask = (! $hasFilters) || $isLanding;
-
-        $filtersUi = $this->buildFilterUiPieces($selectedAttributeValues);
-        $h1Suffix = $filtersUi['h1Suffix'] ?? '';
-        $filterText = $filtersUi['filterText'] ?? '';
-
-        if ($useMask) {
-            $sortParam = $request->input('sort', 'popular_desc');
-            $sortLabel = match ($sortParam) {
-                'price_asc' => 'сначала дешевле',
-                'price_desc' => 'сначала дороже',
-                'popular_desc' => 'по популярности',
-                default => '',
-            };
-
-            $vars = [
-                'category' => $category->name,
-                'category_lc' => mb_strtolower($category->name),
-                'parent' => $category->parent?->name ?? '',
-                'filters' => $filterText,
-                'price_from' => (string) $request->input('price_from', ''),
-                'price_to' => (string) $request->input('price_to', ''),
-                'sort_label' => $sortLabel,
-                'page' => '',
-            ];
-
-            $mask = SeoMask::resolveFor('catalog_category', $category);
-            if ($mask && ! empty($mask->meta_h1_pattern)) {
-                $h1 = $this->renderSeoMask($mask->meta_h1_pattern, $vars);
-                if ($h1) {
-                    return $h1;
-                }
-            }
-        }
-
-        // 3) Фоллбек: название категории + суффикс фильтров
-        return $h1Suffix ? ($category->name.' '.$h1Suffix) : $category->name;
-    }
-
     public function applyCatalogSeo(
         Category $category,
         LengthAwarePaginator $items,
@@ -620,6 +564,17 @@ class CatalogService
         }
 
         Seo::setMetaDescription($currentDescription);
+
+        // ---------- H1 с фоллбеком ----------
+        $currentH1 = Seo::getH1();
+
+        // Если H1 не был установлен, делаем фоллбек
+        if (! $currentH1) {
+            $h1Suffix = $filtersUi['h1Suffix'] ?? '';
+            $currentH1 = $h1Suffix ? ($category->name.' '.$h1Suffix) : $category->name;
+        }
+
+        Seo::setH1($currentH1);
 
         // =========================
         // CANONICAL
