@@ -23,6 +23,9 @@ Route::get('/img/{preset}/{path}', ImageController::class)
 
 Route::get('robots.txt', \App\Http\Controllers\RobotsController::class);
 
+Route::get('sitemap.xml', \App\Http\Controllers\SitemapController::class)
+    ->name('sitemap');
+
 Route::post('/orders', [OrderController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('orders.store');
