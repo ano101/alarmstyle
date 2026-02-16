@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\Seo;
 use App\Models\Product;
 use App\Models\Slug;
 use App\Services\BreadcrumbService;
@@ -47,6 +48,9 @@ class ProductController extends Controller
         }
 
         $product->applySeo('product', $vars);
+
+        // Устанавливаем канонический URL на саму страницу товара
+        Seo::setCanonicalIfEmpty(url()->current());
 
         $breadcrumbs = $breadcrumbService->forProduct($product);
 

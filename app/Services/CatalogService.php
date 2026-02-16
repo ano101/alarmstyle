@@ -553,12 +553,16 @@ class CatalogService
             if ($mask) {
                 $maskTitle = $this->renderSeoMask($mask->meta_title_pattern ?? null, $vars);
                 $maskDesc = $this->renderSeoMask($mask->meta_description_pattern ?? null, $vars);
+                $maskH1 = $this->renderSeoMask($mask->meta_h1_pattern ?? null, $vars);
 
                 if ($maskTitle) {
                     Seo::setMetaTitle($maskTitle);
                 }
                 if ($maskDesc) {
                     Seo::setMetaDescription($maskDesc);
+                }
+                if ($maskH1) {
+                    Seo::setH1($maskH1);
                 }
             }
             // Если маски нет или она пустая — ничего не устанавливаем,
