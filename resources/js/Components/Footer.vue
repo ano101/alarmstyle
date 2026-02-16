@@ -128,6 +128,11 @@ const hasMessengers = computed(() => contacts.value.whatsapp || contacts.value.t
                 </div>
             </div>
             <div class="border-t border-gray-800 pt-8">
+                <div class="mb-6 p-4 bg-gray-800/50 rounded-lg">
+                    <p class="text-gray-400 text-xs leading-relaxed text-center">
+                        Данный интернет-сайт носит исключительно информационный характер и ни при каких условиях не является публичной офертой, определяемой положением ч.2 ст.437 Гражданского кодекса РФ. Для получения подробной информации о стоимости и сроках выполнения услуг, пожалуйста, обращайтесь к сотрудникам AlarmStyle.
+                    </p>
+                </div>
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                     <p class="text-gray-400 text-sm">
                         © {{ currentYear }} AlarmStyle. Все права защищены.
