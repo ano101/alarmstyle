@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Services\CatalogService;
 use App\Support\Breadcrumbs\Breadcrumbs;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class CatalogController extends Controller
@@ -17,15 +16,7 @@ class CatalogController extends Controller
 
     public function index(Request $request, ?string $path = null)
     {
-        $start = microtime(true);
-        $marks = [];
-
-        $mark = function (string $label) use (&$marks, $start) {
-            $marks[$label] = round((microtime(true) - $start) * 1000, 2); // ms
-        };
-
         $data = $this->catalogService->resolvePath($path);
-        $mark('resolvePath');
 
         if ($data['needsRedirect']) {
             return redirect()
@@ -38,38 +29,25 @@ class CatalogController extends Controller
 
         $filtersUi = $this->catalogService->buildFilterUiPieces($attributeValues);
         $crumbsBySlug = $filtersUi['crumbsBySlug'] ?? [];
-        $mark('buildFilterUiPieces');
 
         $landing = $this->catalogService->findLanding($category, $attributeValues);
-        $mark('findLanding');
 
         $quickLinks = $this->catalogService->getQuickLinksForCatalog($category, $attributeValues, $landing);
-        $mark('getQuickLinksForCatalog');
 
         $perPage = 15;
 
         $items = $this->catalogService
             ->searchProductsForListing($category, $attributeValues, $request, $perPage);
 
-        $mark('searchProductsForListing');
-
         $priceBounds = $this->catalogService
             ->getPriceBounds($category, $attributeValues, $request);
-        $mark('getPriceBounds');
 
         $attributes = $this->catalogService
             ->getAttributesForSidebarFromMeili($category, $request);
-        $mark('getAttributesForSidebarFromMeili');
 
         $facets = $this->catalogService
             ->buildFacetsFromMeili($category, $request, $attributeValues, $attributes);
-        $mark('buildFacetsFromMeili');
 
-        Log::info('Catalog timing', [
-            'path' => $path,
-            'total' => round((microtime(true) - $start) * 1000, 2),
-            'steps' => $marks,
-        ]);
         // остальные категории
         $categories = Category::query()
             ->whereKeyNot($category->id)

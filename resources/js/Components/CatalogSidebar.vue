@@ -193,7 +193,7 @@ const sortedAttributes = computed(() => {
                     <!-- Категории -->
                     <div class="bg-gray-50 rounded-xl p-4 border border-gray-200">
                         <h3 class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">Категории</h3>
-                        <div class="space-y-2">
+                        <div class="space-y-2 flex flex-col">
                             <button
                                 @click="emit('navigate', categoryUrl(categorySlug))"
                                 class="w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-200 bg-emerald-100 text-emerald-700 font-medium"
@@ -261,7 +261,7 @@ const sortedAttributes = computed(() => {
         <div class="sticky top-36 space-y-6">
             <div class="bg-white rounded-xl p-5 border border-gray-200">
                 <h3 class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">Категории</h3>
-                <div class="space-y-2">
+                <div class="space-y-2 flex flex-col">
                     <a @click.prevent="emit('navigate', categoryUrl(categorySlug))"
                        :href="categoryUrl(categorySlug)"
                        class="w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-200 bg-emerald-100 text-emerald-700 font-medium">
