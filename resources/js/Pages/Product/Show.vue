@@ -75,6 +75,9 @@ const mainOptions = {
     pagination: false,
     arrows: true,
     cover: true,
+    lazyLoad: 'nearby',
+    preloadPages: 1,
+    speed: 400,
     breakpoints: {
         1024: {
             heightRatio: 0.75,
@@ -94,6 +97,8 @@ const thumbsOptions = {
     cover: true,
     focus: 0,
     trimSpace: false,
+    lazyLoad: false,
+    speed: 300,
     breakpoints: {
         1024: {
             perPage: 4,
@@ -121,7 +126,7 @@ onMounted(async () => {
     }
 
     // Ждем завершения анимаций motion-v перед инициализацией GLightbox
-    await new Promise(resolve => setTimeout(resolve, 600))
+    await new Promise(resolve => setTimeout(resolve, 200))
 
     // Динамический импорт GLightbox (не работает в SSR - нет window)
     const GLightbox = (await import('glightbox')).default
@@ -154,7 +159,7 @@ onBeforeUnmount(() => {
         <motion.div
             :initial="{ opacity: 0, scale: 0.95 }"
             :animate="{ opacity: 1, scale: 1 }"
-            :transition="{ duration: 0.5 }"
+            :transition="{ duration: 0.3 }"
             class="space-y-6 h-fit"
         >
             <!-- Main Gallery -->
@@ -206,7 +211,7 @@ onBeforeUnmount(() => {
         <motion.div
             :initial="{ opacity: 0, y: 20 }"
             :animate="{ opacity: 1, y: 0 }"
-            :transition="{ duration: 0.5, delay: 0.2 }"
+            :transition="{ duration: 0.3, delay: 0.1 }"
         >
             <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 rounded-full mb-4" v-if="brand">
                 <span class="text-sm font-medium text-emerald-700">{{ brand }}</span>
@@ -267,7 +272,7 @@ onBeforeUnmount(() => {
         <motion.div
             :initial="{ opacity: 0, y: 20 }"
             :animate="{ opacity: 1, y: 0 }"
-            :transition="{ duration: 0.5, delay: 0.4 }"
+            :transition="{ duration: 0.3, delay: 0.2 }"
             class="mt-16"
         >
             <h2 class="text-2xl font-semibold text-gray-800 mb-6">Технические характеристики</h2>
@@ -326,7 +331,7 @@ onBeforeUnmount(() => {
             v-if="product.description"
             :initial="{ opacity: 0, y: 20 }"
             :animate="{ opacity: 1, y: 0 }"
-            :transition="{ duration: 0.5, delay: 0.6 }"
+            :transition="{ duration: 0.3, delay: 0.25 }"
             class="mt-12 bg-white rounded-2xl p-8 sm:p-12 border border-gray-200"
         >
             <h2 class="text-2xl font-semibold text-gray-800 mb-6">Описание</h2>
