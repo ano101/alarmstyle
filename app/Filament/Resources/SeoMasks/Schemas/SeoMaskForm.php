@@ -39,32 +39,32 @@ class SeoMaskForm
                                     ->titleAttribute('value')
                                     ->label('Посадочная страница'),
                             ])
-                            ->searchable()
-                            ->helperText('Для какой сущности применяется маска'),
+                            ->searchable(),
                     ])
                     ->columns(1),
 
                 Section::make('Шаблоны SEO')
-                    ->description('Используйте переменные в фигурных скобках, например: {name}, {category}')
+                    ->description('Переменные: Товар → {name}, {price}, {category}, {attr_ID}. Категория → {name}, {parent}, {category}, {filters}. Лендинг → {name}, {category}, {filters}')
                     ->schema([
                         TextInput::make('meta_title_pattern')
                             ->label('Шаблон Meta Title')
                             ->maxLength(255)
-                            ->placeholder('Купить {name} в Москве | {category}')
-                            ->helperText('Доступные переменные зависят от типа сущности')
+                            ->placeholder('Купить {name} по цене {price} руб | {category}')
+                            ->helperText('Для атрибутов: {attr_5} где 5 - ID атрибута. Пример: {attr_5} для бренда')
                             ->columnSpanFull(),
 
                         TextInput::make('meta_h1_pattern')
                             ->label('Шаблон H1')
                             ->maxLength(255)
                             ->placeholder('{name} - {category}')
+                            ->helperText('Используйте переменные из описания секции выше')
                             ->columnSpanFull(),
 
                         Textarea::make('meta_description_pattern')
                             ->label('Шаблон Meta Description')
                             ->rows(3)
-                            ->placeholder('Купить {name} по выгодной цене. {description}. Доставка по всей России.')
-                            ->helperText('Рекомендуемая длина до 160 символов')
+                            ->placeholder('Купить {name} по выгодной цене {price} руб. Доставка по всей России.')
+                            ->helperText('Рекомендуется до 160 символов. Все переменные из описания секции доступны')
                             ->columnSpanFull(),
                     ])
                     ->columns(1),

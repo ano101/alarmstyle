@@ -33,8 +33,18 @@ class ProductController extends Controller
             'name' => $product->name ?? '',
             'price' => $product->basePrice?->price ?? '',
             'article' => $product->article ?? '',
-            // добавьте другие переменные по необходимости
+            'category' => $product->mainCategory?->name ?? '',
         ];
+
+        // Добавляем атрибуты по их ID для использования в масках
+        // Формат: {attr_5} где 5 - это ID атрибута
+        if ($product->attributeValues && $product->attributeValues->isNotEmpty()) {
+            foreach ($product->attributeValues as $attributeValue) {
+                if ($attributeValue->attribute_id) {
+                    $vars['attr_'.$attributeValue->attribute_id] = $attributeValue->value ?? '';
+                }
+            }
+        }
 
         $product->applySeo('product', $vars);
 

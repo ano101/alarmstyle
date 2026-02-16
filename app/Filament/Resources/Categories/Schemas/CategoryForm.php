@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Categories\Schemas;
 
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -59,6 +60,13 @@ class CategoryForm
                             ->required(),
                     ])
                     ->columns(2),
+                Section::make('Содержимое')
+                    ->schema([
+                        RichEditor::make('description')
+                            ->label('Текст лендинга')->placeholder('Опишите здесь основной контент лендинга...')
+                            ->columnSpanFull(),
+
+                    ])->columnSpanFull(),
             ]);
     }
 }

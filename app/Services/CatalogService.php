@@ -453,6 +453,7 @@ class CatalogService
             $vars = [
                 'category' => $category->name,
                 'category_lc' => mb_strtolower($category->name),
+                'parent' => $category->parent?->name ?? '',
                 'filters' => $filterText,
                 'price_from' => (string) $request->input('price_from', ''),
                 'price_to' => (string) $request->input('price_to', ''),
@@ -533,6 +534,7 @@ class CatalogService
         $vars = [
             'category' => $category->name,
             'category_lc' => mb_strtolower($category->name),
+            'parent' => $category->parent?->name ?? '',
             'filters' => $filterText,
             'price_from' => $priceFrom,
             'price_to' => $priceTo,

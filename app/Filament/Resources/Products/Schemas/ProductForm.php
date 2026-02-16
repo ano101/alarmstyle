@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\ProductPrice;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
@@ -172,6 +173,13 @@ class ProductForm
                             ->columnSpan(2),
                     ])
                     ->columns(2),
+                Section::make('Содержимое')
+                    ->schema([
+                        RichEditor::make('description')
+                            ->label('Текст лендинга')->placeholder('Опишите здесь основной контент лендинга...')
+                            ->columnSpanFull(),
+
+                    ])->columnSpanFull(),
             ])->columns(1);
     }
 }
