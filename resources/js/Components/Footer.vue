@@ -8,6 +8,8 @@ const settings = computed(() => page.props.settings ?? {})
 const contacts = computed(() => settings.value.contacts ?? {})
 const footer1Menu = computed(() => page.props.menus?.footer1 ?? [])
 const footer2Menu = computed(() => page.props.menus?.footer2 ?? [])
+const currentYear = computed(() => new Date().getFullYear())
+const hasMessengers = computed(() => contacts.value.whatsapp || contacts.value.telegram)
 </script>
 
 <template>
@@ -94,10 +96,11 @@ const footer2Menu = computed(() => page.props.menus?.footer2 ?? [])
                         </li>
                     </ul>
 
-                    <div class="mt-6">
+                    <div v-if="hasMessengers" class="mt-6">
                         <h4 class="font-bold text-white mb-4">Мессенджеры</h4>
                         <div class="flex gap-3">
                             <a
+                                v-if="contacts.whatsapp"
                                 :href="contacts.whatsapp"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -109,6 +112,7 @@ const footer2Menu = computed(() => page.props.menus?.footer2 ?? [])
                                 </svg>
                             </a>
                             <a
+                                v-if="contacts.telegram"
                                 :href="contacts.telegram"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -124,9 +128,14 @@ const footer2Menu = computed(() => page.props.menus?.footer2 ?? [])
                 </div>
             </div>
             <div class="border-t border-gray-800 pt-8">
+                <div class="mb-6 p-4 bg-gray-800/50 rounded-lg">
+                    <p class="text-gray-400 text-xs leading-relaxed text-center">
+                        Данный интернет-сайт носит исключительно информационный характер и ни при каких условиях не является публичной офертой, определяемой положением ч.2 ст.437 Гражданского кодекса РФ. Для получения подробной информации о стоимости и сроках выполнения услуг, пожалуйста, обращайтесь к сотрудникам AlarmStyle.
+                    </p>
+                </div>
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                     <p class="text-gray-400 text-sm">
-                        © 2024 AlarmStyle. Все права защищены.
+                        © {{ currentYear }} AlarmStyle. Все права защищены.
                     </p>
                     <div class="flex gap-6">
                         <a href="#" class="text-gray-400 hover:text-emerald-400 text-sm transition">

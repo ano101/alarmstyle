@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Facades\JsonLd;
 use App\Facades\Seo;
 use App\Models\Product;
 use App\Models\Slug;
@@ -33,7 +34,7 @@ class ProductController extends Controller
         $vars = [
             'name' => $product->name ?? '',
             'price' => $product->basePrice?->price ?? '',
-            'article' => $product->article ?? '',
+            'id' => $product->id ?? '',
             'category' => $product->mainCategory?->name ?? '',
         ];
 
@@ -52,7 +53,90 @@ class ProductController extends Controller
         // Устанавливаем канонический URL на саму страницу товара
         Seo::setCanonicalIfEmpty(url()->current());
 
+        // Fallback для OG и Twitter метатегов, если не заполнены в seoMeta
+        $productImageUrl = $product->image
+            ? route('images.show', ['preset' => 'product.og', 'path' => $product->image])
+            : null;
+
+        // OG fallback
+        Seo::setOgTitleIfEmpty($product->name);
+        Seo::setOgDescriptionIfEmpty($product->description);
+        Seo::setOgImageIfEmpty($productImageUrl);
+        Seo::setOgTypeIfEmpty('product');
+
+        // Twitter fallback
+        Seo::setTwitterTitleIfEmpty($product->name);
+        Seo::setTwitterDescriptionIfEmpty($product->description);
+        Seo::setTwitterImageIfEmpty($productImageUrl);
+        Seo::setTwitterCardIfEmpty('summary_large_image');
+
+        // JSON-LD разметка для товара (Schema.org Product)
+        $jsonLdProduct = [
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => $product->name,
+            'description' => $product->description ?? $product->name,
+            'sku' => 'PRODUCT-'.$product->id,
+        ];
+
+        // Добавляем изображение если есть
+        if ($product->image) {
+            $jsonLdProduct['image'] = route('images.show', [
+                'preset' => 'product.card',
+                'path' => $product->image,
+            ]);
+        }
+
+
+        // Добавляем бренд если есть
+        $brand = $product->presenter()->brand();
+        if ($brand) {
+            $jsonLdProduct['brand'] = [
+                '@type' => 'Brand',
+                'name' => $brand,
+            ];
+        }
+
+        // Добавляем цену и доступность
+        if ($product->basePrice && $product->basePrice->price) {
+            $jsonLdProduct['offers'] = [
+                '@type' => 'Offer',
+                'price' => $product->basePrice->price,
+                'priceCurrency' => 'RUB',
+                'availability' => 'https://schema.org/InStock',
+                'url' => url()->current(),
+            ];
+        }
+
+        // Добавляем категорию если есть
+        if ($product->mainCategory) {
+            $jsonLdProduct['category'] = $product->mainCategory->name;
+        }
+
+        JsonLd::add($jsonLdProduct);
+
+        // JSON-LD для хлебных крошек
         $breadcrumbs = $breadcrumbService->forProduct($product);
+
+        // JSON-LD BreadcrumbList
+        $breadcrumbItems = [];
+        foreach ($breadcrumbs as $index => $breadcrumb) {
+            $breadcrumbItems[] = [
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'name' => $breadcrumb['label'],
+                'item' => $breadcrumb['url'] ?? url()->current(),
+            ];
+        }
+
+        if (count($breadcrumbItems) > 0) {
+            JsonLd::add([
+                '@context' => 'https://schema.org',
+                '@type' => 'BreadcrumbList',
+                'itemListElement' => $breadcrumbItems,
+            ]);
+        }
+
 
         // Форматируем данные продукта для frontend
         $productData = [

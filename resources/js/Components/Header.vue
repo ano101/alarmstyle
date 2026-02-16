@@ -18,6 +18,7 @@ const contacts = computed(() => settings.value.contacts ?? {})
 const menus = computed(() => page.props.menus ?? {})
 const headerMenu = computed(() => menus.value.header ?? [])
 const popularSearches = computed(() => page.props.popularSearches ?? [])
+const hasMessengers = computed(() => contacts.value.whatsapp || contacts.value.telegram)
 
 const searchQuery = ref('')
 const searchFocused = ref(false)
@@ -148,8 +149,9 @@ onUnmounted(() => {
                     </a>
                 </div>
                 <div class="flex items-center gap-3 sm:gap-4">
-                    <div class="flex items-center gap-2 sm:gap-3">
+                    <div v-if="hasMessengers" class="flex items-center gap-2 sm:gap-3">
                         <a
+                            v-if="contacts.whatsapp"
                             :href="contacts.whatsapp"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -161,6 +163,7 @@ onUnmounted(() => {
                             </svg>
                         </a>
                         <a
+                            v-if="contacts.telegram"
                             :href="contacts.telegram"
                             target="_blank"
                             rel="noopener noreferrer"
