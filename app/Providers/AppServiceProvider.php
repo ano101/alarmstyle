@@ -7,6 +7,7 @@ use App\Models\PopularSearch;
 use App\Observers\MenuObserver;
 use App\Observers\PopularSearchObserver;
 use App\Services\BreadcrumbService;
+use App\Services\SeoService;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -17,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(BreadcrumbService::class);
+        $this->app->singleton('seo', fn () => new SeoService);
     }
 
     /**
