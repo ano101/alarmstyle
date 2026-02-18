@@ -477,6 +477,7 @@ class CatalogService
         $priceTo = $request->input('price_to', '');
 
         $vars = [
+            'name' => $category->name, // алиас для обратной совместимости с масками
             'category' => $category->name,
             'category_lc' => mb_strtolower($category->name),
             'parent' => $category->parent?->name ?? '',
