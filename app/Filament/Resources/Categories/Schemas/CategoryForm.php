@@ -63,7 +63,16 @@ class CategoryForm
                 Section::make('Содержимое')
                     ->schema([
                         RichEditor::make('description')
-                            ->label('Текст лендинга')->placeholder('Опишите здесь основной контент лендинга...')
+                            ->label('Текст лендинга')
+                            ->placeholder('Опишите здесь основной контент лендинга...')
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link', 'code'],
+                                ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
+                                ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+                                ['table', 'attachFiles'],
+                                ['undo', 'redo'],
+                                ['source-ai'],
+                            ])
                             ->columnSpanFull(),
 
                     ])->columnSpanFull(),

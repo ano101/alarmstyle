@@ -213,4 +213,271 @@
         scrollbar-width: thin;
         scrollbar-color: #d1d5db transparent;
     }
+
+    /* RichEditor content styles */
+    .prose {
+        /* Lists */
+        ol {
+            list-style-type: decimal;
+            margin-left: 1.5em;
+            margin-top: 1em;
+            margin-bottom: 1em;
+            padding-left: 0.5em;
+        }
+
+        ul {
+            list-style-type: disc;
+            margin-left: 1.5em;
+            margin-top: 1em;
+            margin-bottom: 1em;
+            padding-left: 0.5em;
+        }
+
+        ol li,
+        ul li {
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            line-height: 1.7;
+            color: inherit;
+        }
+
+        ol li::marker {
+            color: var(--foreground);
+            font-weight: var(--font-weight-medium);
+        }
+
+        ul li::marker {
+            color: var(--primary);
+        }
+
+        /* Nested lists */
+        ol ol,
+        ul ul,
+        ol ul,
+        ul ol {
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+        }
+
+        /* Blockquote */
+        blockquote {
+            border-left: 4px solid var(--primary);
+            padding-left: 1.5em;
+            padding-top: 0.5em;
+            padding-bottom: 0.5em;
+            margin: 1.5em 0;
+            font-style: italic;
+            color: var(--muted-foreground);
+            background-color: var(--muted);
+            border-radius: var(--radius-md);
+        }
+
+        blockquote p {
+            margin: 0;
+        }
+
+        /* Code */
+        code {
+            background-color: var(--muted);
+            color: var(--foreground);
+            padding: 0.2em 0.4em;
+            border-radius: var(--radius-sm);
+            font-size: 0.875em;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: var(--font-weight-medium);
+        }
+
+        /* Code block */
+        pre {
+            background-color: var(--muted);
+            color: var(--foreground);
+            padding: 1.25em;
+            border-radius: var(--radius-lg);
+            margin: 1.5em 0;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.875em;
+            line-height: 1.7;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5em 0;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        thead {
+            background-color: var(--muted);
+        }
+
+        thead th {
+            padding: 0.75em 1em;
+            text-align: left;
+            font-weight: var(--font-weight-medium);
+            color: var(--foreground);
+            border-bottom: 2px solid var(--border);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background-color: var(--accent);
+        }
+
+        tbody td {
+            padding: 0.75em 1em;
+            color: var(--foreground);
+        }
+
+        /* Links */
+        a {
+            color: var(--primary);
+            text-decoration: underline;
+            transition: opacity 0.2s;
+        }
+
+        a:hover {
+            opacity: 0.8;
+        }
+
+        /* Text alignment */
+        [style*="text-align: left"] {
+            text-align: left;
+        }
+
+        [style*="text-align: center"] {
+            text-align: center;
+        }
+
+        [style*="text-align: right"] {
+            text-align: right;
+        }
+
+        /* Strikethrough */
+        s,
+        del {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        /* Underline */
+        u {
+            text-decoration: underline;
+        }
+
+        /* Strong/Bold */
+        strong,
+        b {
+            font-weight: var(--font-weight-medium);
+        }
+
+        /* Italic */
+        em,
+        i {
+            font-style: italic;
+        }
+
+        /* Subscript and Superscript */
+        sub {
+            vertical-align: sub;
+            font-size: 0.75em;
+        }
+
+        sup {
+            vertical-align: super;
+            font-size: 0.75em;
+        }
+
+        /* Horizontal rule */
+        hr {
+            border: none;
+            border-top: 2px solid var(--border);
+            margin: 2em 0;
+        }
+
+        /* Paragraphs */
+        p {
+            margin-top: 1em;
+            margin-bottom: 1em;
+            line-height: 1.7;
+        }
+
+        /* Headings spacing */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: 1.5em;
+            margin-bottom: 0.75em;
+            font-weight: var(--font-weight-medium);
+        }
+
+        h1:first-child,
+        h2:first-child,
+        h3:first-child,
+        h4:first-child,
+        h5:first-child,
+        h6:first-child {
+            margin-top: 0;
+        }
+    }
+
+    /* Dark mode adjustments for prose */
+    .dark .prose {
+        blockquote {
+            background-color: oklch(0.269 0 0 / 0.3);
+            border-left-color: var(--primary);
+        }
+
+        code {
+            background-color: oklch(0.269 0 0 / 0.5);
+        }
+
+        pre {
+            background-color: oklch(0.205 0 0);
+            border-color: oklch(0.269 0 0);
+        }
+
+        table {
+            border-color: oklch(0.269 0 0);
+        }
+
+        thead {
+            background-color: oklch(0.269 0 0 / 0.5);
+        }
+
+        thead th {
+            border-bottom-color: oklch(0.269 0 0);
+        }
+
+        tbody tr {
+            border-bottom-color: oklch(0.269 0 0);
+        }
+
+        tbody tr:hover {
+            background-color: oklch(0.269 0 0 / 0.3);
+        }
+
+        hr {
+            border-top-color: oklch(0.269 0 0);
+        }
+    }
 }

@@ -6,7 +6,6 @@ use App\Models\AttributeValue;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -137,7 +136,16 @@ class CategoryLandingForm
                 Section::make('Содержимое')
                     ->schema([
                         RichEditor::make('content')
-                            ->label('Текст лендинга')->placeholder('Опишите здесь основной контент лендинга...')
+                            ->label('Текст лендинга')
+                            ->placeholder('Опишите здесь основной контент лендинга...')
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'underline', 'strike', 'subscript', 'superscript', 'link', 'code'],
+                                ['h2', 'h3', 'alignStart', 'alignCenter', 'alignEnd'],
+                                ['blockquote', 'codeBlock', 'bulletList', 'orderedList'],
+                                ['table', 'attachFiles'],
+                                ['undo', 'redo'],
+                                ['source-ai'],
+                            ])
                             ->columnSpanFull(),
 
                     ]),
