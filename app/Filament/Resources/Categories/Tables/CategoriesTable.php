@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\Categories\Tables;
 
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -39,6 +41,13 @@ class CategoriesTable
                 //
             ])
             ->recordActions([
+                Action::make('view_on_site')
+                    ->label('На сайте')
+                    ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
+                    ->color('gray')
+                    ->url(fn ($record) => $record->url)
+                    ->openUrlInNewTab()
+                    ->visible(fn ($record) => (bool) $record->url),
                 EditAction::make(),
             ])
             ->toolbarActions([

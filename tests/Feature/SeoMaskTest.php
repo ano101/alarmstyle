@@ -16,7 +16,7 @@ class SeoMaskTest extends TestCase
     public function test_seo_mask_applies_h1_pattern_for_category(): void
     {
         // Создаем категорию
-        $category = Category::factory()->create(['name' => 'Тестовая категория']);
+        $category = Category::create(['name' => 'Тестовая категория']);
 
         // Создаем маску
         SeoMask::create([
@@ -54,7 +54,7 @@ class SeoMaskTest extends TestCase
     public function test_seo_mask_applies_h1_pattern_with_filters(): void
     {
         // Создаем категорию
-        $category = Category::factory()->create(['name' => 'Автосигнализации']);
+        $category = Category::create(['name' => 'Автосигнализации']);
 
         // Создаем маску
         SeoMask::create([
@@ -88,7 +88,7 @@ class SeoMaskTest extends TestCase
     public function test_seo_mask_removes_empty_placeholders(): void
     {
         // Создаем категорию
-        $category = Category::factory()->create(['name' => 'Категория']);
+        $category = Category::create(['name' => 'Категория']);
 
         // Создаем маску с несуществующими плейсхолдерами
         SeoMask::create([

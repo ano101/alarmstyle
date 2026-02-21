@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Menus\RelationManagers;
 
+use App\Filament\Actions\CopyMenuItemsAction;
 use App\Models\MenuItem;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -140,6 +141,7 @@ class MenuItemsRelationManager extends RelationManager
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
+                CopyMenuItemsAction::make($this->getOwnerRecord()->id),
             ]);
     }
 }

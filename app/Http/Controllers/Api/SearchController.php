@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\SearchRequest;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
-    public function search(Request $request): JsonResponse
+    public function search(SearchRequest $request): JsonResponse
     {
         $query = $request->input('q', '');
 

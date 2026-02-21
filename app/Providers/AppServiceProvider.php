@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Models\Menu;
+use App\Models\MenuItem;
 use App\Models\PopularSearch;
+use App\Observers\MenuItemObserver;
 use App\Observers\MenuObserver;
 use App\Observers\PopularSearchObserver;
 use App\Services\BreadcrumbService;
@@ -28,8 +30,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Регистрируем observers для автоматической очистки кэша
         Menu::observe(MenuObserver::class);
+        MenuItem::observe(MenuItemObserver::class);
         PopularSearch::observe(PopularSearchObserver::class);
     }
 }
-
-

@@ -601,7 +601,7 @@ class CatalogService
 
         $seoMeta = $seoSource->seoMeta ?? null;
 
-        if ($seoMeta && !empty($seoMeta->og_image)) {
+        if ($seoMeta && ! empty($seoMeta->og_image)) {
             // Используем изображение из seoMeta (уже должен быть полный URL или путь)
             $categoryImageUrl = $seoMeta->og_image;
         } elseif ($category->image) {
@@ -649,7 +649,83 @@ class CatalogService
             }
         }
 
-        // JSON-LD для хлебных крошек (если они есть в контроллере, добавим там)
+        // JSON-LD для хлебных крошек добавляется отдельно через applyBreadcrumbsJsonLd()
+    }
+
+    /**
+     * Собрать хлебные крошки для каталога.
+     *
+     * @param  string[]  $selectedSlugSequence
+     * @param  array<string, string>  $crumbsBySlug
+     * @return array<int, array{label: string, url: string|null, current: bool}>
+     */
+    public function buildBreadcrumbs(
+        Category $category,
+        array $selectedSlugSequence,
+        array $crumbsBySlug
+    ): array {
+        $categorySlug = $category->getSlug();
+
+        $breadcrumbs = [
+            [
+                'label' => 'Главная',
+                'url' => route('page.show', ['slug' => '']),
+                'current' => false,
+            ],
+            [
+                'label' => $category->name,
+                'url' => route('catalog', ['path' => $categorySlug]),
+                'current' => empty($selectedSlugSequence),
+            ],
+        ];
+
+        if (! empty($selectedSlugSequence)) {
+            $accumulated = [];
+            $lastIndex = count($selectedSlugSequence) - 1;
+
+            foreach ($selectedSlugSequence as $index => $slug) {
+                $accumulated[] = $slug;
+                $label = $crumbsBySlug[$slug] ?? $slug;
+                $isLast = $index === $lastIndex;
+                $path = $categorySlug.'/'.implode('/', $accumulated);
+
+                $breadcrumbs[] = [
+                    'label' => $label,
+                    'url' => $isLast ? null : route('catalog', ['path' => $path]),
+                    'current' => $isLast,
+                ];
+            }
+        }
+
+        return $breadcrumbs;
+    }
+
+    /**
+     * Добавить JSON-LD BreadcrumbList для каталога.
+     *
+     * @param  array<int, array{label: string, url: string|null, current: bool}>  $breadcrumbs
+     */
+    public function applyBreadcrumbsJsonLd(array $breadcrumbs, Request $request): void
+    {
+        if (empty($breadcrumbs)) {
+            return;
+        }
+
+        $breadcrumbItems = [];
+        foreach ($breadcrumbs as $index => $breadcrumb) {
+            $breadcrumbItems[] = [
+                '@type' => 'ListItem',
+                'position' => $index + 1,
+                'name' => $breadcrumb['label'],
+                'item' => $breadcrumb['url'] ?? $request->fullUrl(),
+            ];
+        }
+
+        JsonLd::add([
+            '@context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => $breadcrumbItems,
+        ]);
     }
 
     protected function renderSeoMask(?string $pattern, array $vars): ?string

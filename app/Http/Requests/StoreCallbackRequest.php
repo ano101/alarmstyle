@@ -14,7 +14,7 @@ class StoreCallbackRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'website' => ['nullable', 'string', 'max:0'], // honeypot
+            'website' => ['nullable', 'string'], // honeypot
             'name' => ['nullable', 'string', 'max:100'],
             'phone' => ['required', 'string', 'max:50'],
             'comment' => ['nullable', 'string', 'max:2000'],
