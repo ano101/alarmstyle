@@ -1,9 +1,11 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { Link, router, usePage } from '@inertiajs/vue3'
-import { Phone, Mail, MapPin, Search } from 'lucide-vue-next'
+import { Phone, Mail, MapPin, Search, X, Menu } from 'lucide-vue-next'
 import axios from 'axios'
 import Button from "./ui/Button.vue";
+
+const headerRef = ref(null)
 
 const props = defineProps({
     mobileMenuOpen: Boolean,
@@ -24,6 +26,7 @@ const searchQuery = ref('')
 const searchFocused = ref(false)
 const searchResults = ref([])
 const isSearching = ref(false)
+const mobileSearchOpen = ref(false)
 
 // Debounce функция
 let searchTimeout = null
@@ -103,6 +106,22 @@ const handleClickOutside = (e) => {
 
 onMounted(() => {
     document.addEventListener('click', handleClickOutside)
+
+    // Измеряем реальную высоту шапки и устанавливаем CSS-переменную
+    if (headerRef.value) {
+        const observer = new ResizeObserver(() => {
+            document.documentElement.style.setProperty(
+                '--header-height',
+                `${headerRef.value.offsetHeight}px`
+            )
+        })
+        observer.observe(headerRef.value)
+        // Устанавливаем сразу
+        document.documentElement.style.setProperty(
+            '--header-height',
+            `${headerRef.value.offsetHeight}px`
+        )
+    }
 })
 
 onUnmounted(() => {
@@ -128,7 +147,7 @@ onUnmounted(() => {
     </Transition>
 
     <!-- Header -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200/50">
+    <header ref="headerRef" class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200/50">
         <!-- Top bar -->
         <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white py-3">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4 text-sm">
@@ -179,17 +198,21 @@ onUnmounted(() => {
                         <MapPin class="w-4 h-4 flex-shrink-0" />
                         <span class="text-xs sm:text-sm">{{ contacts.address }}</span>
                     </div>
+                    <div class="md:hidden flex items-center gap-2">
+                        <MapPin class="w-4 h-4 flex-shrink-0" />
+                        <span class="text-xs">Москва</span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Main navigation -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
-            <div class="flex items-center justify-between gap-4 sm:gap-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 lg:py-5">
+            <div class="flex items-center justify-between gap-3 lg:gap-8">
                 <!-- Logo -->
                 <Link href="/" class="flex items-center gap-3 group flex-shrink-0">
                     <div class="text-left">
-                        <div class="text-lg sm:text-xl font-bold text-gray-900">
+                        <div class="text-base sm:text-xl font-bold text-gray-900 leading-tight">
                             ALARM<span class="text-emerald-600">STYLE</span>
                         </div>
                         <div class="text-xs text-gray-500 uppercase tracking-wide hidden sm:block">
@@ -369,131 +392,147 @@ onUnmounted(() => {
 
                     <Button
                         @click="emit('update:callbackOpen', true)"
-                        class="bg-emerald-600 hover:bg-emerald-700 text-white shadow-md px-6 h-10 transition-colors duration-30"
+                        class="bg-emerald-600 hover:bg-emerald-700 text-white shadow-md px-6 h-10 transition-colors duration-300"
                     >
-                        <Phone className="w-4 h-4 mr-2" />
+                        <Phone class="w-4 h-4 mr-2" />
                         Обратный звонок
                     </Button>
                 </nav>
 
-                <!-- Mobile Menu Button -->
-                <button
-                    @click="emit('update:mobileMenuOpen', true)"
-                    class="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
-                >
-                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Mobile Search -->
-            <div class="lg:hidden mt-4 search-container">
-                <div class="relative">
-                    <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                    <input
-                        v-model="searchQuery"
-                        @focus="searchFocused = true"
-                        type="text"
-                        placeholder="Поиск..."
-                        class="pl-12 h-11 bg-gray-50 border border-gray-200 focus:border-emerald-500 rounded-xl w-full outline-none focus:ring-1 focus:ring-emerald-500"
+                <!-- Mobile Actions -->
+                <div class="flex items-center gap-2 lg:hidden">
+                    <!-- Mobile Search Button -->
+                    <button
+                        @click="mobileSearchOpen = !mobileSearchOpen"
+                        :class="[
+                            'p-2.5 rounded-xl transition-all',
+                            mobileSearchOpen
+                                ? 'bg-emerald-600 text-white'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ]"
                     >
+                        <X v-if="mobileSearchOpen" class="w-5 h-5" />
+                        <Search v-else class="w-5 h-5" />
+                    </button>
 
-                    <Transition
-                        enter-active-class="transition-all duration-200"
-                        enter-from-class="opacity-0 -translate-y-2"
-                        enter-to-class="opacity-100 translate-y-0"
-                        leave-active-class="transition-all duration-200"
-                        leave-from-class="opacity-100 translate-y-0"
-                        leave-to-class="opacity-0 -translate-y-2"
+                    <!-- Mobile Menu Button -->
+                    <button
+                        @click="emit('update:mobileMenuOpen', true)"
+                        class="p-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors"
                     >
-                        <div
-                            v-if="searchFocused"
-                            class="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-200 p-4 z-50"
-                        >
-                            <!-- Search Results Mobile -->
-                            <div v-if="searchResults.length > 0" class="mb-4">
-                                <h3 class="text-sm font-bold text-gray-900 mb-3">Результаты</h3>
-                                <div class="space-y-2 max-h-80 overflow-y-auto">
-                                    <button
-                                        v-for="product in searchResults"
-                                        :key="product.id"
-                                        @click="handleProductClick(product)"
-                                        class="w-full flex items-center gap-3 p-2.5 rounded-lg hover:bg-gray-50 transition-colors text-left"
-                                    >
-                                        <img
-                                            v-if="product.image"
-                                            :src="product.image"
-                                            :alt="product.name"
-                                            class="w-12 h-12 object-cover rounded-lg flex-shrink-0"
-                                        />
-                                        <div v-else class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                            </svg>
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <div class="font-medium text-sm text-gray-900 truncate">{{ product.name }}</div>
-                                            <div v-if="product.brand" class="text-xs text-emerald-600">{{ product.brand }}</div>
-                                            <div v-if="product.price" class="text-sm font-bold text-gray-900 mt-0.5">
-                                                {{ Number(product.price).toLocaleString('ru-RU') }} ₽
-                                            </div>
-                                        </div>
-                                    </button>
-                                </div>
-                                <div class="mt-3 pt-3 border-t border-gray-200">
-                                    <button
-                                        @click="viewAllResults"
-                                        class="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
-                                    >
-                                        Все результаты →
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Loading State Mobile -->
-                            <div v-else-if="isSearching" class="mb-4">
-                                <div class="flex items-center justify-center py-6">
-                                    <svg class="animate-spin h-6 w-6 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <!-- No Results Mobile -->
-                            <div v-else-if="searchQuery.trim().length >= 2 && searchResults.length === 0 && !isSearching" class="mb-4">
-                                <div class="text-center py-4">
-                                    <svg class="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                    </svg>
-                                    <p class="text-sm text-gray-500">Ничего не найдено</p>
-                                </div>
-                            </div>
-
-                            <!-- Popular Searches Mobile -->
-                            <div class="flex items-center gap-2 mb-3">
-                                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                                </svg>
-                                <span class="text-sm font-medium text-gray-700">Популярные</span>
-                            </div>
-                            <div class="flex flex-wrap gap-2">
-                                <button
-                                    v-for="(search, idx) in popularSearches"
-                                    :key="idx"
-                                    @click="handleSearchSelect(search)"
-                                    class="px-3 py-2 bg-gray-100 hover:bg-emerald-100 hover:text-emerald-700 text-gray-700 rounded-lg text-sm font-medium transition-all duration-200"
-                                >
-                                    {{ search }}
-                                </button>
-                            </div>
-                        </div>
-                    </Transition>
+                        <Menu class="w-5 h-5" />
+                    </button>
                 </div>
             </div>
         </div>
+
+        <!-- Mobile Search Overlay -->
+        <Transition
+            enter-active-class="transition-all duration-200"
+            enter-from-class="opacity-0 -translate-y-5"
+            enter-to-class="opacity-100 translate-y-0"
+            leave-active-class="transition-all duration-200"
+            leave-from-class="opacity-100 translate-y-0"
+            leave-to-class="opacity-0 -translate-y-5"
+        >
+            <div
+                v-if="mobileSearchOpen"
+                class="lg:hidden border-t border-gray-200 bg-white/95 backdrop-blur-xl relative z-50 search-container"
+            >
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+                    <div class="relative">
+                        <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 pointer-events-none" />
+                        <input
+                            v-model="searchQuery"
+                            @focus="searchFocused = true"
+                            type="text"
+                            placeholder="Поиск услуг..."
+                            autofocus
+                            class="pl-12 h-12 bg-gray-50 border border-gray-200 focus:border-emerald-500 rounded-xl w-full outline-none focus:ring-1 focus:ring-emerald-500"
+                        >
+                    </div>
+
+                    <!-- Popular Searches (empty state) -->
+                    <div v-if="searchQuery.trim().length === 0" class="mt-4 bg-white rounded-2xl border border-gray-200 p-4">
+                        <div class="flex items-center gap-2 mb-3">
+                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                            </svg>
+                            <span class="text-sm font-medium text-gray-700">Популярные запросы</span>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <button
+                                v-for="(search, idx) in popularSearches"
+                                :key="idx"
+                                @click="handleSearchSelect(search)"
+                                class="px-3 py-2 bg-gray-100 hover:bg-emerald-100 hover:text-emerald-700 text-gray-700 rounded-lg text-sm font-medium transition-all duration-200"
+                            >
+                                {{ search }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Loading State Mobile -->
+                    <div v-else-if="isSearching" class="mt-4 bg-white rounded-2xl border border-gray-200 p-4">
+                        <div class="flex items-center justify-center py-6">
+                            <svg class="animate-spin h-6 w-6 text-emerald-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- No Results Mobile -->
+                    <div v-else-if="searchQuery.trim().length >= 2 && searchResults.length === 0 && !isSearching" class="mt-4 bg-white rounded-2xl border border-gray-200 p-4">
+                        <div class="text-center py-4">
+                            <svg class="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                            <p class="text-sm text-gray-500">Ничего не найдено</p>
+                        </div>
+                    </div>
+
+                    <!-- Search Results Mobile -->
+                    <div v-else-if="searchResults.length > 0" class="mt-4 bg-white rounded-2xl border border-gray-200 p-4">
+                        <h3 class="text-sm font-bold text-gray-900 mb-3">Результаты поиска</h3>
+                        <div class="space-y-2 max-h-80 overflow-y-auto">
+                            <button
+                                v-for="product in searchResults"
+                                :key="product.id"
+                                @click="handleProductClick(product)"
+                                class="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors text-left"
+                            >
+                                <img
+                                    v-if="product.image"
+                                    :src="product.image"
+                                    :alt="product.name"
+                                    class="w-14 h-14 object-cover rounded-lg flex-shrink-0"
+                                />
+                                <div v-else class="w-14 h-14 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-medium text-sm text-gray-900 truncate">{{ product.name }}</div>
+                                    <div v-if="product.brand" class="text-xs text-emerald-600">{{ product.brand }}</div>
+                                    <div v-if="product.price" class="text-sm font-bold text-gray-900 mt-0.5">
+                                        {{ Number(product.price).toLocaleString('ru-RU') }} ₽
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-gray-200">
+                            <button
+                                @click="viewAllResults"
+                                class="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+                            >
+                                Все результаты →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Transition>
     </header>
 </template>

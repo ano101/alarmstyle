@@ -94,19 +94,19 @@ const navigate = (url) => {
             >
         </Head>
         <!-- Mobile Menu -->
-        <MobileMenu 
+        <MobileMenu
             v-model:open="mobileMenuOpen"
             @callback="callbackOpen = true"
         />
         <!-- Header -->
-        <Header 
+        <Header
             v-model:mobile-menu-open="mobileMenuOpen"
             v-model:callback-open="callbackOpen"
         />
         <!-- Контент -->
-        <div class="min-h-screen pt-40 pb-24 bg-gradient-to-br from-gray-50 to-white">
+        <div class="min-h-screen pb-16 lg:pb-24 bg-gradient-to-br from-gray-50 to-white" style="padding-top: calc(var(--header-height, 112px) + 20px)">
             <!-- Breadcrumbs в контейнере -->
-            <div v-if="breadcrumbs.length" class="max-w-7xl mx-auto px-4 sm:px-6 mb-8">
+            <div v-if="breadcrumbs.length" class="max-w-7xl mx-auto px-4 sm:px-6 mb-4 sm:mb-6">
                 <Breadcrumbs
                     :items="breadcrumbs"
                     @navigate="navigate"
