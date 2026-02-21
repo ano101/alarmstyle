@@ -18,7 +18,7 @@ const props = defineProps({
         :initial="{ opacity: 0, y: 20 }"
         :whileInView="{ opacity: 1, y: 0 }"
         :inViewOptions="{ once: true }"
-        class="group bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 hover:shadow-lg hover:border-emerald-500 transition-all duration-300"
+        class="group bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 hover:shadow-lg hover:border-emerald-500 transition-all duration-300 flex flex-col"
     >
         <div class="relative overflow-hidden bg-gray-100 aspect-[4/3]">
             <Link :href="`/product/${product.slug}`" class="block w-full h-full">
@@ -31,11 +31,6 @@ const props = defineProps({
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
             </Link>
-
-            <div class="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1 shadow-md">
-                <Star class="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <span class="text-sm font-medium text-gray-900">{{ product.rating }}</span>
-            </div>
         </div>
 
         <div class="p-3 sm:p-5 flex flex-col flex-1 min-w-0">

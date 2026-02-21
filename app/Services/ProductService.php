@@ -104,7 +104,7 @@ class ProductService
     /**
      * Собрать данные товара для frontend.
      *
-     * @return array{id: int, name: string, price: mixed, gallery: string[], attributeGroups: array<int, mixed>}
+     * @return array{id: int, name: string, price: mixed, description: string|null, gallery: string[], attributeGroups: array<int, mixed>}
      */
     public function buildProductData(Product $product): array
     {
@@ -162,6 +162,7 @@ class ProductService
             'id' => $product->id,
             'name' => $product->name ?? '',
             'price' => $product->basePrice?->price ?? null,
+            'description' => $product->description,
             'gallery' => $gallery,
             'attributeGroups' => array_values($attributesByGroup),
             'attributeFeature' => $attributeFeature,
