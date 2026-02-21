@@ -78,4 +78,9 @@ class Category extends Model
         return $this->morphMany(\App\Models\CatalogQuickLink::class, 'linkable')
             ->orderBy('sort');
     }
+
+    public function getUrlAttribute(): ?string
+    {
+        return $this->slug ? '/category/'.$this->slug->slug : null;
+    }
 }

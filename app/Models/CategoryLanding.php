@@ -6,6 +6,7 @@ use App\Models\Traits\HasSeo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\DB;
 
 class CategoryLanding extends Model
 {
@@ -63,5 +64,37 @@ class CategoryLanding extends Model
     {
         return $this->morphMany(\App\Models\CatalogQuickLink::class, 'linkable')
             ->orderBy('sort');
+    }
+
+    /**
+     * URL посадочной страницы: /category/{categorySlug}/{attributeValueSlugs}
+     */
+    public function getUrlAttribute(): ?string
+    {
+        $categorySlug = $this->category?->getSlug();
+
+        if (! $categorySlug) {
+            return null;
+        }
+
+        $ids = $this->getNormalizedAttributeValueIds();
+
+        if (empty($ids)) {
+            return '/category/'.$categorySlug;
+        }
+
+        $slugs = DB::table('slugs')
+            ->where('sluggable_type', AttributeValue::class)
+            ->whereIn('sluggable_id', $ids)
+            ->pluck('slug')
+            ->sort()
+            ->values()
+            ->all();
+
+        if (empty($slugs)) {
+            return '/category/'.$categorySlug;
+        }
+
+        return '/category/'.$categorySlug.'/'.implode('/', $slugs);
     }
 }

@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\CategoryLandings\Tables;
 
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -31,6 +33,13 @@ class CategoryLandingsTable
                 //
             ])
             ->recordActions([
+                Action::make('view_on_site')
+                    ->label('На сайте')
+                    ->icon(Heroicon::OutlinedArrowTopRightOnSquare)
+                    ->color('gray')
+                    ->url(fn ($record) => $record->load(['category.slug'])->url)
+                    ->openUrlInNewTab()
+                    ->visible(fn ($record) => (bool) $record->load(['category.slug'])->url),
                 EditAction::make(),
             ])
             ->toolbarActions([

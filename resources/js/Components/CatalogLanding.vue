@@ -22,12 +22,12 @@ const hasContent = computed(() => {
     <section v-if="hasContent" class="mt-8">
         <div
             v-if="landing && landing.content"
-            class="mb-6 prose max-w-none"
+            class="mb-6 prose mb-6 mt-12 bg-white rounded-2xl p-8 sm:p-12 border border-gray-200"
             v-html="landing.content"
         />
         <div
             v-else-if="category && category.description"
-            class="mb-6 prose max-w-none text-sm text-gray-700"
+            class="mb-6 prose mb-6 mt-12 bg-white rounded-2xl p-8 sm:p-12 border border-gray-200"
             v-html="category.description"
         />
     </section>

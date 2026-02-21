@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Facades\JsonLd;
 use App\Models\Category;
 use App\Services\CatalogService;
-use App\Support\Breadcrumbs\Breadcrumbs;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class CatalogController extends Controller
 {
     public function __construct(
-        protected CatalogService $catalogService
+        protected CatalogService $catalogService,
     ) {}
 
     public function index(Request $request, ?string $path = null)
@@ -49,26 +47,20 @@ class CatalogController extends Controller
         $facets = $this->catalogService
             ->buildFacetsFromMeili($category, $request, $attributeValues, $attributes);
 
-        // остальные категории
         $categories = Category::query()
             ->whereKeyNot($category->id)
             ->with('slug')
             ->get();
 
-        // выбранные slug’и
         $selectedValueSlugs = $attributeValues
             ->map(fn ($v) => $v->getSlug())
             ->filter()
             ->values()
             ->all();
 
-        // канонический порядок slug'ов
         $selectedSlugSequence = $selectedValueSlugs;
         sort($selectedSlugSequence, SORT_STRING);
 
-        $categorySlug = $category->getSlug();
-
-        // SEO (внутри уже новая логика noindex)
         $this->catalogService->applyCatalogSeo(
             $category,
             $items,
@@ -77,53 +69,13 @@ class CatalogController extends Controller
             $landing
         );
 
-        // хлебные крошки
-        $breadcrumbs = Breadcrumbs::home();
+        $breadcrumbs = $this->catalogService->buildBreadcrumbs(
+            $category,
+            $selectedSlugSequence,
+            $crumbsBySlug
+        );
 
-        $breadcrumbs[] = [
-            'label' => $category->name,
-            'url' => route('catalog', ['path' => $categorySlug]),
-            'current' => empty($selectedSlugSequence),
-        ];
-
-        if (! empty($selectedSlugSequence)) {
-            $accumulated = [];
-            $lastIndex = count($selectedSlugSequence) - 1;
-
-            foreach ($selectedSlugSequence as $index => $slug) {
-                $accumulated[] = $slug;
-                $label = $crumbsBySlug[$slug] ?? $slug;
-
-                $isLast = $index === $lastIndex;
-                $path = $categorySlug.'/'.implode('/', $accumulated);
-
-                $breadcrumbs[] = [
-                    'label' => $label,
-                    'url' => $isLast ? null : route('catalog', ['path' => $path]),
-                    'current' => $isLast,
-                ];
-            }
-        }
-
-        // JSON-LD BreadcrumbList
-        $breadcrumbItems = [];
-        foreach ($breadcrumbs as $index => $breadcrumb) {
-            $breadcrumbItems[] = [
-                '@type' => 'ListItem',
-                'position' => $index + 1,
-                'name' => $breadcrumb['label'],
-                'item' => $breadcrumb['url'] ?? $request->fullUrl(),
-            ];
-        }
-
-        if (count($breadcrumbItems) > 0) {
-            JsonLd::add([
-                '@context' => 'https://schema.org',
-                '@type' => 'BreadcrumbList',
-                'itemListElement' => $breadcrumbItems,
-            ]);
-        }
-
+        $this->catalogService->applyBreadcrumbsJsonLd($breadcrumbs, $request);
 
         return Inertia::render('Catalog/Index', [
             'category' => $category,
@@ -131,7 +83,7 @@ class CatalogController extends Controller
             'items' => $items,
             'attributes' => $attributes,
             'selectedValueSlugs' => $selectedValueSlugs,
-            'categorySlug' => $categorySlug,
+            'categorySlug' => $category->getSlug(),
             'facets' => $facets,
             'priceBounds' => $priceBounds,
             'landing' => $landing,

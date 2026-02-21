@@ -2,8 +2,11 @@
 
 namespace App\Filament\Resources\MenuItems\Tables;
 
+use App\Filament\Actions\CopyMenuItemsAction;
 use App\Models\Menu;
 use App\Models\MenuItem;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -106,6 +109,12 @@ class MenuItemsTable
 
             // ограничиваем список выбранным меню + уровнем,
             // чтобы drag&drop сортировал ТОЛЬКО внутри уровня
+            ->toolbarActions([
+                CopyMenuItemsAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ])
             ->modifyQueryUsing(function (Builder $query) {
                 // В Filament v4 фильтры автоматически применяются к запросу
                 // через свои callback-функции в ->query()

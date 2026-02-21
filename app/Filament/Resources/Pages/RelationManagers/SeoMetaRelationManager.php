@@ -26,6 +26,7 @@ class SeoMetaRelationManager extends RelationManager
     {
         return $schema
             ->components([
+                TextInput::make('h1'),
                 TextInput::make('meta_title'),
                 Textarea::make('meta_description')
                     ->columnSpanFull(),
@@ -57,6 +58,8 @@ class SeoMetaRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
+                TextColumn::make('h1')
+                    ->searchable(),
                 TextColumn::make('meta_title')
                     ->searchable(),
                 TextColumn::make('canonical')
