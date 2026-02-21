@@ -2,7 +2,7 @@
 import { X, Phone, Mail, User, Car, Calendar } from 'lucide-vue-next'
 import { motion, AnimatePresence } from 'motion-v'
 import { useForm } from '@inertiajs/vue3'
-import {inject, watch, ref} from 'vue'
+import { inject, watch, ref, onUnmounted } from 'vue'
 import { usePhoneMask } from '@/Composables/usePhoneMask'
 import { useEmailValidation } from '@/Composables/useEmailValidation'
 import Label from "./ui/Label.vue"
@@ -59,16 +59,24 @@ const closeModal = () => {
     emit('update:open', false)
     form.reset()
     form.clearErrors()
-    // Сбрасываем маску телефона
     raw.value = ''
     formatted.value = ''
-    // Сбрасываем email
     emailValue.value = ''
-    // Сбрасываем успех через небольшую задержку после закрытия
     setTimeout(() => {
         isSuccess.value = false
     }, 300)
 }
+
+watch(
+    () => props.open,
+    (isOpen) => {
+        document.body.style.overflow = isOpen ? 'hidden' : ''
+    }
+)
+
+onUnmounted(() => {
+    document.body.style.overflow = ''
+})
 
 const submitForm = () => {
     form.post(route('orders.store'), {

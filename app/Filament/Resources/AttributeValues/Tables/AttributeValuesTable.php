@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AttributeValues\Tables;
 
+use App\Filament\Actions\MergeAttributeValueAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -41,6 +42,7 @@ class AttributeValuesTable
             ])
             ->recordActions([
                 EditAction::make(),
+                MergeAttributeValueAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

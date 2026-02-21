@@ -156,12 +156,9 @@ class ImageController
                     $image = $image->resize($targetW, $targetH);
                 }
 
-                // 2. Создаем «канвас» нужного размера и кладём картинку по центру
+                // 2. Создаём канвас нужного размера с белым фоном и кладём картинку по центру
                 $canvas = $this->manager->create($width, $height);
-                // можно залить фоном (серый/белый) если нужно:
-                // $canvas->fill('#f3f4f6');
-
-                // В v3 есть метод place()
+                $canvas->fill('#ffffff');
                 $canvas->place($image, 'center');
 
                 $image = $canvas;
@@ -169,6 +166,18 @@ class ImageController
                 // Обычное поведение пресета
                 if ($fit === 'crop') {
                     $image = $image->cover($width, $height);
+                } elseif ($fit === 'contain') {
+                    // Вписываем с сохранением пропорций, затем кладём на белый канвас
+                    $ratio = min($width / $srcW, $height / $srcH);
+                    $targetW = (int) round($srcW * $ratio);
+                    $targetH = (int) round($srcH * $ratio);
+                    $image = $image->resize($targetW, $targetH);
+
+                    $canvas = $this->manager->create($width, $height);
+                    $canvas->fill('#ffffff');
+                    $canvas->place($image, 'center');
+
+                    $image = $canvas;
                 } else {
                     $image = $image->resize($width, $height);
                 }

@@ -12,29 +12,32 @@ return [
 
     'presets' => [
         'product' => [
+            // Карточка каталога: ~300-400px CSS × 2x ретина = 600-800px
             'card' => [
-                'width' => 800,
-                'height' => 800,
+                'width' => 600,
+                'height' => 600,
                 'fit' => 'contain',
-                'upscale' => false,
+                'upscale' => true,
             ],
+            // 2x ретина для карточки каталога
             'card_2x' => [
-                'width' => 1600,
-                'height' => 1600,
+                'width' => 1200,
+                'height' => 1200,
                 'fit' => 'contain',
-                'upscale' => false,
+                'upscale' => true,
             ],
+            // Миниатюра галереи: 80-120px CSS × 2x ретина = 240px
             'thumbnail' => [
-                'width' => 120,
-                'height' => 120,
-                'fit' => 'crop',
-                'upscale' => false,
+                'width' => 160,
+                'height' => 160,
+                'fit' => 'contain',
+                'upscale' => true,
             ],
             'thumbnail_2x' => [
-                'width' => 240,
-                'height' => 240,
-                'fit' => 'crop',
-                'upscale' => false,
+                'width' => 320,
+                'height' => 320,
+                'fit' => 'contain',
+                'upscale' => true,
             ],
             'lightbox' => [
                 'width' => 2560,
