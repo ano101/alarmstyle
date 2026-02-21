@@ -6,7 +6,6 @@ import { Star, Shield, Clock, Wrench, ShoppingCart, Phone, Check, ChevronDown, I
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import Button from "../../Components/ui/Button.vue";
 import { Splide, SplideSlide } from '@splidejs/vue-splide';
-import '@splidejs/splide/dist/css/splide.min.css';
 // GLightbox импортируется динамически в onMounted (не работает в SSR)
 import 'glightbox/dist/css/glightbox.min.css';
 import { Tooltip, TooltipTrigger, TooltipContent } from "../../Components/ui/Tooltip.vue";
@@ -163,7 +162,7 @@ onBeforeUnmount(() => {
             class="space-y-6 h-fit"
         >
             <!-- Main Gallery -->
-            <div class="rounded-2xl overflow-hidden bg-white shadow-xl border border-gray-200 aspect-[4/3] lg:aspect-auto">
+            <div class="rounded-2xl overflow-hidden bg-white shadow-xl border border-gray-200 aspect-square lg:aspect-auto">
                 <Splide
                     ref="mainSplide"
                     :options="mainOptions"
@@ -180,7 +179,7 @@ onBeforeUnmount(() => {
                                 :src="image"
                                 preset="product.card"
                                 :alt="`${product.name} ${index + 1}`"
-                                class="w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+                                class="w-full h-full object-contain p-4 group-hover:opacity-90 transition-opacity"
                             />
                         </a>
                     </SplideSlide>
@@ -422,16 +421,17 @@ onBeforeUnmount(() => {
     min-height: auto !important;
 }
 
-.product-gallery-thumbs :deep(.splide__slide.is-active) {
-    opacity: 1;
-    border: none !important;
+.product-gallery-thumbs :deep(.splide__track--nav > .splide__list > .splide__slide.is-active),
+.product-gallery-thumbs :deep(.splide__track--nav > .splide__list > .splide__slide.is-active.is-active) {
+    border: 0 !important;
     outline: none !important;
     box-shadow: none !important;
+    opacity: 1;
 }
 
-.product-gallery-thumbs :deep(.splide__slide.is-active) .cursor-pointer {
-    border-color: #059669;
-    box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2);
+.product-gallery-thumbs :deep(.splide__track--nav > .splide__list > .splide__slide.is-active) .cursor-pointer {
+    border-color: #34d399 !important;
+    box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.3);
 }
 
 /* Убираем все стандартные фокусные стили */

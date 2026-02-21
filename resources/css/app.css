@@ -1,5 +1,16 @@
 @import 'tailwindcss';
 @import './theme.css';
+@import '@splidejs/splide/dist/css/splide.min.css';
+
+/* Убираем чёрную рамку активного слайда Splide (рисуем её сами на внутреннем элементе) */
+.splide__track--nav > .splide__list > .splide__slide.is-active {
+    border: none;
+}
+
+.splide__track--nav > .splide__list > .splide__slide.is-active .cursor-pointer {
+    border-color: #34d399 !important;
+    box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.3);
+}
 
 /* Inter Regular */
 @font-face {

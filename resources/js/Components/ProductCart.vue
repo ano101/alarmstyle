@@ -20,7 +20,7 @@ const props = defineProps({
         :inViewOptions="{ once: true }"
         class="group bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 hover:shadow-lg hover:border-emerald-500 transition-all duration-300 flex flex-col"
     >
-        <div class="relative overflow-hidden bg-gray-100 aspect-[4/3]">
+        <div class="relative overflow-hidden bg-white aspect-square">
             <Link :href="`/product/${product.slug}`" class="block w-full h-full">
                 <Image
                     v-if="product.image"
@@ -28,7 +28,7 @@ const props = defineProps({
                     :src="product.image"
                     preset="product.card"
                     :alt="product.name"
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
                 />
             </Link>
         </div>
