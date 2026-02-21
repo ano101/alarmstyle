@@ -13,7 +13,7 @@ const props = defineProps({
 <template>
     <nav
         v-if="items.length"
-        class="flex items-center gap-2 text-sm mb-8"
+        class="flex items-center gap-2 text-sm"
         aria-label="Breadcrumb"
     >
         <div
