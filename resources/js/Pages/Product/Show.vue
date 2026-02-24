@@ -162,7 +162,8 @@ onBeforeUnmount(() => {
             class="space-y-6 h-fit"
         >
             <!-- Main Gallery -->
-            <div class="rounded-2xl overflow-hidden bg-white shadow-xl border border-gray-200 aspect-square lg:aspect-auto">
+            <div class="relative rounded-2xl overflow-hidden bg-white shadow-xl border border-gray-200" style="padding-top: 100%">
+                <div class="absolute inset-0">
                 <Splide
                     ref="mainSplide"
                     :options="mainOptions"
@@ -177,13 +178,14 @@ onBeforeUnmount(() => {
                         >
                             <Image
                                 :src="image"
-                                preset="product.card"
+                                preset="product.gallery"
                                 :alt="`${product.name} ${index + 1}`"
                                 class="w-full h-full object-contain p-4 group-hover:opacity-90 transition-opacity"
                             />
                         </a>
                     </SplideSlide>
                 </Splide>
+                </div>
             </div>
 
             <!-- Thumbnail Gallery -->
@@ -254,7 +256,7 @@ onBeforeUnmount(() => {
 
             </div>
             <div class="bg-white rounded-xl border border-gray-200 p-6" v-if="attributeFeature.length > 0">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Основные особенности</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Основные характеристики</h3>
                 <div class="space-y-3">
                     <div v-for="(feature, index) in attributeFeature" :key="index" class="flex items-start gap-3">
                         <div class="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">

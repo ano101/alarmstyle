@@ -20,8 +20,8 @@ const props = defineProps({
         :inViewOptions="{ once: true }"
         class="group bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 hover:shadow-lg hover:border-emerald-500 transition-all duration-300 flex flex-col"
     >
-        <div class="relative overflow-hidden bg-white aspect-square">
-            <Link :href="`/product/${product.slug}`" class="block w-full h-full">
+        <div class="relative overflow-hidden bg-white" style="padding-top: 100%">
+            <Link :href="`/product/${product.slug}`" class="absolute inset-0 block">
                 <Image
                     v-if="product.image"
                     v-show="product.image"
