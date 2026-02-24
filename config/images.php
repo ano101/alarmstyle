@@ -26,7 +26,21 @@ return [
                 'fit' => 'contain',
                 'upscale' => true,
             ],
-            // Миниатюра галереи: 80-120px CSS × 2x ретина = 240px
+            // Главная галерея продукта: ~640px контейнер на десктопе × 2x ретина = 1280px
+            'gallery' => [
+                'width' => 800,
+                'height' => 800,
+                'fit' => 'contain',
+                'upscale' => true,
+            ],
+            // 2x ретина для главной галереи
+            'gallery_2x' => [
+                'width' => 1600,
+                'height' => 1600,
+                'fit' => 'contain',
+                'upscale' => true,
+            ],
+            // Миниатюра галереи: ~120px CSS × 2x ретина = 240px
             'thumbnail' => [
                 'width' => 160,
                 'height' => 160,
@@ -39,15 +53,17 @@ return [
                 'fit' => 'contain',
                 'upscale' => true,
             ],
+            // Лайтбокс: оптимизировано для Full HD и 2K мониторов
             'lightbox' => [
-                'width' => 2560,
+                'width' => 1920,
                 'height' => 1920,
                 'fit' => 'contain',
                 'upscale' => false,
             ],
+            // 2x ретина для лайтбокса (для 4K мониторов и ретина дисплеев)
             'lightbox_2x' => [
-                'width' => 3840,
-                'height' => 2880,
+                'width' => 2560,
+                'height' => 2560,
                 'fit' => 'contain',
                 'upscale' => false,
             ],
