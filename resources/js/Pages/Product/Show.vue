@@ -264,11 +264,14 @@ onBeforeUnmount(() => {
                 <div v-for="(group, index) in product.attributeGroups" :key="index" class="bg-white rounded-xl border border-gray-200 overflow-hidden">
                     <button
                         @click="toggleGroup(index)"
-                        class="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
+                        class="w-full flex items-center justify-between px-5 py-3.5 hover:bg-gray-50 transition-colors group"
                     >
-                        <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">{{ group.name }}</h3>
+                        <span class="flex items-center gap-3">
+                            <span class="w-0.5 h-4 rounded-full bg-emerald-500 opacity-60 group-hover:opacity-100 transition-opacity shrink-0"></span>
+                            <h3 class="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors text-left">{{ group.name }}</h3>
+                        </span>
                         <ChevronDown
-                            class="w-5 h-5 text-gray-400 transition-transform duration-300 ease-in-out"
+                            class="w-4 h-4 text-gray-400 transition-transform duration-300 ease-in-out shrink-0 ml-3"
                             :class="{ 'rotate-180': isGroupOpen(index) }"
                         />
                     </button>
