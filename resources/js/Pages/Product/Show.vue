@@ -1,6 +1,5 @@
 <script setup>
 import MainLayout from "@/Layouts/MainLayout.vue"
-import { motion } from 'motion-v'
 import Image from "../../Components/ui/Image.vue";
 import { Star, Shield, Clock, Wrench, ShoppingCart, Phone, Check, ChevronDown, Info } from 'lucide-vue-next'
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
@@ -155,12 +154,7 @@ onBeforeUnmount(() => {
 <template>
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
         <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
-        <motion.div
-            :initial="{ opacity: 0, scale: 0.95 }"
-            :animate="{ opacity: 1, scale: 1 }"
-            :transition="{ duration: 0.3 }"
-            class="space-y-6 h-fit"
-        >
+        <div class="space-y-6 h-fit">
             <!-- Main Gallery -->
             <div class="relative rounded-2xl overflow-hidden bg-white shadow-xl border border-gray-200" style="padding-top: 100%">
                 <div class="absolute inset-0">
@@ -207,13 +201,9 @@ onBeforeUnmount(() => {
                     </SplideSlide>
                 </Splide>
             </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-            :initial="{ opacity: 0, y: 20 }"
-            :animate="{ opacity: 1, y: 0 }"
-            :transition="{ duration: 0.3, delay: 0.1 }"
-        >
+        <div>
             <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 rounded-full mb-4" v-if="brand">
                 <span class="text-sm font-medium text-emerald-700">{{ brand }}</span>
             </div>
@@ -266,16 +256,11 @@ onBeforeUnmount(() => {
                     </div>
                 </div>
             </div>
-        </motion.div>
+        </div>
         </div><!-- Закрытие grid lg:grid-cols-2 -->
 
         <!-- Технические характеристики на всю ширину -->
-        <motion.div
-            :initial="{ opacity: 0, y: 20 }"
-            :animate="{ opacity: 1, y: 0 }"
-            :transition="{ duration: 0.3, delay: 0.2 }"
-            class="mt-16"
-        >
+        <div class="mt-16">
             <h2 class="text-2xl font-semibold text-gray-800 mb-6">Технические характеристики</h2>
             <div class="space-y-3">
                 <div v-for="(group, index) in product.attributeGroups" :key="index" class="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -325,19 +310,16 @@ onBeforeUnmount(() => {
                     </Transition>
                 </div>
             </div>
-        </motion.div>
+        </div>
 
         <!-- Описание товара на всю ширину -->
-        <motion.div
+        <div
             v-if="product.description"
-            :initial="{ opacity: 0, y: 20 }"
-            :animate="{ opacity: 1, y: 0 }"
-            :transition="{ duration: 0.3, delay: 0.25 }"
             class="mt-12 bg-white rounded-2xl p-8 sm:p-12 border border-gray-200"
         >
             <h2 class="text-2xl font-semibold text-gray-800 mb-6">Описание</h2>
             <div class="prose prose-gray max-w-none text-gray-700 leading-relaxed" v-html="product.description"></div>
-        </motion.div>
+        </div>
     </div><!-- Закрытие контейнера max-w-7xl -->
 
     <!-- Модалки -->

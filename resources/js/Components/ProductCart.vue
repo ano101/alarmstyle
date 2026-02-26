@@ -1,6 +1,5 @@
 <script setup>
 import { ShoppingCart, Star, Radio, Navigation, Zap } from 'lucide-vue-next';
-import { motion } from "motion-v"
 import { Link } from '@inertiajs/vue3';
 import Button from "./ui/Button.vue";
 import Image from "./ui/Image.vue"; // ⬅ новый компонент
@@ -14,12 +13,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <motion.div
-        :initial="{ opacity: 0, y: 20 }"
-        :whileInView="{ opacity: 1, y: 0 }"
-        :inViewOptions="{ once: true }"
-        class="group bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 hover:shadow-lg hover:border-emerald-500 transition-all duration-300 flex flex-col"
-    >
+    <div class="group bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 hover:shadow-lg hover:border-emerald-500 transition-all duration-300 flex flex-col">
         <div class="relative overflow-hidden bg-white" style="padding-top: 100%">
             <Link :href="`/product/${product.slug}`" class="absolute inset-0 block">
                 <Image
@@ -79,5 +73,5 @@ const props = defineProps({
                 </Button>
             </div>
         </div>
-    </motion.div>
+    </div>
 </template>

@@ -2,27 +2,17 @@
     <section class="py-12 sm:py-16 md:py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <!-- Header -->
-            <motion.div
-                :initial="{ opacity: 0, y: 20 }"
-                :while-in-view="{ opacity: 1, y: 0 }"
-                :viewport="{ once: true }"
-                :transition="{ duration: 0.6 }"
-                class="text-center mb-8 sm:mb-12"
-            >
+            <div class="text-center mb-8 sm:mb-12">
                 <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">{{ title }}</h2>
                 <p class="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto">
                     {{ description }}
                 </p>
-            </motion.div>
+            </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <motion.div
+                <div
                     v-for="(service, index) in services"
                     :key="service.title"
-                    :initial="{ opacity: 0, y: 20 }"
-                    :while-in-view="{ opacity: 1, y: 0 }"
-                    :viewport="{ once: true }"
-                    :transition="{ delay: index * 0.1 }"
                     class="group relative bg-white rounded-2xl p-6 sm:p-8 border border-gray-200 hover:border-emerald-500 transition-all duration-300 hover:shadow-lg"
                 >
                     <div
@@ -57,7 +47,7 @@
                     >
                         Подробнее
                     </Button>
-                </motion.div>
+                </div>
             </div>
         </div>
 
@@ -72,7 +62,6 @@
 
 <script setup>
 import { computed } from "vue"
-import { motion } from "motion-v"
 import {
     Car,
     Radio,

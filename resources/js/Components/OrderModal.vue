@@ -1,6 +1,5 @@
 <script setup>
 import { X, Phone, Mail, User, Car, Calendar } from 'lucide-vue-next'
-import { motion, AnimatePresence } from 'motion-v'
 import { useForm } from '@inertiajs/vue3'
 import { inject, watch, ref, onUnmounted } from 'vue'
 import { usePhoneMask } from '@/Composables/usePhoneMask'
@@ -102,24 +101,15 @@ const submitForm = () => {
 </script>
 
 <template>
-    <AnimatePresence>
+    <Transition name="fade">
         <!-- ВАЖНО: нужен v-if внутри AnimatePresence -->
         <template v-if="open">
             <!-- затемнение фона -->
-            <motion.div
-                :initial="{ opacity: 0 }"
-                :animate="{ opacity: 1 }"
-                :exit="{ opacity: 0 }"
-                class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
-            />
+            <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50" />
 
             <!-- контейнер модалки -->
             <div class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="closeModal">
-                <motion.div
-                    :initial="{ opacity: 0, scale: 0.95, y: 20 }"
-                    :animate="{ opacity: 1, scale: 1, y: 0 }"
-                    :exit="{ opacity: 0, scale: 0.95, y: 20 }"
-                    :transition="{ type: 'spring', duration: 0.5 }"
+                <div
                     @click.stop
                     class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
                 >
@@ -286,8 +276,8 @@ const submitForm = () => {
                         </Button>
                         </template>
                     </form>
-                </motion.div>
+                </div>
             </div>
         </template>
-    </AnimatePresence>
+    </Transition>
 </template>

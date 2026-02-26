@@ -1,6 +1,5 @@
 <script setup>
 import { computed } from 'vue'
-import { motion } from "motion-v"
 import { Shield, Phone, Clock, Award } from 'lucide-vue-next'
 import Button from "@/Components/ui/Button.vue"
 import OrderModal from "@/Components/OrderModal.vue"
@@ -43,13 +42,7 @@ const imageSrc = background.value || 'https://images.unsplash.com/photo-14921445
         <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
             <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                 <!-- Text content -->
-                <motion.div
-                    :initial="{ opacity: 0, y: 20 }"
-                    :whileInView="{ opacity: 1, y: 0 }"
-                    :inViewOptions="{ once: true }"
-                    :transition="{ duration: 0.6 }"
-                    class="order-2 lg:order-1"
-                >
+                <div class="order-2 lg:order-1">
                     <div
                         class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100/80 backdrop-blur-sm rounded-full mb-6 sm:mb-8"
                     >
@@ -121,16 +114,10 @@ const imageSrc = background.value || 'https://images.unsplash.com/photo-14921445
               </span>
                         </div>
                     </div>
-                </motion.div>
+                </div>
 
                 <!-- Image -->
-                <motion.div
-                    :initial="{ opacity: 0, scale: 0.95 }"
-                    :whileInView="{ opacity: 1, scale: 1 }"
-                    :inViewOptions="{ once: true }"
-                    :transition="{ duration: 0.6, delay: 0.2 }"
-                    class="relative order-1 lg:order-2"
-                >
+                <div class="relative order-1 lg:order-2">
                     <div class="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
                         <img
                             :src="imageSrc"
@@ -174,7 +161,7 @@ const imageSrc = background.value || 'https://images.unsplash.com/photo-14921445
            bg-gradient-to-br from-emerald-400 to-emerald-500
            rounded-2xl sm:rounded-3xl -z-10 -rotate-12 opacity-80"
                     />
-                </motion.div>
+                </div>
             </div>
         </div>
     </section>
