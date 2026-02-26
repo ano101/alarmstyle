@@ -156,17 +156,16 @@ onBeforeUnmount(() => {
         <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
         <div class="space-y-6 h-fit">
             <!-- Main Gallery -->
-            <div class="relative rounded-2xl overflow-hidden bg-white shadow-xl border border-gray-200" style="padding-top: 100%">
-                <div class="absolute inset-0">
+            <div class="relative rounded-2xl overflow-hidden bg-white shadow-xl border border-gray-200 group cursor-pointer">
                 <Splide
                     ref="mainSplide"
                     :options="mainOptions"
-                    class="product-gallery-main h-full"
+                    class="product-gallery-main"
                 >
                     <SplideSlide v-for="(image, index) in galleryImages" :key="index">
                         <a
                             :href="route('images.show', { path: image, preset: 'product.lightbox_2x' })"
-                            class="glightbox block cursor-zoom-in group"
+                            class="glightbox block cursor-zoom-in"
                             :data-gallery="'product-gallery'"
                             :data-title="`${product.name} ${index + 1}`"
                         >
@@ -174,12 +173,11 @@ onBeforeUnmount(() => {
                                 :src="image"
                                 preset="product.gallery"
                                 :alt="`${product.name} ${index + 1}`"
-                                class="w-full h-full object-contain p-4 group-hover:opacity-90 transition-opacity"
+                                class="w-full aspect-square object-cover"
                             />
                         </a>
                     </SplideSlide>
                 </Splide>
-                </div>
             </div>
 
             <!-- Thumbnail Gallery -->

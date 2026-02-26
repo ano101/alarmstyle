@@ -102,8 +102,7 @@ const submitForm = () => {
 
 <template>
     <Transition name="fade">
-        <!-- ВАЖНО: нужен v-if внутри AnimatePresence -->
-        <template v-if="open">
+        <div v-if="open" class="contents">
             <!-- затемнение фона -->
             <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50" />
 
@@ -278,6 +277,6 @@ const submitForm = () => {
                     </form>
                 </div>
             </div>
-        </template>
+        </div>
     </Transition>
 </template>

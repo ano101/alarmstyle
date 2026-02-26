@@ -15,29 +15,29 @@ return [
             // Карточка каталога: ~300-400px CSS × 2x ретина = 600-800px
             'card' => [
                 'width' => 600,
-                'height' => 600,
-                'fit' => 'contain',
+                'height' => 450,
+                'fit' => 'crop',
                 'upscale' => true,
             ],
             // 2x ретина для карточки каталога
             'card_2x' => [
                 'width' => 1200,
-                'height' => 1200,
-                'fit' => 'contain',
+                'height' => 900,
+                'fit' => 'crop',
                 'upscale' => true,
             ],
-            // Главная галерея продукта: ~640px контейнер на десктопе × 2x ретина = 1280px
+            // Главная галерея продукта: aspect-square
             'gallery' => [
                 'width' => 800,
                 'height' => 800,
-                'fit' => 'contain',
+                'fit' => 'crop',
                 'upscale' => true,
             ],
             // 2x ретина для главной галереи
             'gallery_2x' => [
                 'width' => 1600,
                 'height' => 1600,
-                'fit' => 'contain',
+                'fit' => 'crop',
                 'upscale' => true,
             ],
             // Миниатюра галереи: ~120px CSS × 2x ретина = 240px

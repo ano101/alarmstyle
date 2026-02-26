@@ -85,7 +85,7 @@ function submit() {
 
 <template>
     <Transition name="fade">
-        <template v-if="open">
+        <div v-if="open" class="contents">
             <!-- затемнение фона -->
             <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]" />
 
@@ -198,6 +198,6 @@ function submit() {
                     </form>
                 </div>
             </div>
-        </template>
+        </div>
     </Transition>
 </template>

@@ -14,7 +14,7 @@ const props = defineProps({
 
 <template>
     <div class="group bg-white rounded-2xl overflow-hidden shadow-md border border-gray-200 hover:shadow-lg hover:border-emerald-500 transition-all duration-300 flex flex-col">
-        <div class="relative overflow-hidden bg-white" style="padding-top: 100%">
+        <div class="relative overflow-hidden bg-gray-100 aspect-[4/3]">
             <Link :href="`/product/${product.slug}`" class="absolute inset-0 block">
                 <Image
                     v-if="product.image"
@@ -22,13 +22,13 @@ const props = defineProps({
                     :src="product.image"
                     preset="product.card"
                     :alt="product.name"
-                    class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
             </Link>
         </div>
 
         <div class="p-3 sm:p-5 flex flex-col flex-1 min-w-0">
-            <div class="text-xs sm:text-sm text-emerald-600 font-medium mb-1 truncate">{{ product.brand }}</div>
+            <div class="text-sm text-emerald-600 font-medium mb-1">{{ product.brand }}</div>
             <Link :href="`/product/${product.slug}`">
                 <h3 class="font-bold text-gray-900 mb-3 sm:mb-4 line-clamp-2 text-base sm:text-lg hover:text-emerald-600 transition-colors duration-200 break-words">
                     {{ product.name }}
