@@ -190,7 +190,7 @@ const accordionContent = ref(null)
 <template>
     <div class="bg-white rounded-xl p-5 border border-gray-200" v-if="attribute.values && attribute.values.length">
         <button class="flex items-center justify-between w-full mb-4"  @click="toggleOpen" type="button">
-            <h3 class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">{{ attribute.name }}</h3>
+            <h3 class="text-sm font-medium text-gray-700 mb-4">{{ attribute.name }}</h3>
             <ChevronUp
                 v-if="isOpen"
                 class="w-5 h-5 text-gray-500"
