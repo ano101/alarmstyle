@@ -39,11 +39,14 @@ const workWeekend = computed(() => data.value.work_weekend || "10:00 - 20:00")
 
 const ctaTitle = computed(() => data.value.cta_title || "Остались вопросы?")
 const ctaDescription = computed(() => data.value.cta_description || "Оставьте заявку, и наш специалист перезвонит вам в течение 5 минут для бесплатной консультации.")
-const ctaFeatures = computed(() => data.value.cta_features || [
-    { item: 'Бесплатная консультация' },
-    { item: 'Подбор оптимальной системы' },
-    { item: 'Расчет стоимости установки' },
-])
+const ctaFeatures = computed(() => {
+    const raw = data.value.cta_features || [
+        { item: 'Бесплатная консультация' },
+        { item: 'Подбор оптимальной системы' },
+        { item: 'Расчет стоимости установки' },
+    ]
+    return raw.map(f => (typeof f === 'string' ? { item: f } : f))
+})
 const ctaFooterNote = computed(() => data.value.cta_footer_note || "Работаем ежедневно с 9:00 до 21:00")
 
 const stats = computed(() => data.value.stats || [
