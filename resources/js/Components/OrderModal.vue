@@ -1,5 +1,5 @@
 <script setup>
-import { X, Phone, Mail, User, Car, Calendar } from 'lucide-vue-next'
+import { X, Phone, Mail, User } from 'lucide-vue-next'
 import { useForm } from '@inertiajs/vue3'
 import { inject, watch, ref, onUnmounted } from 'vue'
 import { usePhoneMask } from '@/Composables/usePhoneMask'
@@ -29,11 +29,10 @@ const form = useForm({
     name: '',
     phone: '',
     email: '',
-    car: '',
-    preferred_date: '',
     message: '',
     product_id: null,
 })
+
 
 // Обновляем product_id при изменении props.product
 watch(
@@ -209,40 +208,6 @@ const submitForm = () => {
                             </div>
                         </div>
 
-                        <div class="grid md:grid-cols-2 gap-6 min-w-0">
-                            <div class="space-y-2 min-w-0">
-                                <Label for="car" class="text-gray-700 font-medium">
-                                    Марка и модель авто
-                                </Label>
-                                <div class="relative">
-                                    <Car class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                    <Input
-                                        id="car"
-                                        v-model="form.car"
-                                        type="text"
-                                        placeholder="Toyota Camry"
-                                        class="pl-12 h-12 border-2 border-gray-200 focus:border-emerald-500 rounded-xl"
-                                    />
-                                </div>
-                                <div v-if="form.errors.car" class="text-sm text-red-600">{{ form.errors.car }}</div>
-                            </div>
-
-                            <div class="space-y-2">
-                                <Label for="preferred_date" class="text-gray-700 font-medium">
-                                    Желаемая дата
-                                </Label>
-                                <div class="relative">
-                                    <Calendar class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                                    <Input
-                                        id="preferred_date"
-                                        v-model="form.preferred_date"
-                                        type="date"
-                                        class="pl-12 h-12 w-full min-w-0 border-2 border-gray-200 focus:border-emerald-500 rounded-xl"
-                                    />
-                                </div>
-                                <div v-if="form.errors.preferred_date" class="text-sm text-red-600">{{ form.errors.preferred_date }}</div>
-                            </div>
-                        </div>
 
                         <div class="space-y-2">
                             <Label for="message" class="text-gray-700 font-medium">
@@ -280,3 +245,5 @@ const submitForm = () => {
         </div>
     </Transition>
 </template>
+
+
