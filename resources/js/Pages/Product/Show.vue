@@ -205,10 +205,10 @@ onBeforeUnmount(() => {
             <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 rounded-full mb-4" v-if="brand">
                 <span class="text-sm font-medium text-emerald-700">{{ brand }}</span>
             </div>
-            <h1 class="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-5 leading-tight">{{ product.name }}</h1>
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-5 leading-tight">{{ product.name }}</h1>
             <div class="mb-8 sm:mb-10">
                 <div class="flex items-baseline gap-3 mb-2">
-                    <div class="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-transparent">{{ Math.round(product.price).toLocaleString('ru-RU') }} ₽</div>
+                    <div class="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-emerald-600 to-emerald-500 bg-clip-text text-transparent">{{ Math.round(product.price).toLocaleString('ru-RU') }} ₽</div>
                 </div>
                 <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 rounded-lg">
                     <span class="text-sm text-gray-600">+ установка включена</span>
