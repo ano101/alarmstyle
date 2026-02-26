@@ -16,29 +16,29 @@ return [
             'card' => [
                 'width' => 600,
                 'height' => 450,
-                'fit' => 'crop',
-                'upscale' => true,
+                'fit' => 'contain',
+                'upscale' => false,
             ],
             // 2x ретина для карточки каталога
             'card_2x' => [
                 'width' => 1200,
                 'height' => 900,
-                'fit' => 'crop',
-                'upscale' => true,
+                'fit' => 'contain',
+                'upscale' => false,
             ],
             // Главная галерея продукта: aspect-square
             'gallery' => [
                 'width' => 800,
                 'height' => 800,
-                'fit' => 'crop',
-                'upscale' => true,
+                'fit' => 'contain',
+                'upscale' => false,
             ],
             // 2x ретина для главной галереи
             'gallery_2x' => [
                 'width' => 1600,
                 'height' => 1600,
-                'fit' => 'crop',
-                'upscale' => true,
+                'fit' => 'contain',
+                'upscale' => false,
             ],
             // Миниатюра галереи: ~120px CSS × 2x ретина = 240px
             'thumbnail' => [
