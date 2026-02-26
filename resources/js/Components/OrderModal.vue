@@ -107,12 +107,12 @@ const submitForm = () => {
             <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50" />
 
             <!-- контейнер модалки -->
-            <div class="fixed inset-0 z-50 flex items-center justify-center p-4" @click.self="closeModal">
+            <div class="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-x-hidden" @click.self="closeModal">
                 <div
                     @click.stop
-                    class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+                    class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[85dvh] overflow-hidden"
                 >
-                    <div class="relative bg-gradient-to-r from-emerald-500 to-emerald-600 px-8 py-6">
+                    <div class="relative bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-4 md:px-8 md:py-6">
                         <h2 class="text-3xl font-bold text-white mb-2">Оформление заявки</h2>
                         <p class="text-emerald-100">
                             Заполните форму и мы свяжемся с вами в ближайшее время
@@ -124,7 +124,7 @@ const submitForm = () => {
                             <X className="w-5 h-5 text-white" />
                         </button>
                     </div>
-                    <form @submit.prevent="submitForm" class="p-8 space-y-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                    <form @submit.prevent="submitForm" class="px-4 py-6 md:p-8 space-y-6 overflow-y-auto max-h-[calc(85dvh-120px)]">
                         <!-- Сообщение об успешной отправке -->
                         <div v-if="isSuccess" class="py-12 text-center">
                             <div class="mx-auto w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mb-6">
@@ -209,8 +209,8 @@ const submitForm = () => {
                             </div>
                         </div>
 
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div class="space-y-2">
+                        <div class="grid md:grid-cols-2 gap-6 min-w-0">
+                            <div class="space-y-2 min-w-0">
                                 <Label for="car" class="text-gray-700 font-medium">
                                     Марка и модель авто
                                 </Label>
@@ -237,7 +237,7 @@ const submitForm = () => {
                                         id="preferred_date"
                                         v-model="form.preferred_date"
                                         type="date"
-                                        class="pl-12 h-12 border-2 border-gray-200 focus:border-emerald-500 rounded-xl"
+                                        class="pl-12 h-12 w-full min-w-0 border-2 border-gray-200 focus:border-emerald-500 rounded-xl"
                                     />
                                 </div>
                                 <div v-if="form.errors.preferred_date" class="text-sm text-red-600">{{ form.errors.preferred_date }}</div>
