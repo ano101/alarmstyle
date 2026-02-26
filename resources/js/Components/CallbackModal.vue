@@ -1,7 +1,6 @@
 <script setup>
 import { computed, watch, ref, inject } from 'vue'
 import { useForm } from '@inertiajs/vue3'
-import { motion, AnimatePresence } from 'motion-v'
 import { usePhoneMask } from '@/Composables/usePhoneMask'
 
 defineOptions({
@@ -85,23 +84,14 @@ function submit() {
 </script>
 
 <template>
-    <AnimatePresence>
-        <template v-if="open">
+    <Transition name="fade">
+        <div v-if="open" class="contents">
             <!-- затемнение фона -->
-            <motion.div
-                :initial="{ opacity: 0 }"
-                :animate="{ opacity: 1 }"
-                :exit="{ opacity: 0 }"
-                class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]"
-            />
+            <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]" />
 
             <!-- контейнер модалки -->
             <div class="fixed inset-0 z-[60] flex items-center justify-center p-4" @click.self="close">
-                <motion.div
-                    :initial="{ opacity: 0, scale: 0.95, y: 20 }"
-                    :animate="{ opacity: 1, scale: 1, y: 0 }"
-                    :exit="{ opacity: 0, scale: 0.95, y: 20 }"
-                    :transition="{ type: 'spring', duration: 0.5 }"
+                <div
                     @click.stop
                     class="w-full max-w-md rounded-2xl bg-white shadow-xl border border-slate-200"
                 >
@@ -206,8 +196,8 @@ function submit() {
                             <input v-model="form.website" type="text" tabindex="-1" autocomplete="off" class="hidden" />
                         </template>
                     </form>
-                </motion.div>
+                </div>
             </div>
-        </template>
-    </AnimatePresence>
+        </div>
+    </Transition>
 </template>
