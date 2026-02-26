@@ -22,7 +22,7 @@ const props = defineProps({
                     :src="product.image"
                     preset="product.card"
                     :alt="product.name"
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                 />
             </Link>
         </div>
@@ -55,21 +55,21 @@ const props = defineProps({
                 <div class="text-xs sm:text-sm text-gray-500">с установкой</div>
             </div>
 
-            <div class="flex flex-col sm:flex-row gap-2 mt-auto">
+            <div class="flex flex gap-2">
                 <Link :href="`/product/${product.slug}`" class="flex-1">
                     <Button
                         variant="outline"
-                        class="w-full border-2 border-gray-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-200 text-sm"
+                        class="flex-1 border-2 border-gray-200 hover:border-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all duration-200"
                     >
                         Подробнее
                     </Button>
                 </Link>
                 <Button
                     @click="open(product)"
-                    class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white shadow-md transition-all duration-200 text-sm"
+                    class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white shadow-md transition-all duration-200"
                 >
-                    <ShoppingCart class="w-4 h-4 sm:mr-2" />
-                    <span class="hidden sm:inline">Заказать</span>
+                    <ShoppingCart class="w-4 h-4 mr-2" />
+                    Заказать
                 </Button>
             </div>
         </div>

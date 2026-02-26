@@ -173,7 +173,7 @@ onBeforeUnmount(() => {
                                 :src="image"
                                 preset="product.gallery"
                                 :alt="`${product.name} ${index + 1}`"
-                                class="w-full aspect-square object-cover"
+                                class="w-full aspect-square object-contain"
                             />
                         </a>
                     </SplideSlide>
